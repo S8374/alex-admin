@@ -1,0 +1,90 @@
+"use client";
+
+import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { User } from "lucide-react";
+import { useGetUserByIdQuery } from "@/redux/api/userApi";
+import { UserProfileDrawerProps } from "./user-profile-drawer/types";
+import { DrawerHeader } from "./user-profile-drawer/DrawerHeader";
+import { OverviewTab } from "./user-profile-drawer/OverviewTab";
+import { ApplicationsTab } from "./user-profile-drawer/ApplicationsTab";
+import { PetsTab } from "./user-profile-drawer/PetsTab";
+import { FinancialsTab } from "./user-profile-drawer/FinancialsTab";
+import { HealthTab } from "./user-profile-drawer/HealthTab";
+import { TimelineTab } from "./user-profile-drawer/TimelineTab";
+import { RepresentativeTab } from "./user-profile-drawer/RepresentativeTab";
+
+export function UserProfileDrawer({ userId, isOpen, onClose }: UserProfileDrawerProps) {
+  const { data: userResponse, isLoading } = useGetUserByIdQuery(userId, { skip: !userId });
+  const user = userResponse?.data;
+  console.log("user", user);
+  if (!userId) return null;
+
+  return (
+    <Sheet open={isOpen} onOpenChange={onClose}>
+      <SheetContent className="w-[95vw] sm:w-[600px] lg:w-[850px] max-w-none p-0 border-l border-gray-100 flex flex-col h-full gap-0 overflow-hidden shadow-2xl bg-white">
+        {isLoading ? (
+          <div className="flex-1 flex items-center justify-center bg-white">
+            <div className="w-12 h-12 border-4 border-[#85A1D1]/20 border-t-[#85A1D1] rounded-full animate-spin" />
+          </div>
+        ) : user ? (
+          <>
+            {/* Header / Profile Summary */}
+            <DrawerHeader user={user} />
+
+            {/* Navigation Tabs */}
+            <Tabs defaultValue="overview" className="flex-1 flex flex-col min-h-0">
+              <div className="border-b border-gray-100 shrink-0 sticky top-0 bg-white z-20">
+                <ScrollArea className="w-full">
+                  <TabsList className="h-16 bg-transparent gap-8 px-6 sm:px-10 flex justify-start items-center border-none outline-none w-max">
+                    <TabsTrigger value="overview" className="h-full rounded-none border-b-2 border-transparent data-[state=active]:border-[#85A1D1] data-[state=active]:bg-transparent px-0 font-black text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all shrink-0">Overview</TabsTrigger>
+                    <TabsTrigger value="applications" className="h-full rounded-none border-b-2 border-transparent data-[state=active]:border-[#85A1D1] data-[state=active]:bg-transparent px-0 font-black text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all shrink-0">Applications ({user.applications?.length || 0})</TabsTrigger>
+                    <TabsTrigger value="pets" className="h-full rounded-none border-b-2 border-transparent data-[state=active]:border-[#85A1D1] data-[state=active]:bg-transparent px-0 font-black text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all shrink-0">Pets ({user.pets?.length || 0})</TabsTrigger>
+                    <TabsTrigger value="financials" className="h-full rounded-none border-b-2 border-transparent data-[state=active]:border-[#85A1D1] data-[state=active]:bg-transparent px-0 font-black text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all shrink-0">Financials</TabsTrigger>
+                    <TabsTrigger value="health" className="h-full rounded-none border-b-2 border-transparent data-[state=active]:border-[#85A1D1] data-[state=active]:bg-transparent px-0 font-black text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all shrink-0">Health</TabsTrigger>
+                    <TabsTrigger value="timeline" className="h-full rounded-none border-b-2 border-transparent data-[state=active]:border-[#85A1D1] data-[state=active]:bg-transparent px-0 font-black text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all shrink-0">Timeline</TabsTrigger>
+                  </TabsList>
+                  <ScrollBar orientation="horizontal" />
+                </ScrollArea>
+              </div>
+
+              <div className="flex-1 overflow-y-auto bg-gray-50/10">
+                <div className="p-6 sm:p-10 pb-16">
+                  <TabsContent value="overview" className="mt-0 outline-none">
+                    <OverviewTab user={user} />
+                  </TabsContent>
+                  <TabsContent value="applications" className="mt-0 outline-none">
+                    <ApplicationsTab user={user} />
+                  </TabsContent>
+                  <TabsContent value="pets" className="mt-0 outline-none">
+                    <PetsTab user={user} />
+                  </TabsContent>
+                  <TabsContent value="financials" className="mt-0 outline-none">
+                    <FinancialsTab user={user} />
+                  </TabsContent>
+                  <TabsContent value="health" className="mt-0 outline-none">
+                    <HealthTab user={user} />
+                  </TabsContent>
+                  <TabsContent value="timeline" className="mt-0 outline-none">
+                    <TimelineTab user={user} />
+                  </TabsContent>
+                </div>
+              </div>
+            </Tabs>
+          </>
+        ) : (
+          <div className="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-4">
+            <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center border border-gray-100">
+              <User className="w-10 h-10 text-gray-200" />
+            </div>
+            <div className="space-y-1">
+              <p className="text-lg font-black text-gray-900 tracking-tight">Error Loading Profile</p>
+              <p className="text-sm font-medium text-gray-500 max-w-[300px]">We couldn't retrieve the full profile data at this time.</p>
+            </div>
+          </div>
+        )}
+      </SheetContent>
+    </Sheet>
+  );
+}

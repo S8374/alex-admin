@@ -1,0 +1,166 @@
+"use client";
+
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  ArrowLeft, 
+  Mail, 
+  Hash, 
+  LayoutGrid, 
+  HeartPulse, 
+  Dog, 
+  UserCheck, 
+  Activity, 
+  ShieldCheck 
+} from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { HealthAnalysis } from "./HealthAnalysis";
+import { PetDossier } from "./PetDossier";
+import { QuoteSidebar } from "./QuoteSidebar";
+
+interface QuoteEditorProps {
+  application: any;
+  onBack: () => void;
+  onSendQuote: (form: any) => void;
+  isSending: boolean;
+}
+
+export const QuoteEditor = ({ 
+  application, 
+  onBack, 
+  onSendQuote, 
+  isSending 
+}: QuoteEditorProps) => {
+  const [activeTab, setActiveTab] = useState<"overview" | "health" | "pets">("overview");
+  const [selectedPetIds, setSelectedPetIds] = useState<string[]>(
+    application.pets
+      ?.filter((p: any) => {
+        const s = p.status?.toUpperCase();
+        return s !== "QUOTE_ACCEPTED" && s !== "ACTIVE" && s !== "QUOTE_READY";
+      })
+      ?.map((p: any) => p.id) || []
+  );
+  const [quoteForm, setQuoteForm] = useState({
+    setupFee: 10,
+    petCharges: {} as Record<string, number>
+  });
+
+  const togglePetSelection = (petId: string) => {
+    setSelectedPetIds(prev =>
+      prev.includes(petId) ? prev.filter(id => id !== petId) : [...prev, petId]
+    );
+  };
+
+  return (
+    <div className="w-full">
+      {/* Sticky Editor Header */}
+      <div className="sticky top-20 z-30 bg-white/95 backdrop-blur-md border-b border-gray-100 py-6 px-4 md:px-10 -mx-4 md:-mx-10 shadow-sm">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div className="flex flex-col gap-4">
+            <button onClick={onBack} className="flex items-center gap-2 text-xs font-bold text-gray-400 hover:text-gray-900 uppercase tracking-widest group transition-all">
+              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Back to queue
+            </button>
+            <div className="flex items-center gap-4">
+              <Avatar className="w-16 h-16 md:w-20 md:h-20 rounded-2xl border-2 border-white ">
+                <AvatarImage src={application.user.avatarUrl} />
+                <AvatarFallback className="bg-[#85A1D1]/10 text-[#85A1D1] font-bold text-xl">
+                  {application.user.fullName.charAt(0)}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight mb-1">{application.user.fullName}</h1>
+                <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500">
+                  <div className="flex items-center gap-1.5"><Mail className="w-4 h-4 text-[#85A1D1]" /> {application.user.email}</div>
+                  <div className="hidden md:block w-1 h-1 rounded-full bg-gray-300" />
+                  <div className="flex items-center gap-1.5 font-mono uppercase"><Hash className="w-3.5 h-3.5 text-[#85A1D1]" /> {application.id.split("-")[0].toUpperCase()}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex bg-gray-100/50 p-1 rounded-xl border border-gray-100 self-start md:self-center">
+            {[
+              { id: "overview", label: "Overview", icon: LayoutGrid },
+              { id: "health", label: "Health", icon: HeartPulse },
+              { id: "pets", label: "Pets", icon: Dog },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`flex items-center gap-2 px-4 md:px-6 py-2.5 rounded-lg text-xs md:text-sm font-bold transition-all ${
+                  activeTab === tab.id ? "bg-white text-gray-900 shadow-sm border border-gray-200" : "text-gray-500 hover:text-gray-900"
+                }`}
+              >
+                <tab.icon className="w-4 h-4" /> {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 py-10">
+        <div className="lg:col-span-8">
+          <AnimatePresence mode="wait">
+            {activeTab === "overview" && (
+              <motion.div key="overview" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="p-8 bg-white rounded-2xl border border-gray-100 shadow-sm space-y-6">
+                  <h3 className="text-sm font-bold text-gray-900 uppercase tracking-widest flex items-center gap-2">
+                    <UserCheck className="w-5 h-5 text-[#85A1D1]" /> Applicant Data
+                  </h3>
+                  <div className="space-y-4">
+                    {application.user.personInfos?.[0] ? Object.entries(application.user.personInfos[0]).filter(([k]) => !['id', 'userId', 'createdAt', 'updatedAt'].includes(k)).map(([key, val]) => (
+                      <div key={key} className="flex justify-between items-center border-b border-gray-50 pb-3">
+                        <span className="text-xs font-semibold text-gray-400 capitalize">{key.replace(/([A-Z])/g, ' $1')}</span>
+                        <span className="text-sm font-bold text-gray-900">{val as string || "N/A"}</span>
+                      </div>
+                    )) : (
+                      <div className="p-10 text-center bg-gray-50 rounded-xl border border-dashed border-gray-200">
+                        <p className="text-sm text-gray-400">Profile data pending submission</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="p-8 bg-gray-900 rounded-2xl text-white space-y-6 shadow-xl relative overflow-hidden">
+                  <div className="absolute top-0 right-0 p-10 opacity-10 pointer-events-none"><ShieldCheck className="w-32 h-32" /></div>
+                  <h3 className="text-sm font-bold text-[#85A1D1] uppercase tracking-widest flex items-center gap-2">
+                    <Activity className="w-5 h-5" /> Summary
+                  </h3>
+                  <div className="grid grid-cols-1 gap-4 relative z-10">
+                    <div className="p-5 bg-white/5 rounded-xl border border-white/10 flex items-center justify-between">
+                      <span className="text-xs font-bold uppercase tracking-wider opacity-60">Total Pets</span>
+                      <span className="text-2xl font-bold">{application.pets.length}</span>
+                    </div>
+                    <div className="p-5 bg-white/5 rounded-xl border border-white/10 flex items-center justify-between">
+                      <span className="text-xs font-bold uppercase tracking-wider opacity-60">Critical Issues</span>
+                      <span className="text-2xl font-bold text-red-400">{application.healthAnswers.filter((a: any) => a.answerBoolean).length}</span>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+            {activeTab === "health" && <HealthAnalysis answers={application.healthAnswers} />}
+            {activeTab === "pets" && (
+              <PetDossier 
+                pets={application.pets} 
+                selectedIds={selectedPetIds} 
+                onToggle={togglePetSelection} 
+              />
+            )}
+          </AnimatePresence>
+        </div>
+
+        <div className="lg:col-span-4">
+          <QuoteSidebar 
+            pets={application.pets} 
+            selectedIds={selectedPetIds} 
+            form={quoteForm} 
+            onFormUpdate={setQuoteForm} 
+            onSend={() => onSendQuote({ ...quoteForm, selectedPetIds })} 
+            isSending={isSending} 
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
