@@ -2,14 +2,18 @@ import {
   createApi,
   fetchBaseQuery,
 } from "@reduxjs/toolkit/query/react";
+import type { RootState } from "../store";
+import { getApiBaseUrl } from "@/lib/api-base-url";
+
+const baseApiUrl = getApiBaseUrl();
 
 export const baseApi = createApi({
   reducerPath: "baseApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: `${process.env.NEXT_PUBLIC_BASE_API}`,
+    baseUrl: baseApiUrl,
     credentials: "include",
     prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as any).auth.token;
+      const token = (getState() as RootState).auth.token;
       if (token) {
         headers.set("authorization", `${token}`);
       }
@@ -18,4 +22,4 @@ export const baseApi = createApi({
   }),
   tagTypes: ["users", "Agreement", "Storage", "Payment", "Activity", "applications", "Questionnaire", "Conversations", "Messages"],
   endpoints: () => ({}),
-}); 
+}); 

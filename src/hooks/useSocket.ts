@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useSelector } from 'react-redux';
+import type { RootState } from '@/redux/store';
+import { getApiBaseUrl } from '@/lib/api-base-url';
 
 export const useSocket = () => {
   const [socket, setSocket] = useState<Socket | null>(null);
-  const token = useSelector((state: any) => state.auth.token);
+  const token = useSelector((state: RootState) => state.auth.token);
 
   useEffect(() => {
-    const socketUrl = process.env.NEXT_PUBLIC_BASE_API?.trim() || 'http://localhost:51212';
+    const socketUrl = getApiBaseUrl();
     const socketInstance = io(socketUrl, {
       auth: { token },
       withCredentials: true,
@@ -16,6 +18,7 @@ export const useSocket = () => {
       timeout: 10000,
     });
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSocket(socketInstance);
 
     socketInstance.on('connect', () => {

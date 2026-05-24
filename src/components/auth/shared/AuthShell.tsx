@@ -38,6 +38,7 @@ export function AuthShell({ slide, children }: AuthShellProps) {
                 alt="Encore Logo"
                 width={140}
                 height={40}
+                className="h-auto w-auto"
               />
             </Link>
           </div>
