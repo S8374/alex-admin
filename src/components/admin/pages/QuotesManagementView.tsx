@@ -18,7 +18,7 @@ export function QuotesManagementView() {
   const { data: userData, isLoading } = useGetAllUsersQuery({ search });
   const { data: detailData, isLoading: isDetailLoading } = useGetApplicationByIdQuery(selectedAppId!, { skip: !selectedAppId });
   const [sendQuote, { isLoading: isSending }] = useSendQuoteMutation();
-
+ console.log("Users data:", userData);
   const allApps = useMemo(() => {
     return userData?.data?.flatMap((user: any) => 
       (user.applications || []).map((app: any) => ({
@@ -31,7 +31,7 @@ export function QuotesManagementView() {
           personInfos: user.personInfos
         }
       }))
-    ).filter((app: any) => app.status !== "DRAFT") || [];
+    )|| [];
   }, [userData]);
 
   const handleOpenEditor = (app: any) => {
