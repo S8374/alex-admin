@@ -31,7 +31,7 @@ export function QuotesManagementView() {
           personInfos: user.personInfos
         }
       }))
-    ).filter((app: any) => app.status == "DRAFT") || [];
+    )|| [];
   }, [userData]);
 
   const handleOpenEditor = (app: any) => {
