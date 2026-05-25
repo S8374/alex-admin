@@ -6,9 +6,14 @@ import { Badge } from "@/components/ui/badge";
 
 interface FinancialsTabProps {
   user: any;
+  isLoading?: boolean;
 }
 
-export function FinancialsTab({ user }: FinancialsTabProps) {
+export function FinancialsTab({ user, isLoading = false }: FinancialsTabProps) {
+  if (isLoading) {
+    return <FinancialsSkeleton />;
+  }
+
   const paymentMethods = user.paymentMethods || [];
   const payments = user.payments || [];
 
@@ -147,6 +152,36 @@ export function FinancialsTab({ user }: FinancialsTabProps) {
                 <p className="text-sm font-bold text-gray-300 uppercase tracking-[0.3em]">No billing history available</p>
               </div>
             )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FinancialsSkeleton() {
+  return (
+    <div className="space-y-8 animate-pulse">
+      <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+        <div className="h-4 w-44 rounded-full bg-gray-200" />
+        <div className="h-7 w-24 rounded-full bg-gray-200" />
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-1 space-y-6">
+          <div className="h-4 w-32 rounded-full bg-gray-200" />
+          <div className="h-56 rounded-2xl bg-gray-100" />
+          <div className="h-20 rounded-xl bg-gray-100" />
+        </div>
+        <div className="lg:col-span-2 space-y-6">
+          <div className="h-4 w-36 rounded-full bg-gray-200" />
+          <div className="space-y-4">
+            {Array.from({ length: 2 }).map((_, index) => (
+              <div key={index} className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm space-y-4">
+                <div className="h-5 w-40 rounded-full bg-gray-200" />
+                <div className="h-4 w-full rounded-full bg-gray-100" />
+                <div className="h-4 w-5/6 rounded-full bg-gray-100" />
+              </div>
+            ))}
           </div>
         </div>
       </div>

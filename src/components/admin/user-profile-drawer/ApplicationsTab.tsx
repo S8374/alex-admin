@@ -6,9 +6,14 @@ import { Badge } from "@/components/ui/badge";
 
 interface ApplicationsTabProps {
   user: any;
+  isLoading?: boolean;
 }
 
-export function ApplicationsTab({ user }: ApplicationsTabProps) {
+export function ApplicationsTab({ user, isLoading = false }: ApplicationsTabProps) {
+  if (isLoading) {
+    return <ApplicationsSkeleton />;
+  }
+
   const applications = user?.applications || [];
   
   return (
@@ -91,6 +96,30 @@ export function ApplicationsTab({ user }: ApplicationsTabProps) {
             <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">No enrollment records found</p>
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+function ApplicationsSkeleton() {
+  return (
+    <div className="space-y-8 animate-pulse">
+      <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+        <div className="h-4 w-56 rounded-full bg-gray-200" />
+        <div className="h-7 w-24 rounded-full bg-gray-200" />
+      </div>
+      <div className="space-y-4">
+        {Array.from({ length: 2 }).map((_, index) => (
+          <div key={index} className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm space-y-5">
+            <div className="h-4 w-40 rounded-full bg-gray-200" />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="h-16 rounded-xl bg-gray-100" />
+              <div className="h-16 rounded-xl bg-gray-100" />
+              <div className="h-16 rounded-xl bg-gray-100" />
+            </div>
+            <div className="h-10 w-28 rounded-full bg-gray-100 ml-auto" />
+          </div>
+        ))}
       </div>
     </div>
   );

@@ -57,6 +57,8 @@ export function QuestionnaireModal({
                   <>
                     <InputGroup label="Topic Title" value={formData.topicTitle} onChange={(val: string) => setFormData({ ...formData, topicTitle: val })} placeholder="Health Assessment 2026" />
                     <TextAreaGroup label="Description" value={formData.description} onChange={(val: string) => setFormData({ ...formData, description: val })} placeholder="Purpose of this assessment..." rows={4} />
+                    <TextAreaGroup label="HIPAA Disclaimer Text" value={formData.disclaimerText || ""} onChange={(val: string) => setFormData({ ...formData, disclaimerText: val })} placeholder="Enter HIPAA disclaimer or policy text..." rows={6} />
+                    <InputGroup label="Disclaimer Checkbox Label" value={formData.disclaimerLabel || ""} onChange={(val: string) => setFormData({ ...formData, disclaimerLabel: val })} placeholder="e.g. I acknowledge that I have read, understood..." />
                   </>
                 )}
 

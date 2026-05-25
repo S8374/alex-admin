@@ -23,7 +23,7 @@ export function ApplicationManagementView({ setActiveView }: ApplicationManageme
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [selectedAppId, setSelectedAppId] = useState<string | null>(null);
 
-  const { data: appsData, isLoading } = useGetAllApplicationsQuery(undefined);
+  const { data: appsData, isLoading, isFetching } = useGetAllApplicationsQuery(undefined);
   const { data: detailData, isLoading: isDetailLoading } = useGetApplicationByIdQuery(selectedAppId!, { skip: !selectedAppId });
   const [updateStatus, { isLoading: isUpdating }] = useUpdateApplicationStatusMutation();
 
@@ -73,7 +73,7 @@ export function ApplicationManagementView({ setActiveView }: ApplicationManageme
       <motion.div 
         initial={{ opacity: 0, x: 20 }} 
         animate={{ opacity: 1, x: 0 }} 
-        className="min-h-screen bg-gray-50/50 -m-10 pt-0 px-10 pb-10"
+        className="min-h-screen bg-gray-50/50 pt-4 px-4 sm:px-6 lg:px-10 pb-10"
       >
         <ApplicationDetail 
           application={detailData?.data}
@@ -95,6 +95,7 @@ export function ApplicationManagementView({ setActiveView }: ApplicationManageme
       <ApplicationList 
         apps={allApps}
         isLoading={isLoading}
+        isFetching={isFetching}
         search={search}
         onSearchChange={setSearch}
         statusFilter={statusFilter}

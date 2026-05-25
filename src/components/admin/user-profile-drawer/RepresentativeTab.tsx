@@ -3,7 +3,11 @@ import { User, Phone, Mail, MapPin, Briefcase } from "lucide-react";
 import { TabProps } from "./types";
 import { Separator } from "@/components/ui/separator";
 
-export function RepresentativeTab({ user }: TabProps) {
+export function RepresentativeTab({ user, isLoading = false }: TabProps) {
+  if (isLoading) {
+    return <RepresentativeSkeleton />;
+  }
+
   // Get all unique representatives from applications
   const representatives = user.applications
     .filter((app: any) => app.representative)
@@ -116,6 +120,42 @@ export function RepresentativeTab({ user }: TabProps) {
           <p className="text-[10px] font-bold text-gray-400 mt-2">Representatives are assigned during the application process.</p>
         </div>
       )}
+    </div>
+  );
+}
+
+function RepresentativeSkeleton() {
+  return (
+    <div className="space-y-8 animate-pulse">
+      <div className="h-12 rounded-2xl bg-gray-100" />
+      <div className="rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden bg-white">
+        <div className="bg-gray-50/40 border-b border-gray-50 py-6 px-4 sm:px-10">
+          <div className="h-3 w-64 rounded-full bg-gray-200" />
+        </div>
+        <div className="p-4 sm:p-10 space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div className="space-y-8">
+              <div className="flex items-center gap-6">
+                <div className="w-16 h-16 rounded-3xl bg-gray-100" />
+                <div className="space-y-3 flex-1">
+                  <div className="h-3 w-24 rounded-full bg-gray-100" />
+                  <div className="h-6 w-44 rounded-full bg-gray-100" />
+                  <div className="h-3 w-28 rounded-full bg-gray-100" />
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div className="h-12 rounded-2xl bg-gray-100" />
+                <div className="h-12 rounded-2xl bg-gray-100" />
+              </div>
+            </div>
+            <div className="space-y-8">
+              <div className="h-20 rounded-3xl bg-gray-100" />
+              <div className="h-px bg-gray-100" />
+              <div className="h-20 rounded-3xl bg-gray-100" />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

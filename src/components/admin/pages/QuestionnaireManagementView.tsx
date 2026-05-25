@@ -33,6 +33,8 @@ type ModalType = "init" | "edit-main" | "add-question" | "edit-question" | "add-
 interface FormData {
   topicTitle: string;
   description: string;
+  disclaimerText: string;
+  disclaimerLabel: string;
   questionText: string;
   category: string;
   isInputRequired: boolean;
@@ -62,6 +64,8 @@ export function QuestionnaireManagementView() {
   const [formData, setFormData] = useState<FormData>({
     topicTitle: "",
     description: "",
+    disclaimerText: "",
+    disclaimerLabel: "",
     questionText: "",
     category: "HEALTH",
     isInputRequired: false,
@@ -77,10 +81,10 @@ export function QuestionnaireManagementView() {
     try {
       if (modalType === "init" || modalType === "edit-main") {
         if (modalType === "edit-main" && questionnaire?.id) {
-          await updateQuestionnaire({ id: questionnaire.id, topicTitle: formData.topicTitle, description: formData.description }).unwrap();
+          await updateQuestionnaire({ id: questionnaire.id, topicTitle: formData.topicTitle, description: formData.description, disclaimerText: formData.disclaimerText, disclaimerLabel: formData.disclaimerLabel }).unwrap();
           toast.success("Framework updated");
         } else {
-          await initQuestionnaire({ topicTitle: formData.topicTitle, description: formData.description }).unwrap();
+          await initQuestionnaire({ topicTitle: formData.topicTitle, description: formData.description, disclaimerText: formData.disclaimerText, disclaimerLabel: formData.disclaimerLabel }).unwrap();
           toast.success("Questionnaire initialized");
         }
       } else if (modalType === "add-question" || modalType === "edit-question") {
@@ -113,7 +117,7 @@ export function QuestionnaireManagementView() {
   };
 
   const resetForm = () => {
-    setFormData({ topicTitle: "", description: "", questionText: "", category: "HEALTH", isInputRequired: false, isDocumentNeeded: false, inputLebleText: "" });
+    setFormData({ topicTitle: "", description: "", disclaimerText: "", disclaimerLabel: "", questionText: "", category: "HEALTH", isInputRequired: false, isDocumentNeeded: false, inputLebleText: "" });
     setEditId("");
     setSelectedParentId("");
   };
@@ -122,7 +126,7 @@ export function QuestionnaireManagementView() {
     setModalType(type);
     if (data) {
       if (type === "edit-main") {
-        setFormData((prev: FormData) => ({ ...prev, topicTitle: data.topicTitle || "", description: data.description || "" }));
+        setFormData((prev: FormData) => ({ ...prev, topicTitle: data.topicTitle || "", description: data.description || "", disclaimerText: data.disclaimerText || "", disclaimerLabel: data.disclaimerLabel || "" }));
       } else if (type === "edit-question") {
         setEditId(data.id);
         setFormData((prev: FormData) => ({ ...prev, questionText: data.questionText, category: data.category, isInputRequired: data.isInputRequired, isDocumentNeeded: data.isDocumentNeeded }));

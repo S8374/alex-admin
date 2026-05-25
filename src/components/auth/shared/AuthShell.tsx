@@ -32,7 +32,7 @@ export function AuthShell({ slide, children }: AuthShellProps) {
           <div className="absolute inset-0 bg-gradient-to-br from-[#85A1D1]/90 via-[#85A1D1]/40 to-transparent" />
           
           <div className="absolute top-10 left-10 z-10">
-            <Link href="/" className="flex items-center gap-2 group/logo">
+            <Link href="/admin/dashboard" className="flex items-center gap-2 group/logo">
               <Image
                 src="/logo/encore.png"
                 alt="Encore Logo"

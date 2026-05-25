@@ -1,22 +1,24 @@
 "use client";
 
-import React from "react";
-import { Search, ClipboardList, Eye, CheckCircle2, XCircle } from "lucide-react";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import React, { useState, useEffect } from "react";
+import { Search, Eye, CheckCircle2, XCircle, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { LoadingState } from "../questionnaire/UIElements";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface ApplicationListProps {
   apps: any[];
   isLoading: boolean;
+  isFetching?: boolean;
   search: string;
   onSearchChange: (val: string) => void;
   statusFilter: string;
@@ -26,26 +28,89 @@ interface ApplicationListProps {
   onReject: (id: string) => void;
 }
 
-export const ApplicationList = ({ 
-  apps, 
-  isLoading, 
-  search, 
+function MobileApplicationCard({ app, getStatusBadge, onApprove, onReject, onOpenDetail }: any) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="w-full bg-white rounded-md border border-gray-50 shadow-sm overflow-hidden">
+      <button
+        type="button"
+        onClick={() => setOpen((s) => !s)}
+        className="w-full flex items-center justify-between gap-3 p-3 text-left"
+      >
+        <div className="flex items-center gap-3 min-w-0">
+          <Avatar className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg border border-white shadow-sm shrink-0">
+            <AvatarImage src={app.user?.avatarUrl} />
+            <AvatarFallback className="bg-[#85A1D1]/10 text-[#85A1D1] font-bold text-xs">{app.user?.fullName?.charAt(0) || "U"}</AvatarFallback>
+          </Avatar>
+          <div className="min-w-0">
+            <p className="text-sm font-bold text-gray-900 truncate">{app.user?.fullName}</p>
+            <p className="text-[11px] text-gray-400 font-medium truncate wrap-break-word">{app.user?.email}</p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <div className="whitespace-nowrap">{getStatusBadge(app.status)}</div>
+          <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${open ? "rotate-180" : "rotate-0"}`} />
+        </div>
+      </button>
+
+      {open && (
+        <div className="px-3 pb-3 pt-0 border-t border-gray-100 flex items-center justify-between gap-3">
+          <div className="text-[12px] text-gray-600">{new Date(app.createdAt).toLocaleDateString()}</div>
+          <div className="flex items-center gap-2">
+            {app.status === "SUBMITTED" || app.status === "UNDER_REVIEW" ? (
+              <>
+                <Button onClick={() => onApprove(app.id)} variant="ghost" className="h-8 w-8 p-0 rounded-md text-emerald-600">
+                  <CheckCircle2 className="w-4 h-4" />
+                </Button>
+                <Button onClick={() => onReject(app.id)} variant="ghost" className="h-8 w-8 p-0 rounded-md text-rose-600">
+                  <XCircle className="w-4 h-4" />
+                </Button>
+              </>
+            ) : null}
+            <Button onClick={() => onOpenDetail(app)} variant="secondary" className="h-8 px-3 rounded-md text-[10px] font-bold">
+              <Eye className="w-3.5 h-3.5 mr-1" /> View
+            </Button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export const ApplicationList = ({
+  apps,
+  isLoading,
+  isFetching = false,
+  search,
   onSearchChange,
   statusFilter,
-  onStatusFilterChange, 
+  onStatusFilterChange,
   onOpenDetail,
   onApprove,
-  onReject
+  onReject,
 }: ApplicationListProps) => {
+  const loading = isLoading || isFetching;
+
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const filteredApps = apps.filter((app: any) => {
-    const matchesSearch = app.user?.fullName?.toLowerCase().includes(search.toLowerCase()) ||
-      app.user?.email?.toLowerCase().includes(search.toLowerCase());
-    
+    const matchesSearch = app.user?.fullName?.toLowerCase().includes(search.toLowerCase()) || app.user?.email?.toLowerCase().includes(search.toLowerCase());
     const matchesStatus = statusFilter === "ALL" || app.status === statusFilter;
-    
     return matchesSearch && matchesStatus;
   });
+
+  useEffect(() => {
+    setPage(1);
+  }, [search, statusFilter, apps]);
+
+  const total = filteredApps.length;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const startIndex = (page - 1) * pageSize;
+  const endIndex = Math.min(total, startIndex + pageSize);
+  const paginatedApps = filteredApps.slice(startIndex, endIndex);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -76,11 +141,7 @@ export const ApplicationList = ({
         </div>
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto">
           {/* Status Filter */}
-          <select
-            value={statusFilter}
-            onChange={(e) => onStatusFilterChange(e.target.value)}
-            className="h-10 px-4 w-full sm:w-48 bg-white border border-gray-200 rounded-lg text-sm font-bold text-gray-700 outline-none focus:ring-2 focus:ring-[#85A1D1]/10 transition-all shadow-sm"
-          >
+          <select value={statusFilter} onChange={(e) => onStatusFilterChange(e.target.value)} className="h-10 px-4 w-full sm:w-48 bg-white border border-gray-200 rounded-lg text-sm font-bold text-gray-700 outline-none focus:ring-2 focus:ring-[#85A1D1]/10 transition-all shadow-sm">
             <option value="ALL">All Statuses</option>
             <option value="DRAFT">Draft</option>
             <option value="SUBMITTED">Submitted</option>
@@ -93,19 +154,31 @@ export const ApplicationList = ({
           {/* Search */}
           <div className="relative w-full sm:w-80">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input 
-              type="text" 
-              placeholder="Search by name or email..." 
-              value={search}
-              onChange={(e) => onSearchChange(e.target.value)}
-              className="h-10 w-full bg-white border border-gray-200 rounded-lg pl-10 pr-4 text-sm font-medium outline-none focus:ring-2 focus:ring-[#85A1D1]/10 transition-all text-gray-900 shadow-sm"
-            />
+            <input type="text" placeholder="Search by name or email..." value={search} onChange={(e) => onSearchChange(e.target.value)} className="h-10 w-full bg-white border border-gray-200 rounded-lg pl-10 pr-4 text-sm font-medium outline-none focus:ring-2 focus:ring-[#85A1D1]/10 transition-all text-gray-900 shadow-sm" />
           </div>
         </div>
       </div>
 
       <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
+        {/* Mobile accordion */}
+        <div className="block lg:hidden p-4">
+          {loading ? (
+            <LoadingState />
+          ) : filteredApps.length ? (
+            <div className="space-y-3">
+              {filteredApps.map((app: any) => (
+                <MobileApplicationCard key={app.id} app={app} getStatusBadge={getStatusBadge} onApprove={onApprove} onReject={onReject} onOpenDetail={onOpenDetail} />
+              ))}
+            </div>
+          ) : (
+            <div className="p-6 text-center text-gray-300">
+              <p className="text-sm font-medium">No applications found</p>
+            </div>
+          )}
+        </div>
+
+        {/* Desktop table */}
+        <div className="hidden lg:block overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow className="bg-gray-50/50 hover:bg-transparent">
@@ -117,22 +190,20 @@ export const ApplicationList = ({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {isLoading ? (
-                [...Array(5)].map((_, i) => (
-                  <TableRow key={i} className="animate-pulse">
-                    <TableCell colSpan={5} className="px-6 py-6 h-16 bg-gray-50/10" />
-                  </TableRow>
-                ))
-              ) : filteredApps.length ? (
-                filteredApps.map((app: any) => (
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="px-6 py-16">
+                    <LoadingState />
+                  </TableCell>
+                </TableRow>
+              ) : paginatedApps.length ? (
+                paginatedApps.map((app: any) => (
                   <TableRow key={app.id} className="group hover:bg-gray-50/50 transition-all border-b border-gray-50/60">
                     <TableCell className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <Avatar className="w-9 h-9 rounded-lg border border-white shadow-sm">
                           <AvatarImage src={app.user?.avatarUrl} />
-                          <AvatarFallback className="bg-[#85A1D1]/10 text-[#85A1D1] font-bold text-xs">
-                            {app.user?.fullName?.charAt(0) || "U"}
-                          </AvatarFallback>
+                          <AvatarFallback className="bg-[#85A1D1]/10 text-[#85A1D1] font-bold text-xs">{app.user?.fullName?.charAt(0) || "U"}</AvatarFallback>
                         </Avatar>
                         <div>
                           <p className="text-sm font-bold text-gray-900 leading-none mb-1">{app.user?.fullName}</p>
@@ -140,9 +211,7 @@ export const ApplicationList = ({
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell className="px-6 py-4 text-center">
-                      {getStatusBadge(app.status)}
-                    </TableCell>
+                    <TableCell className="px-6 py-4 text-center">{getStatusBadge(app.status)}</TableCell>
                     <TableCell className="px-6 py-4 text-center">
                       <div className="flex flex-col items-center">
                         <span className="text-sm font-bold text-gray-700">{app._count?.pets || app.pets?.length || 0}</span>
@@ -157,29 +226,15 @@ export const ApplicationList = ({
                       <div className="flex items-center justify-end gap-2">
                         {app.status === "SUBMITTED" || app.status === "UNDER_REVIEW" ? (
                           <>
-                            <Button 
-                              onClick={() => onApprove(app.id)} 
-                              variant="ghost"
-                              className="h-8 w-8 p-0 rounded-lg text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 transition-all"
-                              title="Approve Application"
-                            >
+                            <Button onClick={() => onApprove(app.id)} variant="ghost" className="h-8 w-8 p-0 rounded-lg text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 transition-all" title="Approve Application">
                               <CheckCircle2 className="w-4 h-4" />
                             </Button>
-                            <Button 
-                              onClick={() => onReject(app.id)} 
-                              variant="ghost"
-                              className="h-8 w-8 p-0 rounded-lg text-rose-600 hover:text-rose-700 hover:bg-rose-50 transition-all"
-                              title="Reject Application"
-                            >
+                            <Button onClick={() => onReject(app.id)} variant="ghost" className="h-8 w-8 p-0 rounded-lg text-rose-600 hover:text-rose-700 hover:bg-rose-50 transition-all" title="Reject Application">
                               <XCircle className="w-4 h-4" />
                             </Button>
                           </>
                         ) : null}
-                        <Button 
-                          onClick={() => onOpenDetail(app)} 
-                          variant="secondary"
-                          className="h-8 px-3 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all"
-                        >
+                        <Button onClick={() => onOpenDetail(app)} variant="secondary" className="h-8 px-3 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all">
                           <Eye className="w-3.5 h-3.5 mr-1" /> View Details
                         </Button>
                       </div>
@@ -196,7 +251,34 @@ export const ApplicationList = ({
             </TableBody>
           </Table>
         </div>
+        {/* Pagination */}
+        <div className="border-t border-gray-100 px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="text-sm text-gray-600">
+            Showing <span className="font-bold text-gray-900">{startIndex + 1}</span> to <span className="font-bold text-gray-900">{endIndex}</span> of <span className="font-bold text-gray-900">{total}</span> applications
+          </div>
+
+          <div className="flex items-center gap-2">
+            <select value={pageSize} onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }} className="h-9 px-3 border border-gray-200 rounded-md bg-white text-sm outline-none">
+              <option value={10}>10 / page</option>
+              <option value={25}>25 / page</option>
+              <option value={50}>50 / page</option>
+            </select>
+
+            <div className="flex items-center gap-1">
+              <Button variant="ghost" className="h-9 w-9 p-0" disabled={page <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>
+                <ChevronLeft className="w-4 h-4" />
+              </Button>
+              <div className="px-3 text-sm">
+                Page <span className="font-bold">{page}</span> / {totalPages}
+              </div>
+              <Button variant="ghost" className="h-9 w-9 p-0" disabled={page >= totalPages} onClick={() => setPage((p) => Math.min(totalPages, p + 1))}>
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
+ 

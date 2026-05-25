@@ -6,9 +6,14 @@ import { FileText, HeartPulse, Activity, CheckCircle2 } from "lucide-react";
 
 interface HealthTabProps {
   user: any;
+  isLoading?: boolean;
 }
 
-export function HealthTab({ user }: HealthTabProps) {
+export function HealthTab({ user, isLoading = false }: HealthTabProps) {
+  if (isLoading) {
+    return <HealthSkeleton />;
+  }
+
   const questionnaires = user.healthQuestionnaires || [];
 
   return (
@@ -69,6 +74,29 @@ export function HealthTab({ user }: HealthTabProps) {
             <p className="text-xs text-gray-400 mt-2">Health questionnaires will appear here once completed</p>
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+function HealthSkeleton() {
+  return (
+    <div className="space-y-6 animate-pulse">
+      <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+        <div className="h-4 w-52 rounded-full bg-gray-200" />
+        <div className="h-7 w-24 rounded-full bg-gray-200" />
+      </div>
+      <div className="space-y-4">
+        {Array.from({ length: 2 }).map((_, index) => (
+          <div key={index} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden p-6 space-y-4">
+            <div className="h-4 w-60 rounded-full bg-gray-200" />
+            <div className="h-4 w-full rounded-full bg-gray-100" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="h-20 rounded-lg bg-gray-100" />
+              <div className="h-20 rounded-lg bg-gray-100" />
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

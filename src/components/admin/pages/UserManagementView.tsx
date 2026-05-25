@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
   useGetAllUsersQuery,
@@ -17,14 +17,18 @@ type ViewMode = "list" | "detail";
 export function UserManagementView() {
   const [mode, setMode] = useState<ViewMode>("list");
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-  const [params, setParams] = useState({ page: 1, limit: 10, search: "", role: "", status: "" });
+  const [params, setParams] = useState({ page: 1, limit: 10, search: "", role: "USER", status: "" });
 
   const { data: userData, isLoading, isFetching } = useGetAllUsersQuery(params);
   const { data: detailResponse, isLoading: isDetailLoading } = useGetUserByIdQuery(selectedUserId!, { skip: !selectedUserId });
 
   const [toggleStatus] = useToggleUserStatusMutation();
   const [deleteUser] = useDeleteUserMutation();
-  console.log("userData", userData);
+
+  const users = useMemo(() => {
+    return (userData?.data || []).filter((user: any) => user.role !== "ADMIN");
+  }, [userData?.data]);
+
   const handleStatusToggle = async (id: string, currentStatus: string) => {
     const newStatus = currentStatus === "ACTIVE" ? "SUSPENDED" : "ACTIVE";
     try {
@@ -58,7 +62,7 @@ export function UserManagementView() {
 
   if (mode === "detail" && selectedUserId) {
     return (
-      <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="min-h-screen bg-gray-50/50 -m-10 pt-0 px-10 pb-10">
+      <motion.div initial={{ opacity: 0, x: 0 }} animate={{ opacity: 1, x: 0 }} className="min-h-screen bg-gray-50/50 -mx-4 sm:-mx-6 lg:-mx-10 -mt-4 sm:-mt-6 lg:-mt-8 pt-0 pb-4 sm:pb-6 lg:pb-10 px-4 sm:px-6 lg:px-10">
         <UserDetail
           user={detailResponse?.data}
           onBack={handleBack}
@@ -71,8 +75,9 @@ export function UserManagementView() {
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
       <UserList
-        users={userData?.data || []}
+        users={users}
         isLoading={isLoading}
+        isFetching={isFetching}
         params={params}
         setParams={setParams}
         onViewProfile={handleViewProfile}
@@ -82,9 +87,9 @@ export function UserManagementView() {
 
       {/* Pagination */}
       {!isLoading && userData?.meta?.pagination && (
-        <div className="px-8 py-5 border-t border-gray-100 bg-white rounded-b-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-1">
+        <div className="px-4 sm:px-8 py-5 border-t border-gray-100 bg-white rounded-b-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-1">
           <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">
-            Showing {((params.page - 1) * params.limit) + 1} to {Math.min(params.page * params.limit, userData.meta.pagination.total)} of {userData.meta.pagination.total} users
+            Showing {users.length ? ((params.page - 1) * params.limit) + 1 : 0} to {Math.min(((params.page - 1) * params.limit) + users.length, userData.meta.pagination.total)} of {userData.meta.pagination.total} users
           </span>
           <div className="flex gap-2">
             <button

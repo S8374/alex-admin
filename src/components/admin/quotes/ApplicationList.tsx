@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import { Search, FileSpreadsheet, Dog, ArrowRight } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Search, FileSpreadsheet, Dog, ArrowRight, ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
 import { 
   Table, 
   TableBody, 
@@ -17,6 +17,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 interface ApplicationListProps {
   apps: any[];
   isLoading: boolean;
+  isFetching?: boolean;
   search: string;
   onSearchChange: (val: string) => void;
   onOpenEditor: (app: any) => void;
@@ -25,10 +26,30 @@ interface ApplicationListProps {
 export const ApplicationList = ({ 
   apps, 
   isLoading, 
+  isFetching = false,
   search, 
   onSearchChange, 
   onOpenEditor 
 }: ApplicationListProps) => {
+  const loading = isLoading || isFetching;
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  useEffect(() => {
+    setPage(1);
+  }, [search, apps]);
+
+  const filtered = apps.filter((app: any) => {
+    if (!search) return true;
+    const q = search.toLowerCase();
+    return (app.user?.fullName || "").toLowerCase().includes(q) || (app.user?.email || "").toLowerCase().includes(q);
+  });
+
+  const total = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const startIndex = (page - 1) * pageSize;
+  const endIndex = Math.min(total, startIndex + pageSize);
+  const paginated = filtered.slice(startIndex, endIndex);
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -49,7 +70,27 @@ export const ApplicationList = ({
       </div>
 
       <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
+        {/* Mobile */}
+        <div className="block lg:hidden p-4">
+          {loading ? (
+            <div className="h-[40vh] flex items-center justify-center">
+              <div className="w-12 h-12 border-4 border-[#85A1D1] border-t-transparent rounded-full animate-spin" />
+            </div>
+          ) : paginated.length ? (
+            <div className="space-y-3">
+              {paginated.map((app: any) => (
+                <MobileQuoteCard key={app.id} app={app} onOpenEditor={onOpenEditor} />
+              ))}
+            </div>
+          ) : (
+            <div className="p-6 text-center text-gray-300">
+              <p className="text-sm font-medium">No applications found</p>
+            </div>
+          )}
+        </div>
+
+        {/* Desktop table */}
+        <div className="hidden lg:block overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow className="bg-gray-50/50 hover:bg-transparent">
@@ -61,14 +102,16 @@ export const ApplicationList = ({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {isLoading ? (
-                [...Array(5)].map((_, i) => (
-                  <TableRow key={i} className="animate-pulse">
-                    <TableCell colSpan={5} className="px-6 py-6 h-16 bg-gray-50/10" />
-                  </TableRow>
-                ))
-              ) : apps.length ? (
-                apps.map((app: any) => (
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="px-6 py-16">
+                    <div className="h-40 flex items-center justify-center">
+                      <div className="w-12 h-12 border-4 border-[#85A1D1] border-t-transparent rounded-full animate-spin" />
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : paginated.length ? (
+                paginated.map((app: any) => (
                   <TableRow key={app.id} className="group hover:bg-gray-50/50 transition-all border-b border-gray-50/60">
                     <TableCell className="px-6 py-4">
                       <div className="flex items-center gap-3">
@@ -123,7 +166,68 @@ export const ApplicationList = ({
             </TableBody>
           </Table>
         </div>
+        {/* Pagination */}
+        <div className="border-t border-gray-100 px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="text-sm text-gray-600">
+            Showing <span className="font-bold text-gray-900">{startIndex + 1}</span> to <span className="font-bold text-gray-900">{endIndex}</span> of <span className="font-bold text-gray-900">{total}</span> quotes
+          </div>
+
+          <div className="flex items-center gap-2">
+            <select value={pageSize} onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }} className="h-9 px-3 border border-gray-200 rounded-md bg-white text-sm outline-none">
+              <option value={10}>10 / page</option>
+              <option value={25}>25 / page</option>
+              <option value={50}>50 / page</option>
+            </select>
+
+            <div className="flex items-center gap-1">
+              <Button variant="ghost" className="h-9 w-9 p-0" disabled={page <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>
+                <ChevronLeft className="w-4 h-4" />
+              </Button>
+              <div className="px-3 text-sm">
+                Page <span className="font-bold">{page}</span> / {totalPages}
+              </div>
+              <Button variant="ghost" className="h-9 w-9 p-0" disabled={page >= totalPages} onClick={() => setPage((p) => Math.min(totalPages, p + 1))}>
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
+
+  function MobileQuoteCard({ app, onOpenEditor }: any) {
+    const [open, setOpen] = useState(false);
+
+    return (
+      <div className="w-full bg-white rounded-md border border-gray-50 shadow-sm overflow-hidden">
+        <button type="button" onClick={() => setOpen((s) => !s)} className="w-full flex items-center justify-between gap-3 p-3 text-left">
+          <div className="flex items-center gap-3 min-w-0">
+            <Avatar className="w-9 h-9 rounded-lg border border-white shadow-sm shrink-0">
+              <AvatarImage src={app.user?.avatarUrl} />
+              <AvatarFallback className="bg-[#85A1D1]/10 text-[#85A1D1] font-bold text-xs">{app.user?.fullName?.charAt(0) || "U"}</AvatarFallback>
+            </Avatar>
+            <div className="min-w-0">
+              <p className="text-sm font-bold text-gray-900 truncate">{app.user?.fullName}</p>
+              <p className="text-[11px] text-gray-400 font-medium truncate">{app.user?.email}</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <Badge variant="outline" className="rounded-md font-bold text-[10px] uppercase px-2 py-0.5">{app.status?.replace("_", " ")}</Badge>
+            <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${open ? "rotate-180" : "rotate-0"}`} />
+          </div>
+        </button>
+
+        {open && (
+          <div className="px-3 pb-3 pt-0 border-t border-gray-100 flex items-center justify-between gap-3">
+            <div className="text-[12px] text-gray-600">{new Date(app.createdAt).toLocaleDateString()}</div>
+            <div className="flex items-center gap-2">
+              <Button onClick={() => onOpenEditor(app)} variant="secondary" className="h-8 px-3 rounded-md text-[10px] font-bold">Details</Button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }

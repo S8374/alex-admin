@@ -27,17 +27,18 @@ export function ChatManagementView() {
   const [messageText, setMessageText] = useState("");
   const [newChatModalOpen, setNewChatModalOpen] = useState(false);
   const [userSearchQuery, setUserSearchQuery] = useState("");
+  const [conversationSearchQuery, setConversationSearchQuery] = useState("");
   
   const socket = useSocket();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const adminUser = useSelector((state: any) => state.auth.user);
   
 
-  const { data: convsRes, refetch: refetchConvs } = useGetConversationsQuery(undefined);
-  const { data: messagesRes, refetch: refetchMessages } = useGetMessagesQuery(activeChat, {
+  const { data: convsRes, refetch: refetchConvs, isLoading: isConversationsLoading, isFetching: isConversationsFetching } = useGetConversationsQuery(undefined);
+  const { data: messagesRes, refetch: refetchMessages, isLoading: isMessagesLoading, isFetching: isMessagesFetching } = useGetMessagesQuery(activeChat, {
     skip: !activeChat
   });
-  const { data: usersRes } = useGetAllUsersQuery({ search: userSearchQuery, limit: 5 }, {
+  const { data: usersRes, isLoading: isUsersLoading, isFetching: isUsersFetching } = useGetAllUsersQuery({ search: userSearchQuery, limit: 5 }, {
     skip: !newChatModalOpen
   });
 
@@ -48,7 +49,14 @@ export function ChatManagementView() {
   const conversations = convsRes || [];
   const messages = messagesRes || [];
   const users = usersRes?.data || [];
+  const filteredConversations = conversations.filter((conv: any) => {
+    const text = [conv.otherParticipant?.fullName, conv.otherParticipant?.email, conv.lastMessage?.content].filter(Boolean).join(" ").toLowerCase();
+    return !conversationSearchQuery || text.includes(conversationSearchQuery.toLowerCase());
+  });
   const activeConversation = conversations.find((c: any) => c.id === activeChat);
+  const sidebarBusy = isConversationsLoading || isConversationsFetching;
+  const chatBusy = isMessagesLoading || isMessagesFetching;
+  const userPickerBusy = isUsersLoading || isUsersFetching;
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -157,11 +165,11 @@ export function ChatManagementView() {
   };
 
   return (
-    <div className="h-[calc(100vh-160px)] flex bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden relative">
+    <div className="min-h-[calc(100vh-120px)] md:h-[calc(100vh-160px)] flex flex-col md:flex-row bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden relative">
       {/* Sidebar: Conversations List */}
       <div className={`w-full md:w-80 lg:w-96 border-r border-gray-50 flex flex-col ${activeChat ? 'hidden md:flex' : 'flex'}`}>
-        <div className="p-6 border-b border-gray-50">
-          <div className="flex items-center justify-between mb-6">
+        <div className="p-4 sm:p-6 border-b border-gray-50 bg-white/95 backdrop-blur sticky top-0 z-10">
+          <div className="flex items-center justify-between mb-4 sm:mb-6">
             <h2 className="text-xl font-bold text-gray-900">Messages</h2>
             <button 
               onClick={() => setNewChatModalOpen(true)}
@@ -175,14 +183,29 @@ export function ChatManagementView() {
             <input 
               type="text" 
               placeholder="Search conversations..." 
+              value={conversationSearchQuery}
+              onChange={(e) => setConversationSearchQuery(e.target.value)}
               className="w-full h-11 bg-gray-50 border-none rounded-xl pl-11 pr-4 text-sm font-medium outline-none focus:ring-1 focus:ring-[#85A1D1] transition-all"
             />
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto custom-scrollbar">
-          {conversations.length > 0 ? (
-            conversations.map((conv: any) => (
+        <div className="flex-1 overflow-y-auto custom-scrollbar p-2 sm:p-0">
+          {sidebarBusy ? (
+            <div className="space-y-3 p-4">
+              {[...Array(5)].map((_, idx) => (
+                <div key={idx} className="flex items-center gap-4 rounded-2xl p-4 animate-pulse">
+                  <div className="w-12 h-12 rounded-full bg-gray-100" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-3 w-32 rounded-full bg-gray-100" />
+                    <div className="h-2.5 w-48 rounded-full bg-gray-100" />
+                  </div>
+                  <div className="h-5 w-5 rounded-full bg-gray-100" />
+                </div>
+              ))}
+            </div>
+          ) : filteredConversations.length > 0 ? (
+            filteredConversations.map((conv: any) => (
               <div 
                 key={conv.id}
                 onClick={() => setActiveChat(conv.id)}
@@ -236,11 +259,11 @@ export function ChatManagementView() {
       </div>
 
       {/* Main: Chat Window */}
-      <div className={`flex-1 flex flex-col bg-gray-50/30 ${!activeChat ? 'hidden md:flex' : 'flex'}`}>
+      <div className={`flex-1 flex flex-col bg-gray-50/30 min-h-0 ${!activeChat ? 'hidden md:flex' : 'flex'}`}>
         {activeChat ? (
           <>
             {/* Chat Header */}
-            <div className="h-20 bg-white border-b border-gray-50 px-6 flex items-center justify-between">
+            <div className="h-20 bg-white border-b border-gray-50 px-4 sm:px-6 flex items-center justify-between shrink-0">
               <div className="flex items-center gap-4">
                 <button onClick={() => setActiveChat(null)} className="md:hidden p-2 -ml-2 text-gray-400 hover:text-gray-900">
                   <ChevronLeft className="w-6 h-6" />
@@ -270,8 +293,19 @@ export function ChatManagementView() {
             </div>
 
             {/* Messages Area */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
-              {messages.map((msg: any, idx: number) => {
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 custom-scrollbar min-h-0">
+              {chatBusy ? (
+                <div className="space-y-4 animate-pulse">
+                  {[...Array(6)].map((_, idx) => (
+                    <div key={idx} className={`flex ${idx % 2 === 0 ? 'justify-start' : 'justify-end'}`}>
+                      <div className={`max-w-[78%] rounded-2xl px-4 py-3 ${idx % 2 === 0 ? 'bg-white' : 'bg-[#85A1D1]/10'}`}>
+                        <div className="h-3.5 w-48 rounded-full bg-gray-100 mb-2" />
+                        <div className="h-3 w-24 rounded-full bg-gray-100" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : messages.length > 0 ? messages.map((msg: any) => {
                 const isMine = msg.senderId === adminUser?.id;
                 return (
                   <div key={msg.id} className={`flex ${isMine ? 'justify-end' : 'justify-start'} group`}>
@@ -291,7 +325,14 @@ export function ChatManagementView() {
                     </div>
                   </div>
                 );
-              })}
+              }) : (
+                <div className="h-full flex items-center justify-center text-center p-8">
+                  <div className="max-w-sm space-y-2 text-gray-400">
+                    <MessageSquare className="w-10 h-10 mx-auto opacity-40" />
+                    <p className="text-sm font-semibold">No messages yet in this conversation.</p>
+                  </div>
+                </div>
+              )}
               {otherUserTyping && (
                 <div className="flex justify-start items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 overflow-hidden shrink-0">
@@ -311,7 +352,7 @@ export function ChatManagementView() {
             </div>
 
             {/* Message Input */}
-            <div className="p-6 bg-white border-t border-gray-50">
+            <div className="p-4 sm:p-6 bg-white border-t border-gray-50 shrink-0">
               <form onSubmit={handleSend} className="flex items-end gap-3 bg-gray-50 p-2 rounded-2xl border border-gray-100 focus-within:border-[#85A1D1]/30 transition-all">
                 <textarea 
                   value={messageText}
@@ -337,7 +378,7 @@ export function ChatManagementView() {
             </div>
           </>
         ) : (
-          <div className="h-full flex flex-col items-center justify-center p-12 text-center">
+          <div className="min-h-105 flex flex-col items-center justify-center p-8 sm:p-12 text-center">
             <div className="w-20 h-20 bg-gray-50 rounded-3xl flex items-center justify-center text-gray-300 mb-6">
               <MessageSquare className="w-10 h-10" />
             </div>
@@ -356,7 +397,7 @@ export function ChatManagementView() {
       {/* New Chat Modal */}
       <AnimatePresence>
         {newChatModalOpen && (
-          <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-110 flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setNewChatModalOpen(false)} className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="relative bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden">
               <div className="p-6 border-b border-gray-50 flex items-center justify-between">
@@ -376,7 +417,18 @@ export function ChatManagementView() {
                 </div>
 
                 <div className="space-y-2 max-h-80 overflow-y-auto custom-scrollbar">
-                  {users.length > 0 ? (
+                  {userPickerBusy ? (
+                    [...Array(5)].map((_, idx) => (
+                      <div key={idx} className="p-4 rounded-2xl flex items-center gap-4 animate-pulse">
+                        <div className="w-10 h-10 rounded-full bg-gray-100" />
+                        <div className="flex-1 space-y-2">
+                          <div className="h-3 w-36 rounded-full bg-gray-100" />
+                          <div className="h-2.5 w-28 rounded-full bg-gray-100" />
+                        </div>
+                        <div className="h-5 w-10 rounded-full bg-gray-100" />
+                      </div>
+                    ))
+                  ) : users.length > 0 ? (
                     users.map((user: any) => (
                       <div 
                         key={user.id}

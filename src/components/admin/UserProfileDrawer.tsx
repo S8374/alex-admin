@@ -23,7 +23,7 @@ export function UserProfileDrawer({ userId, isOpen, onClose }: UserProfileDrawer
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent className="w-[95vw] sm:w-[600px] lg:w-[850px] max-w-none p-0 border-l border-gray-100 flex flex-col h-full gap-0 overflow-hidden shadow-2xl bg-white">
+      <SheetContent className="w-[95vw] sm:w-150 lg:w-212.5 max-w-none p-0 border-l border-gray-100 flex flex-col h-full gap-0 overflow-hidden shadow-2xl bg-white">
         {isLoading ? (
           <div className="flex-1 flex items-center justify-center bg-white">
             <div className="w-12 h-12 border-4 border-[#85A1D1]/20 border-t-[#85A1D1] rounded-full animate-spin" />
@@ -51,23 +51,23 @@ export function UserProfileDrawer({ userId, isOpen, onClose }: UserProfileDrawer
 
               <div className="flex-1 overflow-y-auto bg-gray-50/10">
                 <div className="p-6 sm:p-10 pb-16">
-                  <TabsContent value="overview" className="mt-0 outline-none">
-                    <OverviewTab user={user} />
+                    <TabsContent value="overview" className="mt-0 outline-none">
+                      <OverviewTab user={user} isLoading={isLoading} />
                   </TabsContent>
                   <TabsContent value="applications" className="mt-0 outline-none">
-                    <ApplicationsTab user={user} />
+                      <ApplicationsTab user={user} isLoading={isLoading} />
                   </TabsContent>
                   <TabsContent value="pets" className="mt-0 outline-none">
-                    <PetsTab user={user} />
+                      <PetsTab user={user} isLoading={isLoading} />
                   </TabsContent>
                   <TabsContent value="financials" className="mt-0 outline-none">
-                    <FinancialsTab user={user} />
+                      <FinancialsTab user={user} isLoading={isLoading} />
                   </TabsContent>
                   <TabsContent value="health" className="mt-0 outline-none">
-                    <HealthTab user={user} />
+                      <HealthTab user={user} isLoading={isLoading} />
                   </TabsContent>
                   <TabsContent value="timeline" className="mt-0 outline-none">
-                    <TimelineTab user={user} />
+                      <TimelineTab user={user} isLoading={isLoading} />
                   </TabsContent>
                 </div>
               </div>
@@ -80,7 +80,7 @@ export function UserProfileDrawer({ userId, isOpen, onClose }: UserProfileDrawer
             </div>
             <div className="space-y-1">
               <p className="text-lg font-black text-gray-900 tracking-tight">Error Loading Profile</p>
-              <p className="text-sm font-medium text-gray-500 max-w-[300px]">We couldn't retrieve the full profile data at this time.</p>
+              <p className="text-sm font-medium text-gray-500 max-w-75">We couldn't retrieve the full profile data at this time.</p>
             </div>
           </div>
         )}

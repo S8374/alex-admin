@@ -15,7 +15,7 @@ export function QuotesManagementView() {
   const [search, setSearch] = useState("");
   const [selectedAppId, setSelectedAppId] = useState<string | null>(null);
 
-  const { data: userData, isLoading } = useGetAllUsersQuery({ search });
+  const { data: userData, isLoading, isFetching } = useGetAllUsersQuery({ search });
   const { data: detailData, isLoading: isDetailLoading } = useGetApplicationByIdQuery(selectedAppId!, { skip: !selectedAppId });
   const [sendQuote, { isLoading: isSending }] = useSendQuoteMutation();
  console.log("Users data:", userData);
@@ -101,6 +101,7 @@ export function QuotesManagementView() {
     <ApplicationList 
       apps={allApps} 
       isLoading={isLoading} 
+      isFetching={isFetching}
       search={search} 
       onSearchChange={setSearch} 
       onOpenEditor={handleOpenEditor} 

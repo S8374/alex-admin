@@ -22,7 +22,7 @@ export const questionnaireApi = baseApi.injectEndpoints({
 
     // CREATE/INIT questionnaire
     initQuestionnaire: builder.mutation({
-      query: (data: { topicTitle: string; description: string }) => ({
+      query: (data: { topicTitle: string; description: string; disclaimerText?: string; disclaimerLabel?: string }) => ({
         url: "/admin/questionnaire",
         method: "POST",
         body: data,
@@ -32,7 +32,7 @@ export const questionnaireApi = baseApi.injectEndpoints({
 
     // UPDATE questionnaire
     updateQuestionnaire: builder.mutation({
-      query: ({ id, ...data }: { id: string; topicTitle?: string; description?: string }) => ({
+      query: ({ id, ...data }: { id: string; topicTitle?: string; description?: string; disclaimerText?: string; disclaimerLabel?: string }) => ({
         url: `/admin/questionnaire/${id}`,
         method: "PATCH",
         body: data,

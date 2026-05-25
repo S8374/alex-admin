@@ -10,4 +10,5 @@ export interface DrawerHeaderProps {
 
 export interface TabProps {
   user: any;
+  isLoading?: boolean;
 }

@@ -16,17 +16,17 @@ interface QuestionCardProps {
 export function QuestionCard({ idx, q, onEdit, onDelete, onAddBranch, onEditBranch, onDeleteBranch }: QuestionCardProps) {
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden group hover:border-[#85A1D1]/30 transition-all">
-      <div className="p-6 flex items-start gap-5">
+      <div className="p-4 sm:p-6 flex flex-col sm:flex-row items-start gap-5">
         <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center shrink-0 text-gray-400 group-hover:bg-[#85A1D1]/10 group-hover:text-[#85A1D1] transition-all">
           <span className="text-xs font-bold font-mono">{(idx + 1).toString().padStart(2, '0')}</span>
         </div>
         <div className="flex-1 space-y-3">
-          <div className="flex items-start justify-between">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
             <div className="space-y-1">
               <Badge className="bg-gray-50 text-gray-500 border-none text-[9px] font-bold uppercase group-hover:bg-[#85A1D1]/10 group-hover:text-[#85A1D1] transition-all">{q.category}</Badge>
               <p className="text-sm font-bold text-gray-900 leading-snug">{q.questionText}</p>
             </div>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 mt-3 sm:mt-0">
               <button onClick={onEdit} className="p-2 text-gray-400 hover:text-[#85A1D1] transition-colors"><Edit3 className="w-4 h-4" /></button>
               <button onClick={onAddBranch} className="h-8 px-3 bg-gray-50 text-gray-400 rounded-lg font-bold text-[10px] uppercase tracking-wider hover:bg-[#85A1D1] hover:text-white transition-all flex items-center gap-2 shadow-sm">
                 <GitBranch className="w-3 h-3" /> Branch

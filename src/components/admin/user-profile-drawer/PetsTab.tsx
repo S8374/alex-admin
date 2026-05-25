@@ -7,9 +7,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface PetsTabProps {
   user: any;
+  isLoading?: boolean;
 }
 
-export function PetsTab({ user }: PetsTabProps) {
+export function PetsTab({ user, isLoading = false }: PetsTabProps) {
+  if (isLoading) {
+    return <PetsSkeleton />;
+  }
+
   const pets = user.pets || [];
 
   return (
@@ -121,6 +126,40 @@ export function PetsTab({ user }: PetsTabProps) {
             <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">No pets registered yet</p>
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+function PetsSkeleton() {
+  return (
+    <div className="space-y-8 animate-pulse">
+      <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+        <div className="h-4 w-44 rounded-full bg-gray-200" />
+        <div className="h-7 w-20 rounded-full bg-gray-200" />
+      </div>
+      <div className="space-y-8">
+        {Array.from({ length: 2 }).map((_, index) => (
+          <div key={index} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+            <div className="bg-gray-50/50 border-b border-gray-50 px-8 py-5 flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-lg bg-gray-200" />
+                <div className="space-y-2">
+                  <div className="h-4 w-32 rounded-full bg-gray-200" />
+                  <div className="h-3 w-20 rounded-full bg-gray-200" />
+                </div>
+              </div>
+              <div className="h-7 w-20 rounded-full bg-gray-200" />
+            </div>
+            <div className="p-8 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="h-48 rounded-xl bg-gray-100" />
+                <div className="h-48 rounded-xl bg-gray-100" />
+                <div className="h-48 rounded-xl bg-gray-100" />
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

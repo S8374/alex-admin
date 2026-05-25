@@ -5,11 +5,16 @@ import { User, Shield, Phone, MapPin, Briefcase, Mail } from "lucide-react";
 
 interface OverviewTabProps {
   user: any;
+  isLoading?: boolean;
 }
 
-export function OverviewTab({ user }: OverviewTabProps) {
+export function OverviewTab({ user, isLoading = false }: OverviewTabProps) {
   const personInfos = user.personInfos?.[0];
   const representative = user.applications?.[0]?.representative;
+
+  if (isLoading) {
+    return <OverviewSkeleton />;
+  }
 
   const InfoCard = ({ title, icon: Icon, children }: { title: string, icon: any, children: React.ReactNode }) => (
     <div className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm">
@@ -117,6 +122,63 @@ export function OverviewTab({ user }: OverviewTabProps) {
           <div className="text-center">
             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Joined</p>
             <p className="text-lg font-bold">{new Date(user.createdAt).toLocaleDateString([], { month: 'short', year: 'numeric' })}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function OverviewSkeleton() {
+  return (
+    <div className="space-y-8 animate-pulse">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm space-y-6">
+          <div className="flex items-center gap-3 pb-4 border-b border-gray-50">
+            <div className="w-8 h-8 rounded-lg bg-gray-200" />
+            <div className="h-3 w-40 rounded-full bg-gray-200" />
+          </div>
+          <div className="space-y-4">
+            <div className="h-4 w-3/4 rounded-full bg-gray-200" />
+            <div className="h-4 w-full rounded-full bg-gray-200" />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="h-16 rounded-xl bg-gray-100" />
+              <div className="h-16 rounded-xl bg-gray-100" />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm space-y-6">
+          <div className="flex items-center gap-3 pb-4 border-b border-gray-50">
+            <div className="w-8 h-8 rounded-lg bg-gray-200" />
+            <div className="h-3 w-32 rounded-full bg-gray-200" />
+          </div>
+          <div className="space-y-4">
+            <div className="h-4 w-2/3 rounded-full bg-gray-200" />
+            <div className="h-4 w-full rounded-full bg-gray-200" />
+            <div className="h-12 w-full rounded-2xl bg-gray-100" />
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-gray-900 rounded-xl p-8 shadow-xl animate-pulse">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+          <div className="flex items-center gap-4 w-full md:w-auto">
+            <div className="w-14 h-14 rounded-xl bg-white/10" />
+            <div className="space-y-3 flex-1">
+              <div className="h-3 w-32 rounded-full bg-white/10" />
+              <div className="h-6 w-56 rounded-full bg-white/10" />
+            </div>
+          </div>
+          <div className="flex gap-10 w-full md:w-auto">
+            <div className="space-y-2 flex-1 md:flex-none text-center">
+              <div className="h-3 w-16 mx-auto rounded-full bg-white/10" />
+              <div className="h-5 w-20 mx-auto rounded-full bg-white/10" />
+            </div>
+            <div className="space-y-2 flex-1 md:flex-none text-center">
+              <div className="h-3 w-16 mx-auto rounded-full bg-white/10" />
+              <div className="h-5 w-24 mx-auto rounded-full bg-white/10" />
+            </div>
           </div>
         </div>
       </div>
