@@ -117,12 +117,12 @@ export function SystemHealthView({
   const summarizeLogMessage = (message: string) => {
     const trimmed = message.replace(/^[📩⚠️✅🛡️⚙ ]+/, "").trim();
 
-    const requestMatch = message.match(/^(?:📩\s*)?\[(?<method>[A-Z]+)\]\s*(?<path>[^|]+)\s*\|\s*Status:\s*(?<status>\d{3})\s*\|\s*Time:\s*(?<time>\d+)ms/i);
-    if (requestMatch?.groups) {
-      const method = requestMatch.groups.method;
-      const path = requestMatch.groups.path.trim();
-      const status = Number(requestMatch.groups.status);
-      const time = Number(requestMatch.groups.time);
+    const requestMatch = message.match(/^(?:📩\s*)?\[([A-Z]+)\]\s*([^|]+)\s*\|\s*Status:\s*(\d{3})\s*\|\s*Time:\s*(\d+)ms/i);
+    if (requestMatch) {
+      const method = requestMatch[1];
+      const path = requestMatch[2].trim();
+      const status = Number(requestMatch[3]);
+      const time = Number(requestMatch[4]);
       const routeLabel = getFriendlyRouteLabel(path);
       const seconds = `${(time / 1000).toFixed(time >= 1000 ? 1 : 0)}s`;
 
@@ -153,12 +153,12 @@ export function SystemHealthView({
     }
 
     if (message.includes("ABORTED")) {
-      const abortMatch = message.match(/^(?:⚠️\s*)?ABORTED\s*\[(?<method>[A-Z]+)\]\s*(?<path>[^|]+)\s*\|\s*Time:\s*(?<time>\d+)ms/i);
-      if (abortMatch?.groups) {
-        const routeLabel = getFriendlyRouteLabel(abortMatch.groups.path.trim());
+      const abortMatch = message.match(/^(?:⚠️\s*)?ABORTED\s*\[([A-Z]+)\]\s*([^|]+)\s*\|\s*Time:\s*(\d+)ms/i);
+      if (abortMatch) {
+        const routeLabel = getFriendlyRouteLabel(abortMatch[2].trim());
         return {
           title: `${routeLabel} request stopped before it finished`,
-          subtitle: `Interrupted after ${(Number(abortMatch.groups.time) / 1000).toFixed(1)}s`,
+          subtitle: `Interrupted after ${(Number(abortMatch[3]) / 1000).toFixed(1)}s`,
           raw: trimmed
         };
       }
