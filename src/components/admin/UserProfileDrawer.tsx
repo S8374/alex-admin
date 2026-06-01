@@ -12,7 +12,6 @@ import { ApplicationsTab } from "./user-profile-drawer/ApplicationsTab";
 import { PetsTab } from "./user-profile-drawer/PetsTab";
 import { FinancialsTab } from "./user-profile-drawer/FinancialsTab";
 import { HealthTab } from "./user-profile-drawer/HealthTab";
-import { TimelineTab } from "./user-profile-drawer/TimelineTab";
 import { RepresentativeTab } from "./user-profile-drawer/RepresentativeTab";
 
 export function UserProfileDrawer({ userId, isOpen, onClose }: UserProfileDrawerProps) {
@@ -37,13 +36,12 @@ export function UserProfileDrawer({ userId, isOpen, onClose }: UserProfileDrawer
             <Tabs defaultValue="overview" className="flex-1 flex flex-col min-h-0">
               <div className="border-b border-gray-100 shrink-0 sticky top-0 bg-white z-20">
                 <ScrollArea className="w-full">
-                  <TabsList className="h-16 bg-transparent gap-8 px-6 sm:px-10 flex justify-start items-center border-none outline-none w-max">
-                    <TabsTrigger value="overview" className="h-full rounded-none border-b-2 border-transparent data-[state=active]:border-[#85A1D1] data-[state=active]:bg-transparent px-0 font-black text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all shrink-0">Overview</TabsTrigger>
-                    <TabsTrigger value="applications" className="h-full rounded-none border-b-2 border-transparent data-[state=active]:border-[#85A1D1] data-[state=active]:bg-transparent px-0 font-black text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all shrink-0">Applications ({user.applications?.length || 0})</TabsTrigger>
-                    <TabsTrigger value="pets" className="h-full rounded-none border-b-2 border-transparent data-[state=active]:border-[#85A1D1] data-[state=active]:bg-transparent px-0 font-black text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all shrink-0">Pets ({user.pets?.length || 0})</TabsTrigger>
-                    <TabsTrigger value="financials" className="h-full rounded-none border-b-2 border-transparent data-[state=active]:border-[#85A1D1] data-[state=active]:bg-transparent px-0 font-black text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all shrink-0">Financials</TabsTrigger>
-                    <TabsTrigger value="health" className="h-full rounded-none border-b-2 border-transparent data-[state=active]:border-[#85A1D1] data-[state=active]:bg-transparent px-0 font-black text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all shrink-0">Health</TabsTrigger>
-                    <TabsTrigger value="timeline" className="h-full rounded-none border-b-2 border-transparent data-[state=active]:border-[#85A1D1] data-[state=active]:bg-transparent px-0 font-black text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all shrink-0">Timeline</TabsTrigger>
+                  <TabsList className="h-16 bg-transparent gap-0 px-6 sm:px-10 flex justify-start items-center border-none outline-none w-max">
+                    <TabsTrigger value="overview" className="h-full rounded-none border-b-3 border-transparent data-[state=active]:border-[#85A1D1] data-[state=active]:bg-[#85A1D1]/5 px-4 sm:px-6 font-black text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all shrink-0 hover:bg-gray-50 data-[state=active]:shadow-sm">Overview</TabsTrigger>
+                    <TabsTrigger value="applications" className="h-full rounded-none border-b-3 border-transparent data-[state=active]:border-[#85A1D1] data-[state=active]:bg-[#85A1D1]/5 px-4 sm:px-6 font-black text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all shrink-0 hover:bg-gray-50 data-[state=active]:shadow-sm">Applications ({user.applications?.length || 0})</TabsTrigger>
+                    <TabsTrigger value="pets" className="h-full rounded-none border-b-3 border-transparent data-[state=active]:border-[#85A1D1] data-[state=active]:bg-[#85A1D1]/5 px-4 sm:px-6 font-black text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all shrink-0 hover:bg-gray-50 data-[state=active]:shadow-sm">Pets ({user.pets?.length || 0})</TabsTrigger>
+                    <TabsTrigger value="financials" className="h-full rounded-none border-b-3 border-transparent data-[state=active]:border-[#85A1D1] data-[state=active]:bg-[#85A1D1]/5 px-4 sm:px-6 font-black text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all shrink-0 hover:bg-gray-50 data-[state=active]:shadow-sm">Financials</TabsTrigger>
+                    <TabsTrigger value="health" className="h-full rounded-none border-b-3 border-transparent data-[state=active]:border-[#85A1D1] data-[state=active]:bg-[#85A1D1]/5 px-4 sm:px-6 font-black text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all shrink-0 hover:bg-gray-50 data-[state=active]:shadow-sm">Health</TabsTrigger>
                   </TabsList>
                   <ScrollBar orientation="horizontal" />
                 </ScrollArea>
@@ -64,10 +62,7 @@ export function UserProfileDrawer({ userId, isOpen, onClose }: UserProfileDrawer
                       <FinancialsTab user={user} isLoading={isLoading} />
                   </TabsContent>
                   <TabsContent value="health" className="mt-0 outline-none">
-                      <HealthTab user={user} isLoading={isLoading} />
-                  </TabsContent>
-                  <TabsContent value="timeline" className="mt-0 outline-none">
-                      <TimelineTab user={user} isLoading={isLoading} />
+                      <HealthTab user={user} />
                   </TabsContent>
                 </div>
               </div>

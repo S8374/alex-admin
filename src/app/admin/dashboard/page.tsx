@@ -1,5 +1,7 @@
 "use client";
 
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+
 import { AnimatePresence } from "framer-motion";
 import {
   Bell,
@@ -167,7 +169,8 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className={`flex min-h-screen bg-gray-50 text-gray-900 ${inter.className}`}>
+    <ProtectedRoute>
+      <div className={`flex min-h-screen bg-gray-50 text-gray-900 ${inter.className}`}>
       <div className="hidden lg:block">
         <Sidebar
           activeView={activeView}
@@ -237,5 +240,6 @@ export default function AdminDashboard() {
         </div>
       </main>
     </div>
+    </ProtectedRoute>
   );
 }

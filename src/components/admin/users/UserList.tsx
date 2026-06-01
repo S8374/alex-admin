@@ -44,6 +44,7 @@ export const UserList = ({
   onDelete,
 }: UserListProps) => {
   const isBusy = isLoading || !!isFetching;
+  const hasActiveFilters = Boolean(params.search?.trim()) || Boolean(params.role);
 
   const getStatusVariant = (status: string) => {
     switch (status) {
@@ -89,7 +90,7 @@ export const UserList = ({
   );
 
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen flex flex-col space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-1">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">User Management</h1>
@@ -117,12 +118,12 @@ export const UserList = ({
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden flex-1 flex flex-col">
         {isBusy ? (
           <LoadingPanel />
         ) : (
           <>
-            <div className="md:hidden p-4 space-y-3">
+            <div className="md:hidden p-4 space-y-3 flex-1">
               {users.length ? (
                 users.map((user: any) => (
                   <div key={user.id} className="rounded-2xl border border-gray-100 p-4 shadow-sm space-y-4">
@@ -188,16 +189,14 @@ export const UserList = ({
                   </div>
                 ))
               ) : (
-                <div className="py-16 text-center text-gray-300">
-                  <div className="flex flex-col items-center gap-4">
-                    <Users className="w-12 h-12 opacity-10" />
-                    <p className="text-sm font-medium">No users match your criteria</p>
-                  </div>
-                </div>
+                <NoUserDataState
+                  hasFilters={hasActiveFilters}
+                  onClearFilters={() => setParams({ ...params, search: "", role: "", page: 1 })}
+                />
               )}
             </div>
 
-            <div className="hidden md:block overflow-x-auto">
+            <div className="hidden md:block overflow-x-auto flex-1">
               <Table>
                 <TableHeader>
                   <TableRow className="bg-gray-50/50 hover:bg-transparent">
@@ -280,10 +279,10 @@ export const UserList = ({
                   ) : (
                     <TableRow>
                       <TableCell colSpan={5} className="px-6 py-20 text-center text-gray-300">
-                        <div className="flex flex-col items-center gap-4">
-                          <Users className="w-12 h-12 opacity-10" />
-                          <p className="text-sm font-medium">No users match your criteria</p>
-                        </div>
+                        <NoUserDataState
+                          hasFilters={hasActiveFilters}
+                          onClearFilters={() => setParams({ ...params, search: "", role: "", page: 1 })}
+                        />
                       </TableCell>
                     </TableRow>
                   )}
@@ -296,3 +295,33 @@ export const UserList = ({
     </div>
   );
 };
+
+function NoUserDataState({ hasFilters, onClearFilters }: { hasFilters: boolean; onClearFilters: () => void }) {
+  return (
+    <div className="w-full min-h-96 flex items-center justify-center px-4 py-10">
+      <div className="max-w-lg w-full rounded-3xl border border-dashed border-gray-200 bg-linear-to-br from-white to-gray-50 p-8 sm:p-10 text-center shadow-sm">
+        <div className="mx-auto mb-4 w-16 h-16 rounded-2xl bg-gray-900 text-white flex items-center justify-center shadow-lg shadow-gray-200">
+          <Users className="w-7 h-7" />
+        </div>
+        <h3 className="text-2xl font-black text-gray-900 mb-2">
+          {hasFilters ? "No matching users" : "No users available"}
+        </h3>
+        <p className="text-sm text-gray-500 leading-6 max-w-md mx-auto">
+          {hasFilters
+            ? "Try clearing your search or role filter to see more users."
+            : "There are no user records to display yet."}
+        </p>
+        {hasFilters && (
+          <div className="mt-6">
+            <button
+              onClick={onClearFilters}
+              className="h-11 px-5 rounded-xl bg-gray-900 text-white text-xs font-bold uppercase tracking-widest hover:bg-black transition-colors"
+            >
+              Clear Filters
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

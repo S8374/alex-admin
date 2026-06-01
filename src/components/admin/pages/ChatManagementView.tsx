@@ -6,14 +6,17 @@ import {
   Send, User, Search, MessageSquare, MoreHorizontal, 
   Circle, Image as ImageIcon, Paperclip, Smile,
   ChevronLeft, Info, Plus, X,
-  UserPlus
+  UserPlus, FileText, Loader2, Edit2, Trash2
 } from "lucide-react";
 import { 
   useGetConversationsQuery, 
   useGetMessagesQuery, 
   useSendMessageMutation,
   useMarkAsReadMutation,
-  useCreateConversationMutation
+  useCreateConversationMutation,
+  useUploadFilesMutation,
+  useUpdateMessageMutation,
+  useDeleteMessageMutation
 } from "@/redux/api/ChatApi";
 import { useGetAllUsersQuery } from "@/redux/api/userApi";
 import { useSocket } from "@/hooks/useSocket";
@@ -25,11 +28,19 @@ import { toast } from "sonner";
 export function ChatManagementView() {
   const [activeChat, setActiveChat] = useState<string | null>(null);
   const [messageText, setMessageText] = useState("");
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
+  const [deletingMessageId, setDeletingMessageId] = useState<string | null>(null);
+  const [editingContent, setEditingContent] = useState("");
+  const [editingAttachments, setEditingAttachments] = useState<string[]>([]);
+  const [editingNewFiles, setEditingNewFiles] = useState<File[]>([]);
   const [newChatModalOpen, setNewChatModalOpen] = useState(false);
   const [userSearchQuery, setUserSearchQuery] = useState("");
   const [conversationSearchQuery, setConversationSearchQuery] = useState("");
   
   const socket = useSocket();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const editFileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const adminUser = useSelector((state: any) => state.auth.user);
   
@@ -42,9 +53,12 @@ export function ChatManagementView() {
     skip: !newChatModalOpen
   });
 
-  const [sendMessage] = useSendMessageMutation();
+  const [sendMessage, { isLoading: isSending }] = useSendMessageMutation();
+  const [uploadFiles, { isLoading: isUploading }] = useUploadFilesMutation();
+  const [updateMessage, { isLoading: isUpdating }] = useUpdateMessageMutation();
+  const [deleteMessage, { isLoading: isDeleting }] = useDeleteMessageMutation();
   const [markAsRead] = useMarkAsReadMutation();
-  const [createConversation] = useCreateConversationMutation();
+  const [createConversation, { isLoading: isCreating }] = useCreateConversationMutation();
 
   const conversations = convsRes || [];
   const messages = messagesRes || [];
@@ -54,7 +68,7 @@ export function ChatManagementView() {
     return !conversationSearchQuery || text.includes(conversationSearchQuery.toLowerCase());
   });
   const activeConversation = conversations.find((c: any) => c.id === activeChat);
-  const sidebarBusy = isConversationsLoading || isConversationsFetching;
+  const sidebarBusy = isConversationsLoading;
   const chatBusy = isMessagesLoading || isMessagesFetching;
   const userPickerBusy = isUsersLoading || isUsersFetching;
 
@@ -88,6 +102,18 @@ export function ChatManagementView() {
       }
     });
 
+    socket.on("message_updated", (message: any) => {
+      if (message.conversationId === activeChat) {
+        refetchMessages();
+      }
+    });
+
+    socket.on("message_deleted", (message: any) => {
+      if (message.conversationId === activeChat) {
+        refetchMessages();
+      }
+    });
+
     socket.on("display_typing", (data: { senderId: string; conversationId: string; isTyping: boolean }) => {
       if (data.conversationId === activeChat) {
         setOtherUserTyping(data.isTyping ? data.senderId : null);
@@ -100,6 +126,8 @@ export function ChatManagementView() {
 
     return () => {
       socket.off("new_message");
+      socket.off("message_updated");
+      socket.off("message_deleted");
       socket.off("display_typing");
       socket.off("user_status");
     };
@@ -136,14 +164,26 @@ export function ChatManagementView() {
 
   const handleSend = async (e?: React.FormEvent) => {
     e?.preventDefault();
-    if (!messageText.trim() || !activeChat) return;
+    if ((!messageText.trim() && selectedFiles.length === 0) || !activeChat) return;
 
     try {
+      let attachmentUrls: string[] = [];
+      if (selectedFiles.length > 0) {
+        const formData = new FormData();
+        selectedFiles.forEach((file) => {
+          formData.append("files", file);
+        });
+        const uploadRes = await uploadFiles(formData).unwrap();
+        attachmentUrls = uploadRes.data?.urls || uploadRes.urls || [];
+      }
+
       await sendMessage({
         conversationId: activeChat,
-        content: messageText.trim()
+        content: messageText.trim() || " ", // if empty text but has attachments
+        attachments: attachmentUrls
       }).unwrap();
       setMessageText("");
+      setSelectedFiles([]);
       refetchMessages();
       refetchConvs();
     } catch (err) {
@@ -151,7 +191,46 @@ export function ChatManagementView() {
     }
   };
 
+  const handleSaveEdit = async (messageId: string) => {
+    if (!editingContent.trim() && editingAttachments.length === 0 && editingNewFiles.length === 0) return;
+    try {
+      let uploadedUrls: string[] = [];
+      if (editingNewFiles.length > 0) {
+        const formData = new FormData();
+        editingNewFiles.forEach((file) => formData.append("files", file));
+        const uploadRes = await uploadFiles(formData).unwrap();
+        uploadedUrls = uploadRes.data?.urls || uploadRes.urls || [];
+      }
+      
+      const finalAttachments = [...editingAttachments, ...uploadedUrls];
+
+      await updateMessage({ messageId, content: editingContent.trim() || " ", attachments: finalAttachments }).unwrap();
+      setEditingMessageId(null);
+      setEditingContent("");
+      setEditingAttachments([]);
+      setEditingNewFiles([]);
+      refetchMessages();
+    } catch (err) {
+      console.error("Failed to edit", err);
+    }
+  };
+
+  const handleDelete = async (messageId: string) => {
+    if (confirm("Are you sure you want to delete this message?")) {
+      setDeletingMessageId(messageId);
+      try {
+        await deleteMessage(messageId).unwrap();
+        refetchMessages();
+      } catch (err) {
+        console.error("Failed to delete", err);
+      } finally {
+        setDeletingMessageId(null);
+      }
+    }
+  };
+
   const handleStartConversation = async (userId: string) => {
+    if (isCreating) return;
     try {
       const res: any = await createConversation([userId]).unwrap();
       await refetchConvs(); // Update sidebar immediately
@@ -308,20 +387,130 @@ export function ChatManagementView() {
               ) : messages.length > 0 ? messages.map((msg: any) => {
                 const isMine = msg.senderId === adminUser?.id;
                 return (
-                  <div key={msg.id} className={`flex ${isMine ? 'justify-end' : 'justify-start'} group`}>
+                  <div key={msg.id} className={`flex ${isMine ? 'justify-end' : 'justify-start'} group relative`}>
                     <div className={`flex gap-3 max-w-[80%] ${isMine ? 'flex-row-reverse' : 'flex-row'}`}>
-                      <div className="flex flex-col gap-1">
-                        <div className={`p-4 rounded-2xl text-sm leading-relaxed shadow-sm ${
-                          isMine 
-                            ? 'bg-[#85A1D1] text-white rounded-br-none' 
-                            : 'bg-white text-gray-700 rounded-bl-none border border-gray-50'
-                        }`}>
-                          {msg.content}
-                        </div>
-                        <span className={`text-[9px] font-bold text-gray-400 px-1 uppercase tracking-tighter ${isMine ? 'text-right' : 'text-left'}`}>
+                      <div className="flex flex-col gap-1 w-full">
+                        {msg.isDeleted ? (
+                          <div className={`p-4 rounded-2xl text-sm leading-relaxed shadow-sm italic text-gray-400 ${
+                            isMine 
+                              ? 'bg-gray-100 rounded-br-none' 
+                              : 'bg-white text-gray-400 rounded-bl-none border border-gray-50'
+                          }`}>
+                            This message was deleted
+                          </div>
+                        ) : editingMessageId === msg.id ? (
+                          <div className="flex flex-col gap-2 bg-white p-3 rounded-2xl border border-gray-200 shadow-sm min-w-[250px]">
+                            {(editingAttachments.length > 0 || editingNewFiles.length > 0) && (
+                              <div className="flex flex-wrap gap-2 mb-2">
+                                {editingAttachments.map((url: string, idx: number) => {
+                                  const isImage = url.match(/\.(jpeg|jpg|gif|png|webp)$/i) != null;
+                                  return (
+                                    <div key={`old-${idx}`} className="relative block max-w-[150px] rounded-lg border border-gray-200 pr-6">
+                                      {isImage ? (
+                                        <img src={url} alt="attachment" className="h-12 w-auto object-cover rounded-md" />
+                                      ) : (
+                                        <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg text-xs font-semibold">
+                                          <FileText className="w-4 h-4" />
+                                          <span>File {idx + 1}</span>
+                                        </div>
+                                      )}
+                                      <button type="button" onClick={() => setEditingAttachments(prev => prev.filter((_, i) => i !== idx))} className="absolute right-1 top-1 bg-white/80 rounded-full p-0.5 hover:bg-gray-200 transition-colors">
+                                        <X className="w-3 h-3" />
+                                      </button>
+                                    </div>
+                                  );
+                                })}
+                                {editingNewFiles.map((file, idx) => (
+                                    <div key={`new-${idx}`} className="relative flex items-center gap-2 bg-gray-100 p-2 rounded-lg pr-6">
+                                      <FileText className="w-4 h-4 text-gray-500" />
+                                      <span className="text-xs font-semibold max-w-[100px] truncate">{file.name}</span>
+                                      <button type="button" onClick={() => setEditingNewFiles(prev => prev.filter((_, i) => i !== idx))} className="absolute right-1 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 rounded-full transition-colors">
+                                        <X className="w-3 h-3" />
+                                      </button>
+                                    </div>
+                                ))}
+                              </div>
+                            )}
+                            <input 
+                              type="text"
+                              value={editingContent} 
+                              onChange={(e) => setEditingContent(e.target.value)} 
+                              className="text-sm bg-gray-50 border-gray-100 w-full outline-none px-2 py-1.5 rounded-lg focus:ring-1 focus:ring-blue-500/20"
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") handleSaveEdit(msg.id);
+                                if (e.key === "Escape") setEditingMessageId(null);
+                              }}
+                            />
+                            <div className="flex justify-between items-center gap-2 mt-1">
+                              <div>
+                                <input type="file" multiple ref={editFileInputRef} className="hidden" onChange={(e) => {
+                                  if (e.target.files) {
+                                    setEditingNewFiles(prev => [...prev, ...Array.from(e.target.files!)]);
+                                  }
+                                }} />
+                                <button type="button" onClick={() => editFileInputRef.current?.click()} className="flex items-center text-gray-500 hover:text-gray-700 text-xs px-2 py-1 rounded-lg hover:bg-gray-50 transition-colors">
+                                  <Paperclip className="w-3.5 h-3.5 mr-1" /> Add Files
+                                </button>
+                              </div>
+                              <div className="flex gap-2">
+                                <button type="button" onClick={() => setEditingMessageId(null)} className="text-xs px-3 py-1.5 rounded-lg font-medium text-gray-600 hover:bg-gray-100 transition-colors">Cancel</button>
+                                <button type="button" disabled={isUploading || isUpdating} onClick={() => handleSaveEdit(msg.id)} className="text-xs px-3 py-1.5 rounded-lg font-medium bg-blue-500 text-white hover:bg-blue-600 transition-colors flex items-center disabled:opacity-50">
+                                  {(isUploading || isUpdating) && editingMessageId === msg.id ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : null}
+                                  Save
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className={`p-4 rounded-2xl text-sm leading-relaxed shadow-sm ${
+                            isMine 
+                              ? 'bg-[#85A1D1] text-white rounded-br-none' 
+                              : 'bg-white text-gray-700 rounded-bl-none border border-gray-50'
+                          }`}>
+                            {msg.content !== " " && msg.content}
+                            
+                            {/* Attachments rendering */}
+                            {msg.attachments && msg.attachments.length > 0 && (
+                              <div className="flex flex-wrap gap-2 mt-2">
+                                {msg.attachments.map((url: string, idx: number) => {
+                                  const isImage = url.match(/\.(jpeg|jpg|gif|png|webp)$/i) != null;
+                                  if (isImage) {
+                                    return (
+                                      <a key={idx} href={url} target="_blank" rel="noopener noreferrer" className="block max-w-[200px] overflow-hidden rounded-lg">
+                                        <img src={url} alt="attachment" className="w-full h-auto object-cover" />
+                                      </a>
+                                    );
+                                  }
+                                  return (
+                                    <a key={idx} href={url} target="_blank" rel="noopener noreferrer" className={`flex items-center gap-2 p-2 rounded-lg text-xs font-semibold transition-colors ${isMine ? 'bg-black/10 hover:bg-black/20 text-white' : 'bg-black/5 hover:bg-black/10 text-gray-700'}`}>
+                                      <FileText className="w-4 h-4" />
+                                      <span>Attachment {idx + 1}</span>
+                                    </a>
+                                  );
+                                })}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                        <span className={`text-[9px] font-bold text-gray-400 px-1 uppercase tracking-tighter flex gap-1 ${isMine ? 'justify-end' : 'justify-start'}`}>
                           {format(new Date(msg.createdAt), "HH:mm")}
+                          {msg.isEdited && !msg.isDeleted && <span className="italic opacity-70">(edited)</span>}
                         </span>
                       </div>
+                      
+                      {isMine && !msg.isDeleted && editingMessageId !== msg.id && (
+                        <div className="opacity-0 group-hover:opacity-100 flex items-center gap-1 transition-opacity self-center">
+                          <button onClick={() => { 
+                            setEditingMessageId(msg.id); 
+                            setEditingContent(msg.content === " " ? "" : msg.content); 
+                            setEditingAttachments(msg.attachments || []);
+                            setEditingNewFiles([]);
+                          }} className="p-1.5 hover:bg-gray-100 rounded-md text-gray-400 hover:text-gray-600 bg-white shadow-sm border border-gray-100 transition-colors" title="Edit"><Edit2 className="w-3.5 h-3.5" /></button>
+                          <button onClick={() => handleDelete(msg.id)} disabled={isDeleting && deletingMessageId === msg.id} className="p-1.5 hover:bg-red-50 rounded-md text-gray-400 hover:text-red-500 bg-white shadow-sm border border-gray-100 transition-colors" title="Delete">
+                            {isDeleting && deletingMessageId === msg.id ? <Loader2 className="w-3.5 h-3.5 animate-spin text-red-500" /> : <Trash2 className="w-3.5 h-3.5" />}
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 );
@@ -352,27 +541,70 @@ export function ChatManagementView() {
             </div>
 
             {/* Message Input */}
-            <div className="p-4 sm:p-6 bg-white border-t border-gray-50 shrink-0">
-              <form onSubmit={handleSend} className="flex items-end gap-3 bg-gray-50 p-2 rounded-2xl border border-gray-100 focus-within:border-[#85A1D1]/30 transition-all">
-                <textarea 
-                  value={messageText}
-                  onChange={handleTyping}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault();
-                      handleSend();
-                    }
-                  }}
-                  placeholder="Type a message..."
-                  className="flex-1 bg-transparent border-none outline-none text-sm font-medium text-gray-900 py-2.5 resize-none max-h-32"
-                  rows={1}
-                />
+            <div className="flex flex-col bg-white border-t border-gray-50 shrink-0">
+              {/* Preview Area */}
+              {selectedFiles.length > 0 && (
+                <div className="flex flex-wrap gap-2 p-4 pb-0 border-b border-gray-50">
+                  {selectedFiles.map((file, idx) => (
+                    <div key={idx} className="relative flex items-center gap-2 bg-gray-100 p-2 rounded-lg pr-8">
+                      <FileText className="w-4 h-4 text-gray-500" />
+                      <span className="text-xs font-semibold max-w-[150px] truncate">{file.name}</span>
+                      <button 
+                        type="button" 
+                        onClick={() => setSelectedFiles(prev => prev.filter((_, i) => i !== idx))}
+                        className="absolute right-1 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 rounded-full"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <form onSubmit={handleSend} className="p-4 sm:p-6 flex items-end gap-3 bg-white">
+                <div className="flex items-center bg-gray-50 p-2 rounded-2xl border border-gray-100 flex-1 focus-within:border-[#85A1D1]/30 transition-all">
+                  <input 
+                    type="file" 
+                    multiple 
+                    ref={fileInputRef} 
+                    className="hidden" 
+                    onChange={(e) => {
+                      if (e.target.files) {
+                        setSelectedFiles(prev => [...prev, ...Array.from(e.target.files!)]);
+                      }
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="p-2.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-xl transition-all"
+                  >
+                    <Paperclip className="w-5 h-5" />
+                  </button>
+                  <textarea 
+                    value={messageText}
+                    onChange={handleTyping}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSend();
+                      }
+                    }}
+                    disabled={isSending || isUploading}
+                    placeholder={isSending || isUploading ? "Sending..." : "Type a message..."}
+                    className="flex-1 bg-transparent border-none outline-none text-sm font-medium text-gray-900 py-2.5 px-3 resize-none max-h-32 disabled:opacity-50"
+                    rows={1}
+                  />
+                </div>
                 <button 
                   type="submit"
-                  disabled={!messageText.trim()}
-                  className="p-3 bg-[#85A1D1] text-white rounded-xl hover:bg-black transition-all shadow-lg shadow-[#85A1D1]/20 disabled:opacity-50"
+                  disabled={(!messageText.trim() && selectedFiles.length === 0) || isSending || isUploading}
+                  className="p-3 bg-[#85A1D1] text-white rounded-2xl hover:bg-black transition-all shadow-lg shadow-[#85A1D1]/20 disabled:opacity-50 h-12 w-12 flex items-center justify-center shrink-0"
                 >
-                  <Send className="w-5 h-5" />
+                  {isSending || isUploading ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <Send className="w-5 h-5 ml-1" />
+                  )}
                 </button>
               </form>
             </div>

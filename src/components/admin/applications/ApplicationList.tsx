@@ -92,6 +92,7 @@ export const ApplicationList = ({
   onReject,
 }: ApplicationListProps) => {
   const loading = isLoading || isFetching;
+  const hasActiveFilters = Boolean(search.trim()) || statusFilter !== "ALL";
 
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -133,7 +134,7 @@ export const ApplicationList = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen flex flex-col space-y-6">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div className="space-y-1">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">Application Management</h1>
@@ -159,9 +160,9 @@ export const ApplicationList = ({
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden flex-1 flex flex-col">
         {/* Mobile accordion */}
-        <div className="block lg:hidden p-4">
+        <div className="block lg:hidden p-4 flex-1">
           {loading ? (
             <LoadingState />
           ) : filteredApps.length ? (
@@ -171,85 +172,100 @@ export const ApplicationList = ({
               ))}
             </div>
           ) : (
-            <div className="p-6 text-center text-gray-300">
-              <p className="text-sm font-medium">No applications found</p>
+            <div className="flex-1 flex items-center justify-center">
+              <NoApplicationDataState
+                hasFilters={hasActiveFilters}
+                onClearFilters={() => {
+                  onSearchChange("");
+                  onStatusFilterChange("ALL");
+                }}
+              />
             </div>
           )}
         </div>
 
         {/* Desktop table */}
-        <div className="hidden lg:block overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-gray-50/50 hover:bg-transparent">
-                <TableHead className="px-6 h-12 text-xs font-bold text-gray-500 uppercase tracking-widest">Applicant</TableHead>
-                <TableHead className="px-6 h-12 text-xs font-bold text-gray-500 uppercase tracking-widest text-center">Status</TableHead>
-                <TableHead className="px-6 h-12 text-xs font-bold text-gray-500 uppercase tracking-widest text-center">Pets</TableHead>
-                <TableHead className="px-6 h-12 text-xs font-bold text-gray-500 uppercase tracking-widest text-center">Date</TableHead>
-                <TableHead className="px-6 h-12 text-xs font-bold text-gray-500 uppercase tracking-widest text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {loading ? (
-                <TableRow>
-                  <TableCell colSpan={5} className="px-6 py-16">
-                    <LoadingState />
-                  </TableCell>
+        <div className="hidden lg:flex overflow-x-auto flex-1 flex-col">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-gray-50/50 hover:bg-transparent">
+                  <TableHead className="px-6 h-12 text-xs font-bold text-gray-500 uppercase tracking-widest">Applicant</TableHead>
+                  <TableHead className="px-6 h-12 text-xs font-bold text-gray-500 uppercase tracking-widest text-center">Status</TableHead>
+                  <TableHead className="px-6 h-12 text-xs font-bold text-gray-500 uppercase tracking-widest text-center">Pets</TableHead>
+                  <TableHead className="px-6 h-12 text-xs font-bold text-gray-500 uppercase tracking-widest text-center">Date</TableHead>
+                  <TableHead className="px-6 h-12 text-xs font-bold text-gray-500 uppercase tracking-widest text-right">Actions</TableHead>
                 </TableRow>
-              ) : paginatedApps.length ? (
-                paginatedApps.map((app: any) => (
-                  <TableRow key={app.id} className="group hover:bg-gray-50/50 transition-all border-b border-gray-50/60">
-                    <TableCell className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <Avatar className="w-9 h-9 rounded-lg border border-white shadow-sm">
-                          <AvatarImage src={app.user?.avatarUrl} />
-                          <AvatarFallback className="bg-[#85A1D1]/10 text-[#85A1D1] font-bold text-xs">{app.user?.fullName?.charAt(0) || "U"}</AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="text-sm font-bold text-gray-900 leading-none mb-1">{app.user?.fullName}</p>
-                          <p className="text-[11px] text-gray-400 font-medium">{app.user?.email}</p>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell className="px-6 py-4 text-center">{getStatusBadge(app.status)}</TableCell>
-                    <TableCell className="px-6 py-4 text-center">
-                      <div className="flex flex-col items-center">
-                        <span className="text-sm font-bold text-gray-700">{app._count?.pets || app.pets?.length || 0}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="px-6 py-4 text-center">
-                      <div className="flex flex-col items-center">
-                        <span className="text-[11px] font-bold text-gray-900">{new Date(app.createdAt).toLocaleDateString()}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        {app.status === "SUBMITTED" || app.status === "UNDER_REVIEW" ? (
-                          <>
-                            <Button onClick={() => onApprove(app.id)} variant="ghost" className="h-8 w-8 p-0 rounded-lg text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 transition-all" title="Approve Application">
-                              <CheckCircle2 className="w-4 h-4" />
+              </TableHeader>
+            </Table>
+          </div>
+
+          <div className="flex-1 overflow-auto flex items-center justify-center p-6">
+            {loading ? (
+              <LoadingState />
+            ) : paginatedApps.length ? (
+              <div className="w-full">
+                <Table>
+                  <TableBody>
+                    {paginatedApps.map((app: any) => (
+                      <TableRow key={app.id} className="group hover:bg-gray-50/50 transition-all border-b border-gray-50/60">
+                        <TableCell className="px-6 py-4">
+                          <div className="flex items-center gap-3">
+                            <Avatar className="w-9 h-9 rounded-lg border border-white shadow-sm">
+                              <AvatarImage src={app.user?.avatarUrl} />
+                              <AvatarFallback className="bg-[#85A1D1]/10 text-[#85A1D1] font-bold text-xs">{app.user?.fullName?.charAt(0) || "U"}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <p className="text-sm font-bold text-gray-900 leading-none mb-1">{app.user?.fullName}</p>
+                              <p className="text-[11px] text-gray-400 font-medium">{app.user?.email}</p>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell className="px-6 py-4 text-center">{getStatusBadge(app.status)}</TableCell>
+                        <TableCell className="px-6 py-4 text-center">
+                          <div className="flex flex-col items-center">
+                            <span className="text-sm font-bold text-gray-700">{app._count?.pets || app.pets?.length || 0}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="px-6 py-4 text-center">
+                          <div className="flex flex-col items-center">
+                            <span className="text-[11px] font-bold text-gray-900">{new Date(app.createdAt).toLocaleDateString()}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="px-6 py-4 text-right">
+                          <div className="flex items-center justify-end gap-2">
+                            {app.status === "SUBMITTED" || app.status === "UNDER_REVIEW" ? (
+                              <>
+                                <Button onClick={() => onApprove(app.id)} variant="ghost" className="h-8 w-8 p-0 rounded-lg text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 transition-all" title="Approve Application">
+                                  <CheckCircle2 className="w-4 h-4" />
+                                </Button>
+                                <Button onClick={() => onReject(app.id)} variant="ghost" className="h-8 w-8 p-0 rounded-lg text-rose-600 hover:text-rose-700 hover:bg-rose-50 transition-all" title="Reject Application">
+                                  <XCircle className="w-4 h-4" />
+                                </Button>
+                              </>
+                            ) : null}
+                            <Button onClick={() => onOpenDetail(app)} variant="secondary" className="h-8 px-3 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all">
+                              <Eye className="w-3.5 h-3.5 mr-1" /> View Details
                             </Button>
-                            <Button onClick={() => onReject(app.id)} variant="ghost" className="h-8 w-8 p-0 rounded-lg text-rose-600 hover:text-rose-700 hover:bg-rose-50 transition-all" title="Reject Application">
-                              <XCircle className="w-4 h-4" />
-                            </Button>
-                          </>
-                        ) : null}
-                        <Button onClick={() => onOpenDetail(app)} variant="secondary" className="h-8 px-3 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all">
-                          <Eye className="w-3.5 h-3.5 mr-1" /> View Details
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={5} className="px-6 py-20 text-center text-gray-300">
-                    <p className="text-sm font-medium">No applications found</p>
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            ) : (
+              <div className="w-full flex items-center justify-center">
+                <NoApplicationDataState
+                  hasFilters={hasActiveFilters}
+                  onClearFilters={() => {
+                    onSearchChange("");
+                    onStatusFilterChange("ALL");
+                  }}
+                />
+              </div>
+            )}
+          </div>
         </div>
         {/* Pagination */}
         <div className="border-t border-gray-100 px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3">
@@ -281,4 +297,32 @@ export const ApplicationList = ({
     </div>
   );
 };
+
+function NoApplicationDataState({ hasFilters, onClearFilters }: { hasFilters: boolean; onClearFilters: () => void }) {
+  return (
+    <div className="w-full max-w-lg rounded-3xl border border-dashed border-gray-200 bg-linear-to-br from-white to-gray-50 p-8 sm:p-10 text-center shadow-sm">
+      <div className="mx-auto mb-4 w-16 h-16 rounded-2xl bg-gray-900 text-white flex items-center justify-center shadow-lg shadow-gray-200">
+        <Eye className="w-7 h-7" />
+      </div>
+      <h3 className="text-2xl font-black text-gray-900 mb-2">
+        {hasFilters ? "No matching applications" : "No applications available"}
+      </h3>
+      <p className="text-sm text-gray-500 leading-6 max-w-md mx-auto">
+        {hasFilters
+          ? "Try clearing your search or status filter to see more applications."
+          : "There are no applications to review yet."}
+      </p>
+      {hasFilters && (
+        <div className="mt-6">
+          <button
+            onClick={onClearFilters}
+            className="h-11 px-5 rounded-xl bg-gray-900 text-white text-xs font-bold uppercase tracking-widest hover:bg-black transition-colors"
+          >
+            Clear Filters
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
  

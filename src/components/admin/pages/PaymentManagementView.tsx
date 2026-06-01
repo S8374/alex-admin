@@ -22,8 +22,9 @@ import {
   ChevronLeft,
   ChevronRight,
   ArrowUpRight,
+  Pencil,
 } from "lucide-react";
-import { useGetAllPaymentsQuery, useGetPaymentStatsQuery } from "@/redux/api/PaymentApi";
+import { useGetAllPaymentsQuery, useGetPaymentStatsQuery, useUpdatePetChargeMutation, useUpdateSubscriptionChargeMutation } from "@/redux/api/PaymentApi";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { toast } from "sonner";
@@ -38,6 +39,33 @@ export function PaymentManagementView() {
   const [typeFilter, setTypeFilter] = useState(ALL_STATUS);
   const [filterOpen, setFilterOpen] = useState(false);
   const [expandedRows, setExpandedRows] = useState<string[]>([]);
+
+  const [editingPaymentId, setEditingPaymentId] = useState<string | null>(null);
+  const [editPaymentCharge, setEditPaymentCharge] = useState<string>("");
+  const [updateSubscriptionCharge, { isLoading: isUpdatingSub }] = useUpdateSubscriptionChargeMutation();
+
+  const handleEditPaymentClick = (e: React.MouseEvent, paymentId: string, currentCharge: number) => {
+    e.stopPropagation();
+    setEditingPaymentId(paymentId);
+    setEditPaymentCharge(currentCharge.toString());
+  };
+
+  const handleSavePaymentCharge = async (e: React.MouseEvent, paymentId: string) => {
+    e.stopPropagation();
+    const parsedCharge = parseFloat(editPaymentCharge);
+    if (isNaN(parsedCharge) || parsedCharge < 0) {
+      toast.error("Invalid amount");
+      return;
+    }
+
+    try {
+      await updateSubscriptionCharge({ paymentId, newTotalCharge: parsedCharge }).unwrap();
+      toast.success("Subscription charge updated and synced with Stripe!");
+      setEditingPaymentId(null);
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Failed to update charge");
+    }
+  };
 
   const { data: statsRes, isLoading: statsLoading } = useGetPaymentStatsQuery(undefined);
   const { data: paymentsRes, isLoading: paymentsLoading } = useGetAllPaymentsQuery({ page: 1, limit: 500 });
@@ -97,6 +125,8 @@ export function PaymentManagementView() {
   };
 
   const loading = statsLoading || paymentsLoading;
+  const hasActiveFilters = Boolean(search.trim()) || statusFilter !== ALL_STATUS || typeFilter !== ALL_STATUS;
+  const isEmpty = filteredPayments.length === 0;
 
   if (loading) {
     return (
@@ -142,7 +172,7 @@ export function PaymentManagementView() {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="space-y-8 pb-20"
+      className="min-h-screen flex flex-col space-y-8 pb-20"
     >
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-2xl border border-gray-100 shadow-sm">
         <div className="flex items-start sm:items-center gap-4 min-w-0">
@@ -154,14 +184,6 @@ export function PaymentManagementView() {
             <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider wrap-break-word">Revenue & Transaction Tracking</p>
           </div>
         </div>
-        <div className="flex items-center gap-3 w-full md:w-auto">
-          <button
-            onClick={() => toast.info("Export report is not wired yet")}
-            className="h-10 w-full md:w-auto px-4 bg-gray-50 text-gray-500 rounded-xl font-bold text-xs hover:bg-gray-100 transition-all flex items-center justify-center gap-2 border border-gray-100"
-          >
-            <Download className="w-4 h-4" /> Export Report
-          </button>
-        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
@@ -170,7 +192,7 @@ export function PaymentManagementView() {
         ))}
       </div>
 
-      <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden flex-1 flex flex-col">
         <div className="p-4 sm:p-6 border-b border-gray-50 flex flex-col gap-4">
           <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3">
             <div className="relative flex-1 max-w-2xl">
@@ -199,128 +221,168 @@ export function PaymentManagementView() {
           </div>
         </div>
 
-        <div className="lg:hidden p-4">
-          {visiblePayments.length ? (
-            <div className="space-y-3">
-              {visiblePayments.map((payment: any) => (
-                <MobilePaymentCard
-                  key={payment.id}
-                  payment={payment}
-                  expanded={expandedRows.includes(payment.id)}
-                  onToggle={() => toggleRow(payment.id)}
-                  onView={() => toast.info(`Viewing details for ${payment.transactionId || payment.id}`)}
-                />
-              ))}
+        {isEmpty ? (
+          <div className="flex-1 min-h-105 flex items-center justify-center p-6 sm:p-10">
+            <NoPaymentDataState
+              hasFilters={hasActiveFilters}
+              onClearFilters={() => {
+                setSearch("");
+                setStatusFilter(ALL_STATUS);
+                setTypeFilter(ALL_STATUS);
+                setPage(1);
+              }}
+            />
+          </div>
+        ) : (
+          <>
+            <div className="lg:hidden p-4">
+              <div className="space-y-3">
+                {visiblePayments.map((payment: any) => (
+                  <MobilePaymentCard
+                    key={payment.id}
+                    payment={payment}
+                    expanded={expandedRows.includes(payment.id)}
+                    onToggle={() => toggleRow(payment.id)}
+                    onView={() => toast.info(`Viewing details for ${payment.transactionId || payment.id}`)}
+                  />
+                ))}
+              </div>
             </div>
-          ) : (
-            <div className="py-16 text-center text-gray-300">
-              <p className="text-sm font-medium">No payments found</p>
-            </div>
-          )}
-        </div>
 
-        <div className="hidden lg:block overflow-x-auto">
-          <table className="w-full text-left border-collapse min-w-275">
-            <thead>
-              <tr className="bg-gray-50/50">
-                <th className="w-10 px-6 py-4"></th>
-                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Transaction / Date</th>
-                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Customer</th>
-                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Pets Covered</th>
-                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Total Amount</th>
-                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Plan Details</th>
-                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</th>
-                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {visiblePayments.map((payment: any) => (
-                <React.Fragment key={payment.id}>
-                  <tr
-                    onClick={() => toggleRow(payment.id)}
-                    className={`hover:bg-gray-50/50 transition-colors group cursor-pointer ${expandedRows.includes(payment.id) ? "bg-gray-50/80" : ""}`}
-                  >
-                    <td className="px-6 py-5">
-                      {expandedRows.includes(payment.id) ? <ChevronUp className="w-4 h-4 text-[#85A1D1]" /> : <ChevronDown className="w-4 h-4 text-gray-300" />}
-                    </td>
-                    <td className="px-6 py-5">
-                      <div className="flex flex-col">
-                        <span className="text-xs font-bold text-gray-900 font-mono mb-1">#{payment.transactionId?.slice(-8).toUpperCase() || "TXN-0000"}</span>
-                        <span className="text-[10px] text-gray-400 font-medium flex items-center gap-1">
-                          <Calendar className="w-3 h-3" /> {format(new Date(payment.createdAt), "MMM dd, yyyy · HH:mm")}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-5">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 overflow-hidden shrink-0">
-                          {payment.user?.avatarUrl ? <img src={payment.user.avatarUrl} className="w-full h-full rounded-full object-cover" alt="" /> : <User className="w-4 h-4" />}
-                        </div>
-                        <div className="flex flex-col min-w-0">
-                          <span className="text-xs font-bold text-gray-900 truncate">{payment.user?.fullName || "Anonymous"}</span>
-                          <span className="text-[10px] text-gray-400 font-medium truncate">{payment.user?.email}</span>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-5">
-                      <div className="flex flex-wrap gap-1 max-w-55">
-                        {payment.coveredPets?.length > 0 ? (
-                          payment.coveredPets.map((pet: any) => (
-                            <Badge key={pet.id} className="bg-[#85A1D1]/10 text-[#85A1D1] border-none text-[9px] font-black uppercase py-0.5">
-                              {pet.name} (${pet.petCharge || "0"})
-                            </Badge>
-                          ))
-                        ) : (
-                          <span className="text-[10px] text-gray-400 font-bold italic uppercase tracking-wider">No pets found</span>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-6 py-5">
-                      <div className="flex flex-col">
-                        <span className="text-xs font-black text-gray-900 mb-1">${Number(payment.amount || 0).toLocaleString()}</span>
-                        <Badge className="w-fit bg-gray-100 text-gray-500 border-none text-[9px] font-bold uppercase py-0.5">{payment.type?.replace("_", " ")}</Badge>
-                      </div>
-                    </td>
-                    <td className="px-6 py-5">
-                      <div className="flex flex-col">
-                        <span className="text-xs font-bold text-gray-900">${Number(payment.monthlyPremium || 0).toLocaleString()}/mo</span>
-                        <span className="text-[9px] text-gray-400 font-black uppercase tracking-tighter">Auto-Connect Premium</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-5">
-                      <StatusBadge status={payment.status} />
-                    </td>
-                    <td className="px-6 py-5 text-right">
-                      <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                        <button onClick={(e) => { e.stopPropagation(); toast.info(`Viewing details for ${payment.transactionId || payment.id}`); }} className="p-2 text-gray-400 hover:text-[#85A1D1] transition-colors"><ExternalLink className="w-4 h-4" /></button>
-                        <button onClick={(e) => { e.stopPropagation(); toast.info("Opening actions for transaction"); }} className="p-2 text-gray-400 hover:text-gray-900 transition-colors"><MoreHorizontal className="w-4 h-4" /></button>
-                      </div>
-                    </td>
+            <div className="hidden lg:block overflow-x-auto flex-1">
+              <table className="w-full text-left border-collapse min-w-275">
+                <thead>
+                  <tr className="bg-gray-50/50">
+                    <th className="w-10 px-6 py-4"></th>
+                    <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Transaction / Date</th>
+                    <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Customer</th>
+                    <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Pets Covered</th>
+                    <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Total Amount</th>
+                    <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Plan Details</th>
+                    <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</th>
+                    <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Actions</th>
                   </tr>
-
-                  <AnimatePresence>
-                    {expandedRows.includes(payment.id) && (
-                      <tr>
-                        <td colSpan={8} className="p-0">
-                          <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: "auto", opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            className="overflow-hidden bg-gray-50/30"
-                          >
-                            <div className="p-8 border-l-4 border-[#85A1D1] ml-6 mb-6 mt-2 space-y-6">
-                              <PetCoverageTable pets={payment.coveredPets || []} totalMonthlyFee={Number(payment.monthlyPremium || 0)} />
+                </thead>
+                <tbody className="divide-y divide-gray-50">
+                  {visiblePayments.map((payment: any) => (
+                    <React.Fragment key={payment.id}>
+                      <tr
+                        onClick={() => toggleRow(payment.id)}
+                        className={`hover:bg-gray-50/50 transition-colors group cursor-pointer ${expandedRows.includes(payment.id) ? "bg-gray-50/80" : ""}`}
+                      >
+                        <td className="px-6 py-5">
+                          {expandedRows.includes(payment.id) ? <ChevronUp className="w-4 h-4 text-[#85A1D1]" /> : <ChevronDown className="w-4 h-4 text-gray-300" />}
+                        </td>
+                        <td className="px-6 py-5">
+                          <div className="flex flex-col">
+                            <span className="text-xs font-bold text-gray-900 font-mono mb-1">#{payment.transactionId?.slice(-8).toUpperCase() || "TXN-0000"}</span>
+                            <span className="text-[10px] text-gray-400 font-medium flex items-center gap-1">
+                              <Calendar className="w-3 h-3" /> {format(new Date(payment.createdAt), "MMM dd, yyyy · HH:mm")}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-5">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 overflow-hidden shrink-0">
+                              {payment.user?.avatarUrl ? <img src={payment.user.avatarUrl} className="w-full h-full rounded-full object-cover" alt="" /> : <User className="w-4 h-4" />}
                             </div>
-                          </motion.div>
+                            <div className="flex flex-col min-w-0">
+                              <span className="text-xs font-bold text-gray-900 truncate">{payment.user?.fullName || "Anonymous"}</span>
+                              <span className="text-[10px] text-gray-400 font-medium truncate">{payment.user?.email}</span>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-5">
+                          <div className="flex flex-wrap gap-1 max-w-55">
+                            {payment.coveredPets?.length > 0 ? (
+                              payment.coveredPets.map((pet: any) => (
+                                <Badge key={pet.id} className="bg-[#85A1D1]/10 text-[#85A1D1] border-none text-[9px] font-black uppercase py-0.5">
+                                  {pet.name} (${pet.petCharge || "0"})
+                                </Badge>
+                              ))
+                            ) : (
+                              <span className="text-[10px] text-gray-400 font-bold italic uppercase tracking-wider">No pets found</span>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-6 py-5">
+                          <div className="flex flex-col">
+                            <span className="text-xs font-black text-gray-900 mb-1">${Number(payment.amount || 0).toLocaleString()}</span>
+                            <Badge className="w-fit bg-gray-100 text-gray-500 border-none text-[9px] font-bold uppercase py-0.5">{payment.type?.replace("_", " ")}</Badge>
+                          </div>
+                        </td>
+                        <td className="px-6 py-5" onClick={(e) => { if (editingPaymentId === payment.id) e.stopPropagation(); }}>
+                          {editingPaymentId === payment.id ? (
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="number"
+                                value={editPaymentCharge}
+                                onChange={(e) => setEditPaymentCharge(e.target.value)}
+                                onClick={(e) => e.stopPropagation()}
+                                className="w-20 px-2 py-1 text-xs border rounded outline-none focus:border-[#85A1D1]"
+                                disabled={isUpdatingSub}
+                              />
+                              <div className="flex gap-1">
+                                <button onClick={(e) => handleSavePaymentCharge(e, payment.id)} disabled={isUpdatingSub} className="p-1 bg-emerald-50 text-emerald-600 rounded hover:bg-emerald-100">
+                                  <CheckCircle2 className="w-3 h-3" />
+                                </button>
+                                <button onClick={(e) => { e.stopPropagation(); setEditingPaymentId(null); }} disabled={isUpdatingSub} className="p-1 bg-gray-100 text-gray-500 rounded hover:bg-gray-200">
+                                  <X className="w-3 h-3" />
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-2 group/plan">
+                              <div className="flex flex-col">
+                                <span className="text-xs font-bold text-gray-900">${Number(payment.monthlyPremium || 0).toLocaleString()}/mo</span>
+                                <span className="text-[9px] text-gray-400 font-black uppercase tracking-tighter">Auto-Connect Premium</span>
+                              </div>
+                              <button
+                                onClick={(e) => handleEditPaymentClick(e, payment.id, Number(payment.monthlyPremium || 0))}
+                                className="p-1 text-gray-400 opacity-0 group-hover/plan:opacity-100 transition-opacity hover:text-[#85A1D1]"
+                                title="Edit Subscription Charge"
+                              >
+                                <Pencil className="w-3 h-3" />
+                              </button>
+                            </div>
+                          )}
+                        </td>
+                        <td className="px-6 py-5">
+                          <StatusBadge status={payment.status} />
+                        </td>
+                        <td className="px-6 py-5 text-right">
+                          <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                            <button onClick={(e) => { e.stopPropagation(); toast.info(`Viewing details for ${payment.transactionId || payment.id}`); }} className="p-2 text-gray-400 hover:text-[#85A1D1] transition-colors"><ExternalLink className="w-4 h-4" /></button>
+                            <button onClick={(e) => { e.stopPropagation(); toast.info("Opening actions for transaction"); }} className="p-2 text-gray-400 hover:text-gray-900 transition-colors"><MoreHorizontal className="w-4 h-4" /></button>
+                          </div>
                         </td>
                       </tr>
-                    )}
-                  </AnimatePresence>
-                </React.Fragment>
-              ))}
-            </tbody>
-          </table>
-        </div>
+
+                      <AnimatePresence>
+                        {expandedRows.includes(payment.id) && (
+                          <tr>
+                            <td colSpan={8} className="p-0">
+                              <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: "auto", opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                className="overflow-hidden bg-gray-50/30 "
+                              >
+                                <div className=" border-l-4 border-[#85A1D1] ml-6 mb-6 mt-2 space-y-6">
+                                  <PetCoverageTable pets={payment.coveredPets || []} totalMonthlyFee={Number(payment.monthlyPremium || 0)} />
+                                </div>
+                              </motion.div>
+                            </td>
+                          </tr>
+                        )}
+                      </AnimatePresence>
+                    </React.Fragment>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
 
         <div className="px-4 sm:px-6 py-4 border-t border-gray-50 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
           <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
@@ -401,6 +463,32 @@ export function PaymentManagementView() {
   );
 }
 
+function NoPaymentDataState({ hasFilters, onClearFilters }: { hasFilters: boolean; onClearFilters: () => void; }) {
+  return (
+    <div className="w-full max-w-xl  p-8 sm:p-12 text-center ">
+
+      <h3 className="text-2xl font-black text-gray-900 mb-2">
+        {hasFilters ? "No matching payments" : "No payments available"}
+      </h3>
+      <p className="text-sm text-gray-500 leading-6 max-w-md mx-auto">
+        {hasFilters
+          ? "Try clearing your search or filter settings to reveal payment records."
+          : "There are no payment records yet. Once a customer completes a payment, it will appear here."}
+      </p>
+      {hasFilters && (
+        <div className="mt-6">
+          <button
+            onClick={onClearFilters}
+            className="h-11 px-5 rounded-xl bg-gray-900 text-white text-xs font-bold uppercase tracking-widest hover:bg-black transition-colors"
+          >
+            Clear Filters
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function MobilePaymentCard({ payment, expanded, onToggle, onView }: any) {
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
@@ -456,23 +544,37 @@ function MobilePaymentCard({ payment, expanded, onToggle, onView }: any) {
 }
 
 function PetCoverageTable({ pets, totalMonthlyFee, compact = false }: { pets: any[]; totalMonthlyFee: number; compact?: boolean }) {
+  const [editingPetId, setEditingPetId] = useState<string | null>(null);
+  const [editCharge, setEditCharge] = useState<string>("");
+  const [updatePetCharge, { isLoading: isUpdating }] = useUpdatePetChargeMutation();
+
+  const handleEditClick = (petId: string, currentCharge: number) => {
+    setEditingPetId(petId);
+    setEditCharge(currentCharge.toString());
+  };
+
+  const handleSaveCharge = async (petId: string) => {
+    const parsedCharge = parseFloat(editCharge);
+    if (isNaN(parsedCharge) || parsedCharge < 0) {
+      toast.error("Invalid amount");
+      return;
+    }
+
+    try {
+      await updatePetCharge({ petId, newCharge: parsedCharge }).unwrap();
+      toast.success("Pet charge updated and synced with Stripe!");
+      setEditingPetId(null);
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Failed to update charge");
+    }
+  };
+
   const totalPets = pets.length;
   const computedTotalFee = pets.reduce((sum, pet) => sum + Number(pet.petCharge || 0), 0);
   const displayTotalFee = totalMonthlyFee > 0 ? totalMonthlyFee : computedTotalFee;
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <div className="rounded-2xl bg-white border border-gray-100 p-4">
-          <p className="text-[9px] text-gray-400 font-black uppercase tracking-widest mb-1">Total Pets</p>
-          <p className="text-xl font-black text-gray-900">{totalPets}</p>
-        </div>
-        <div className="rounded-2xl bg-white border border-gray-100 p-4">
-          <p className="text-[9px] text-gray-400 font-black uppercase tracking-widest mb-1">Total Monthly Fee</p>
-          <p className="text-xl font-black text-gray-900">${displayTotalFee.toLocaleString()}/mo</p>
-        </div>
-      </div>
-
+    <div className="space-y-4 ">
       {pets.length ? (
         <div className={`${compact ? "bg-white border border-gray-100 rounded-2xl overflow-hidden" : "bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm"}`}>
           <div className="overflow-x-auto">
@@ -487,7 +589,7 @@ function PetCoverageTable({ pets, totalMonthlyFee, compact = false }: { pets: an
                   <th className="px-4 py-3 text-[10px] font-black uppercase tracking-widest text-gray-400 text-right">Microchip</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+              <tbody className="divide-y divide-gray-50 min-h-screen">
                 {pets.map((pet) => (
                   <tr key={pet.id} className="hover:bg-gray-50/40 transition-colors">
                     <td className="px-4 py-3">
@@ -511,9 +613,41 @@ function PetCoverageTable({ pets, totalMonthlyFee, compact = false }: { pets: an
                       <Badge className="bg-gray-100 text-gray-500 border-none text-[9px] font-black uppercase py-0.5">{pet.status || "ACTIVE"}</Badge>
                     </td>
                     <td className="px-4 py-3 text-right">
-                      <Badge className="bg-emerald-50 text-emerald-600 border-emerald-100 text-[10px] font-black py-1">
-                        ${Number(pet.petCharge || 0).toLocaleString()}/mo
-                      </Badge>
+                      {editingPetId === pet.id ? (
+                        <div className="flex items-center justify-end gap-2">
+                          <input
+                            type="number"
+                            value={editCharge}
+                            onChange={(e) => setEditCharge(e.target.value)}
+                            className="w-20 px-2 py-1 text-xs border rounded outline-none focus:border-[#85A1D1]"
+                            disabled={isUpdating}
+                          />
+                          <div className="flex gap-1">
+                            <button onClick={() => handleSaveCharge(pet.id)} disabled={isUpdating} className="p-1 bg-emerald-50 text-emerald-600 rounded hover:bg-emerald-100">
+                              <CheckCircle2 className="w-3 h-3" />
+                            </button>
+                            <button onClick={() => setEditingPetId(null)} disabled={isUpdating} className="p-1 bg-gray-100 text-gray-500 rounded hover:bg-gray-200">
+                              <X className="w-3 h-3" />
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-end gap-2">
+                          <Badge className="bg-emerald-50 text-emerald-600 border-emerald-100 text-[10px] font-black py-1">
+                            ${Number(pet.petCharge || 0).toLocaleString()}/mo
+                          </Badge>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEditClick(pet.id, Number(pet.petCharge || 0));
+                            }}
+                            className="p-1 text-gray-400 transition-colors hover:text-[#85A1D1]"
+                            title="Edit Monthly Charge"
+                          >
+                            <Pencil className="w-3 h-3" />
+                          </button>
+                        </div>
+                      )}
                     </td>
                     <td className="px-4 py-3 text-right">
                       <p className="text-sm font-bold text-gray-700">{pet.microchipNumber || "No ID"}</p>

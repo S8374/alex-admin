@@ -12,8 +12,7 @@ import {
   User as UserIcon,
   ShieldCheck,
   CreditCard,
-  ClipboardList,
-  History
+  ClipboardList
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -26,7 +25,6 @@ import { ApplicationsTab } from "../user-profile-drawer/ApplicationsTab";
 import { PetsTab } from "../user-profile-drawer/PetsTab";
 import { FinancialsTab } from "../user-profile-drawer/FinancialsTab";
 import { HealthTab } from "../user-profile-drawer/HealthTab";
-import { TimelineTab } from "../user-profile-drawer/TimelineTab";
 
 interface UserDetailProps {
   user: any;
@@ -118,12 +116,11 @@ export const UserDetail = ({ user, onBack, isLoading }: UserDetailProps) => {
                   { id: "pets", label: `Pets (${user.pets?.length || 0})`, icon: Dog },
                   { id: "financials", label: "Financials", icon: CreditCard },
                   { id: "health", label: "Health", icon: HeartPulse },
-                  { id: "timeline", label: "Timeline", icon: History },
                 ].map((tab) => (
                   <TabsTrigger
                     key={tab.id}
                     value={tab.id}
-                    className="h-10 sm:h-full px-3 sm:px-0 rounded-xl sm:rounded-none border-b-2 border-transparent data-[state=active]:border-[#85A1D1] data-[state=active]:bg-[#85A1D1]/5 sm:data-[state=active]:bg-transparent font-bold text-[10px] sm:text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all shrink-0"
+                    className="h-10 sm:h-full px-3 sm:px-4 md:px-6 rounded-xl sm:rounded-none border-b-3 sm:border-b-3 border-transparent data-[state=active]:border-[#85A1D1] data-[state=active]:bg-[#85A1D1]/5 sm:data-[state=active]:bg-[#85A1D1]/5 font-bold text-[10px] sm:text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all shrink-0 hover:bg-gray-50 sm:hover:bg-gray-50 data-[state=active]:shadow-sm"
                   >
                     <tab.icon className="w-4 h-4 mr-2 hidden sm:inline-flex" /> {tab.label}
                   </TabsTrigger>
@@ -147,10 +144,7 @@ export const UserDetail = ({ user, onBack, isLoading }: UserDetailProps) => {
               <FinancialsTab user={user} isLoading={isLoading} />
             </TabsContent>
             <TabsContent value="health" className="mt-0 outline-none">
-              <HealthTab user={user} isLoading={isLoading} />
-            </TabsContent>
-            <TabsContent value="timeline" className="mt-0 outline-none">
-              <TimelineTab user={user} isLoading={isLoading} />
+              <HealthTab user={user} />
             </TabsContent>
           </div>
         </Tabs>

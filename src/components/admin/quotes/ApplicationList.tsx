@@ -51,7 +51,7 @@ export const ApplicationList = ({
   const endIndex = Math.min(total, startIndex + pageSize);
   const paginated = filtered.slice(startIndex, endIndex);
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen flex flex-col space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-1">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">Quotes Management</h1>
@@ -69,11 +69,11 @@ export const ApplicationList = ({
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden flex flex-col grow">
         {/* Mobile */}
-        <div className="block lg:hidden p-4">
+        <div className="block lg:hidden p-4 flex-1">
           {loading ? (
-            <div className="h-[40vh] flex items-center justify-center">
+            <div className="h-full flex items-center justify-center">
               <div className="w-12 h-12 border-4 border-[#85A1D1] border-t-transparent rounded-full animate-spin" />
             </div>
           ) : paginated.length ? (
@@ -83,14 +83,14 @@ export const ApplicationList = ({
               ))}
             </div>
           ) : (
-            <div className="p-6 text-center text-gray-300">
+            <div className="h-full flex items-center justify-center text-gray-300">
               <p className="text-sm font-medium">No applications found</p>
             </div>
           )}
         </div>
 
         {/* Desktop table */}
-        <div className="hidden lg:block overflow-x-auto">
+        <div className="hidden lg:block overflow-x-auto flex-1">
           <Table>
             <TableHeader>
               <TableRow className="bg-gray-50/50 hover:bg-transparent">
@@ -104,8 +104,8 @@ export const ApplicationList = ({
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="px-6 py-16">
-                    <div className="h-40 flex items-center justify-center">
+                  <TableCell colSpan={5} className="px-6 py-0">
+                    <div className="min-h-[40vh] flex items-center justify-center">
                       <div className="w-12 h-12 border-4 border-[#85A1D1] border-t-transparent rounded-full animate-spin" />
                     </div>
                   </TableCell>
@@ -158,8 +158,10 @@ export const ApplicationList = ({
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={5} className="px-6 py-20 text-center text-gray-300">
-                    <p className="text-sm font-medium">No applications found</p>
+                  <TableCell colSpan={5} className="px-6 py-0">
+                    <div className="min-h-[40vh] flex items-center justify-center text-gray-300">
+                      <p className="text-sm font-medium">No applications found</p>
+                    </div>
                   </TableCell>
                 </TableRow>
               )}

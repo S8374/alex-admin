@@ -33,6 +33,26 @@ export const ChatApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Conversations"],
     }),
+    uploadFiles: builder.mutation({
+      query: (formData) => ({
+        url: "/upload/documents",
+        method: "POST",
+        body: formData,
+      }),
+    }),
+    updateMessage: builder.mutation({
+      query: ({ messageId, content, attachments }) => ({
+        url: `/chat/message/${messageId}`,
+        method: "PATCH",
+        body: { content, attachments },
+      }),
+    }),
+    deleteMessage: builder.mutation({
+      query: (messageId) => ({
+        url: `/chat/message/${messageId}`,
+        method: "DELETE",
+      }),
+    }),
   }),
 });
 
@@ -41,5 +61,8 @@ export const {
   useGetMessagesQuery, 
   useSendMessageMutation,
   useCreateConversationMutation,
-  useMarkAsReadMutation
+  useMarkAsReadMutation,
+  useUploadFilesMutation,
+  useUpdateMessageMutation,
+  useDeleteMessageMutation
 } = ChatApi;
