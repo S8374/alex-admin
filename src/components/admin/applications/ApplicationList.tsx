@@ -185,8 +185,12 @@ export const ApplicationList = ({
         </div>
 
         {/* Desktop table */}
-        <div className="hidden lg:flex overflow-x-auto flex-1 flex-col">
-          <div className="overflow-x-auto">
+        <div className="hidden lg:block overflow-x-auto flex-1">
+          {loading ? (
+            <div className="h-[60vh] flex items-center justify-center">
+              <LoadingState />
+            </div>
+          ) : paginatedApps.length ? (
             <Table>
               <TableHeader>
                 <TableRow className="bg-gray-50/50 hover:bg-transparent">
@@ -197,75 +201,60 @@ export const ApplicationList = ({
                   <TableHead className="px-6 h-12 text-xs font-bold text-gray-500 uppercase tracking-widest text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
-            </Table>
-          </div>
-
-          <div className="flex-1 overflow-auto flex items-center justify-center p-6">
-            {loading ? (
-              <LoadingState />
-            ) : paginatedApps.length ? (
-              <div className="w-full">
-                <Table>
-                  <TableBody>
-                    {paginatedApps.map((app: any) => (
-                      <TableRow key={app.id} className="group hover:bg-gray-50/50 transition-all border-b border-gray-50/60">
-                        <TableCell className="px-6 py-4">
-                          <div className="flex items-center gap-3">
-                            <Avatar className="w-9 h-9 rounded-lg border border-white shadow-sm">
-                              <AvatarImage src={app.user?.avatarUrl} />
-                              <AvatarFallback className="bg-[#85A1D1]/10 text-[#85A1D1] font-bold text-xs">{app.user?.fullName?.charAt(0) || "U"}</AvatarFallback>
-                            </Avatar>
-                            <div>
-                              <p className="text-sm font-bold text-gray-900 leading-none mb-1">{app.user?.fullName}</p>
-                              <p className="text-[11px] text-gray-400 font-medium">{app.user?.email}</p>
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell className="px-6 py-4 text-center">{getStatusBadge(app.status)}</TableCell>
-                        <TableCell className="px-6 py-4 text-center">
-                          <div className="flex flex-col items-center">
-                            <span className="text-sm font-bold text-gray-700">{app._count?.pets || app.pets?.length || 0}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="px-6 py-4 text-center">
-                          <div className="flex flex-col items-center">
-                            <span className="text-[11px] font-bold text-gray-900">{new Date(app.createdAt).toLocaleDateString()}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="px-6 py-4 text-right">
-                          <div className="flex items-center justify-end gap-2">
-                            {app.status === "SUBMITTED" || app.status === "UNDER_REVIEW" ? (
-                              <>
-                                <Button onClick={() => onApprove(app.id)} variant="ghost" className="h-8 w-8 p-0 rounded-lg text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 transition-all" title="Approve Application">
-                                  <CheckCircle2 className="w-4 h-4" />
-                                </Button>
-                                <Button onClick={() => onReject(app.id)} variant="ghost" className="h-8 w-8 p-0 rounded-lg text-rose-600 hover:text-rose-700 hover:bg-rose-50 transition-all" title="Reject Application">
-                                  <XCircle className="w-4 h-4" />
-                                </Button>
-                              </>
-                            ) : null}
-                            <Button onClick={() => onOpenDetail(app)} variant="secondary" className="h-8 px-3 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all">
-                              <Eye className="w-3.5 h-3.5 mr-1" /> View Details
+              <TableBody>
+                {paginatedApps.map((app: any) => (
+                  <TableRow key={app.id} className="group hover:bg-gray-50/50 transition-all border-b border-gray-50/60">
+                    <TableCell className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <Avatar className="w-9 h-9 rounded-lg border border-white shadow-sm">
+                          <AvatarImage src={app.user?.avatarUrl} />
+                          <AvatarFallback className="bg-[#85A1D1]/10 text-[#85A1D1] font-bold text-xs">{app.user?.fullName?.charAt(0) || "U"}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="text-sm font-bold text-gray-900 leading-none mb-1">{app.user?.fullName}</p>
+                          <p className="text-[11px] text-gray-400 font-medium">{app.user?.email}</p>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="px-6 py-4 text-center">{getStatusBadge(app.status)}</TableCell>
+                    <TableCell className="px-6 py-4 text-center">
+                      <span className="text-sm font-bold text-gray-700">{app._count?.pets || app.pets?.length || 0}</span>
+                    </TableCell>
+                    <TableCell className="px-6 py-4 text-center">
+                      <span className="text-[11px] font-bold text-gray-900">{new Date(app.createdAt).toLocaleDateString()}</span>
+                    </TableCell>
+                    <TableCell className="px-6 py-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        {app.status === "SUBMITTED" || app.status === "UNDER_REVIEW" ? (
+                          <>
+                            <Button onClick={() => onApprove(app.id)} variant="ghost" className="h-8 w-8 p-0 rounded-lg text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 transition-all" title="Approve Application">
+                              <CheckCircle2 className="w-4 h-4" />
                             </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            ) : (
-              <div className="w-full flex items-center justify-center">
-                <NoApplicationDataState
-                  hasFilters={hasActiveFilters}
-                  onClearFilters={() => {
-                    onSearchChange("");
-                    onStatusFilterChange("ALL");
-                  }}
-                />
-              </div>
-            )}
-          </div>
+                            <Button onClick={() => onReject(app.id)} variant="ghost" className="h-8 w-8 p-0 rounded-lg text-rose-600 hover:text-rose-700 hover:bg-rose-50 transition-all" title="Reject Application">
+                              <XCircle className="w-4 h-4" />
+                            </Button>
+                          </>
+                        ) : null}
+                        <Button onClick={() => onOpenDetail(app)} variant="secondary" className="h-8 px-3 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all">
+                          <Eye className="w-3.5 h-3.5 mr-1" /> View Details
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <div className="flex items-center justify-center p-6">
+              <NoApplicationDataState
+                hasFilters={hasActiveFilters}
+                onClearFilters={() => {
+                  onSearchChange("");
+                  onStatusFilterChange("ALL");
+                }}
+              />
+            </div>
+          )}
         </div>
         {/* Pagination */}
         <div className="border-t border-gray-100 px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3">
