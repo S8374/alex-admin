@@ -311,41 +311,11 @@ export function PaymentManagementView() {
                             <Badge className="w-fit bg-gray-100 text-gray-500 border-none text-[9px] font-bold uppercase py-0.5">{payment.type?.replace("_", " ")}</Badge>
                           </div>
                         </td>
-                        <td className="px-6 py-5" onClick={(e) => { if (editingPaymentId === payment.id) e.stopPropagation(); }}>
-                          {editingPaymentId === payment.id ? (
-                            <div className="flex items-center gap-2">
-                              <input
-                                type="number"
-                                value={editPaymentCharge}
-                                onChange={(e) => setEditPaymentCharge(e.target.value)}
-                                onClick={(e) => e.stopPropagation()}
-                                className="w-20 px-2 py-1 text-xs border rounded outline-none focus:border-[#85A1D1]"
-                                disabled={isUpdatingSub}
-                              />
-                              <div className="flex gap-1">
-                                <button onClick={(e) => handleSavePaymentCharge(e, payment.id)} disabled={isUpdatingSub} className="p-1 bg-emerald-50 text-emerald-600 rounded hover:bg-emerald-100">
-                                  <CheckCircle2 className="w-3 h-3" />
-                                </button>
-                                <button onClick={(e) => { e.stopPropagation(); setEditingPaymentId(null); }} disabled={isUpdatingSub} className="p-1 bg-gray-100 text-gray-500 rounded hover:bg-gray-200">
-                                  <X className="w-3 h-3" />
-                                </button>
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="flex items-center gap-2 group/plan">
-                              <div className="flex flex-col">
-                                <span className="text-xs font-bold text-gray-900">${Number(payment.monthlyPremium || 0).toLocaleString()}/mo</span>
-                                <span className="text-[9px] text-gray-400 font-black uppercase tracking-tighter">Auto-Connect Premium</span>
-                              </div>
-                              <button
-                                onClick={(e) => handleEditPaymentClick(e, payment.id, Number(payment.monthlyPremium || 0))}
-                                className="p-1 text-gray-400 opacity-0 group-hover/plan:opacity-100 transition-opacity hover:text-[#85A1D1]"
-                                title="Edit Subscription Charge"
-                              >
-                                <Pencil className="w-3 h-3" />
-                              </button>
-                            </div>
-                          )}
+                        <td className="px-6 py-5">
+                          <div className="flex flex-col">
+                            <span className="text-xs font-bold text-gray-900">${Number(payment.monthlyPremium || 0).toLocaleString()}/mo</span>
+                            <span className="text-[9px] text-gray-400 font-black uppercase tracking-tighter">Auto-Connect Premium</span>
+                          </div>
                         </td>
                         <td className="px-6 py-5">
                           <StatusBadge status={payment.status} />
@@ -562,7 +532,7 @@ function PetCoverageTable({ pets, totalMonthlyFee, compact = false }: { pets: an
 
     try {
       await updatePetCharge({ petId, newCharge: parsedCharge }).unwrap();
-      toast.success("Pet charge updated and synced with Stripe!");
+      toast.success("Pet charge update request sent for user approval!");
       setEditingPetId(null);
     } catch (error: any) {
       toast.error(error?.data?.message || "Failed to update charge");
@@ -610,7 +580,15 @@ function PetCoverageTable({ pets, totalMonthlyFee, compact = false }: { pets: an
                       <p className="text-sm font-bold text-gray-700">{pet.birthday ? format(new Date(pet.birthday), "MMM dd, yyyy") : "Not set"}</p>
                     </td>
                     <td className="px-4 py-3">
-                      <Badge className="bg-gray-100 text-gray-500 border-none text-[9px] font-black uppercase py-0.5">{pet.status || "ACTIVE"}</Badge>
+                      {pet.status === "PENDING_UPDATE" ? (
+                        <Badge className="bg-amber-50 text-amber-600 border border-amber-100 text-[9px] font-black uppercase py-0.5">
+                          PENDING UPDATE
+                        </Badge>
+                      ) : (
+                        <Badge className="bg-gray-100 text-gray-500 border-none text-[9px] font-black uppercase py-0.5">
+                          {pet.status || "ACTIVE"}
+                        </Badge>
+                      )}
                     </td>
                     <td className="px-4 py-3 text-right">
                       {editingPetId === pet.id ? (
@@ -619,27 +597,52 @@ function PetCoverageTable({ pets, totalMonthlyFee, compact = false }: { pets: an
                             type="number"
                             value={editCharge}
                             onChange={(e) => setEditCharge(e.target.value)}
+                            placeholder="Add $/mo"
                             className="w-20 px-2 py-1 text-xs border rounded outline-none focus:border-[#85A1D1]"
                             disabled={isUpdating}
                           />
                           <div className="flex gap-1">
-                            <button onClick={() => handleSaveCharge(pet.id)} disabled={isUpdating} className="p-1 bg-emerald-50 text-emerald-600 rounded hover:bg-emerald-100">
-                              <CheckCircle2 className="w-3 h-3" />
+                            <button 
+                              onClick={() => handleSaveCharge(pet.id)} 
+                              disabled={isUpdating} 
+                              className="p-1 bg-emerald-50 text-emerald-600 rounded hover:bg-emerald-100 disabled:opacity-50 flex items-center justify-center min-w-[24px] min-h-[24px]"
+                            >
+                              {isUpdating ? (
+                                <div className="w-3 h-3 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin" />
+                              ) : (
+                                <CheckCircle2 className="w-3 h-3" />
+                              )}
                             </button>
-                            <button onClick={() => setEditingPetId(null)} disabled={isUpdating} className="p-1 bg-gray-100 text-gray-500 rounded hover:bg-gray-200">
+                            <button 
+                              onClick={() => setEditingPetId(null)} 
+                              disabled={isUpdating} 
+                              className="p-1 bg-gray-100 text-gray-500 rounded hover:bg-gray-200 disabled:opacity-50 flex items-center justify-center min-w-[24px] min-h-[24px]"
+                            >
                               <X className="w-3 h-3" />
                             </button>
                           </div>
                         </div>
                       ) : (
                         <div className="flex items-center justify-end gap-2">
-                          <Badge className="bg-emerald-50 text-emerald-600 border-emerald-100 text-[10px] font-black py-1">
-                            ${Number(pet.petCharge || 0).toLocaleString()}/mo
-                          </Badge>
+                          <div className="flex flex-col items-end">
+                            <Badge className="bg-emerald-50 text-emerald-600 border-emerald-100 text-[10px] font-black py-1">
+                              ${Number(pet.petCharge || 0).toLocaleString()}/mo
+                            </Badge>
+                            {pet.status === "PENDING_UPDATE" && pet.proposedCharge !== undefined && (
+                              <span className="text-[10px] text-amber-600 font-bold mt-1">
+                                Proposed: ${Number(pet.proposedCharge).toLocaleString()}/mo
+                              </span>
+                            )}
+                          </div>
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleEditClick(pet.id, Number(pet.petCharge || 0));
+                              handleEditClick(
+                                pet.id,
+                                pet.status === "PENDING_UPDATE" && pet.proposedCharge !== undefined
+                                  ? Number(pet.proposedCharge)
+                                  : Number(pet.petCharge || 0)
+                              );
                             }}
                             className="p-1 text-gray-400 transition-colors hover:text-[#85A1D1]"
                             title="Edit Monthly Charge"
