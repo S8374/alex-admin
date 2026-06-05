@@ -14,7 +14,14 @@ const normalizeBaseUrl = (value: string | undefined) => {
   return trimmedValue;
 };
 
-export const getApiBaseUrl = () =>
-  normalizeBaseUrl(process.env.NEXT_PUBLIC_BASE_API_URL) ||
-  normalizeBaseUrl(process.env.NEXT_PUBLIC_BASE_API) ||
-  FALLBACK_API_BASE_URL;
+export const getApiBaseUrl = () => {
+  if (typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")) {
+    return FALLBACK_API_BASE_URL;
+  }
+
+  return (
+    normalizeBaseUrl(process.env.NEXT_PUBLIC_BASE_API_URL) ||
+    normalizeBaseUrl(process.env.NEXT_PUBLIC_BASE_API) ||
+    FALLBACK_API_BASE_URL
+  );
+};

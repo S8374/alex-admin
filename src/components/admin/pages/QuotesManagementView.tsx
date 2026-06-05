@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import { motion } from "framer-motion";
+import { useSelector } from "react-redux";
 import { useGetAllUsersQuery } from "@/redux/api/userApi";
 import { useSendQuoteMutation, useGetApplicationByIdQuery } from "@/redux/api/quoteApi";
 import { toast } from "sonner";
@@ -15,6 +16,7 @@ export function QuotesManagementView() {
   const [search, setSearch] = useState("");
   const [selectedAppId, setSelectedAppId] = useState<string | null>(null);
 
+  const authUser = useSelector((state: any) => state.auth.user);
   const { data: userData, isLoading, isFetching } = useGetAllUsersQuery({ search, limit: 99999 });
   const { data: detailData, isLoading: isDetailLoading } = useGetApplicationByIdQuery(selectedAppId!, { skip: !selectedAppId });
   const [sendQuote, { isLoading: isSending }] = useSendQuoteMutation();
@@ -52,7 +54,24 @@ export function QuotesManagementView() {
     const spayNeuterFee = Number(formData.spayNeuterFee ?? 150);
     const dueDay = Number(formData.dueDay ?? 1);
     const lateFee = Number(formData.lateFee ?? 25);
-    const generatedUrl = `AUTO_GENERATED?transportFee=${transportFee}&spayNeuterFee=${spayNeuterFee}&dueDay=${dueDay}&lateFee=${lateFee}`;
+    const repSig = formData.representativeSignatureUrl || "";
+    
+    let adminName = "";
+    if (repSig) {
+      if (repSig.startsWith("TYPED:")) {
+        adminName = repSig.substring(6);
+      } else {
+        adminName = authUser?.fullName || "";
+      }
+    }
+
+    let generatedUrl = `AUTO_GENERATED?transportFee=${transportFee}&spayNeuterFee=${spayNeuterFee}&dueDay=${dueDay}&lateFee=${lateFee}`;
+    if (repSig) {
+      generatedUrl += `&representativeSignatureUrl=${encodeURIComponent(repSig)}`;
+    }
+    if (adminName) {
+      generatedUrl += `&adminName=${encodeURIComponent(adminName)}`;
+    }
 
     const quotes = application.pets
       .filter((pet: any) => formData.selectedPetIds.includes(pet.id))

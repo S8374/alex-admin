@@ -32,7 +32,7 @@ export const QuoteSidebar = ({
   const [dragOver, setDragOver] = useState(false);
   const [sigMode, setSigMode] = useState<SigMode>("draw");
   const [typedName, setTypedName] = useState("");
-  const [isDrawing, setIsDrawing] = useState(false);
+  const isDrawingRef = useRef(false);
   const [hasSigned, setHasSigned] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const lastPos = useRef<{ x: number; y: number } | null>(null);
@@ -52,29 +52,36 @@ export const QuoteSidebar = ({
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   }, [sigMode]);
 
-  const getPos = (e: React.MouseEvent | React.TouchEvent, canvas: HTMLCanvasElement) => {
+  const getPos = (e: any, canvas: HTMLCanvasElement) => {
     const rect = canvas.getBoundingClientRect();
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
-    if ("touches" in e) {
-      const t = e.touches[0];
-      return { x: (t.clientX - rect.left) * scaleX, y: (t.clientY - rect.top) * scaleY };
-    }
-    return { x: ((e as React.MouseEvent).clientX - rect.left) * scaleX, y: ((e as React.MouseEvent).clientY - rect.top) * scaleY };
+    
+    const clientX = e.clientX ?? (e.touches?.[0]?.clientX ?? e.changedTouches?.[0]?.clientX ?? 0);
+    const clientY = e.clientY ?? (e.touches?.[0]?.clientY ?? e.changedTouches?.[0]?.clientY ?? 0);
+    
+    return {
+      x: (clientX - rect.left) * scaleX,
+      y: (clientY - rect.top) * scaleY
+    };
   };
 
-  const startDraw = useCallback((e: React.MouseEvent | React.TouchEvent) => {
-    e.preventDefault();
+  const startDraw = useCallback((e: any) => {
+    if (e.cancelable) {
+      e.preventDefault();
+    }
     const canvas = canvasRef.current;
     if (!canvas) return;
-    setIsDrawing(true);
+    isDrawingRef.current = true;
     setHasSigned(true);
     lastPos.current = getPos(e, canvas);
   }, []);
 
-  const draw = useCallback((e: React.MouseEvent | React.TouchEvent) => {
-    e.preventDefault();
-    if (!isDrawing) return;
+  const draw = useCallback((e: any) => {
+    if (!isDrawingRef.current) return;
+    if (e.cancelable) {
+      e.preventDefault();
+    }
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
@@ -82,7 +89,7 @@ export const QuoteSidebar = ({
     const pos = getPos(e, canvas);
     if (lastPos.current) {
       ctx.strokeStyle = "#1e3a8a";
-      ctx.lineWidth = 2.5;
+      ctx.lineWidth = 3.0;
       ctx.lineCap = "round";
       ctx.lineJoin = "round";
       ctx.beginPath();
@@ -91,10 +98,10 @@ export const QuoteSidebar = ({
       ctx.stroke();
     }
     lastPos.current = pos;
-  }, [isDrawing]);
+  }, []);
 
   const endDraw = useCallback(() => {
-    setIsDrawing(false);
+    isDrawingRef.current = false;
     lastPos.current = null;
   }, []);
 
@@ -107,6 +114,88 @@ export const QuoteSidebar = ({
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     setHasSigned(false);
     onFormUpdate({ ...form, representativeSignatureUrl: "" });
+  };
+
+  // Handle touch interactions directly to ensure they are smooth and prevent scrolling
+  useEffect(() => {
+    if (sigMode !== "draw") return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      startDraw(e);
+    };
+    const handleTouchMove = (e: TouchEvent) => {
+      draw(e);
+    };
+    const handleTouchEnd = (e: TouchEvent) => {
+      endDraw();
+    };
+
+    canvas.addEventListener("touchstart", handleTouchStart, { passive: false });
+    canvas.addEventListener("touchmove", handleTouchMove, { passive: false });
+    canvas.addEventListener("touchend", handleTouchEnd, { passive: false });
+
+    return () => {
+      canvas.removeEventListener("touchstart", handleTouchStart);
+      canvas.removeEventListener("touchmove", handleTouchMove);
+      canvas.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, [sigMode, startDraw, draw, endDraw]);
+
+  const cropSignatureCanvas = (canvas: HTMLCanvasElement): HTMLCanvasElement => {
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return canvas;
+
+    const w = canvas.width;
+    const h = canvas.height;
+    const imgData = ctx.getImageData(0, 0, w, h);
+    const data = imgData.data;
+
+    let minX = w, maxX = 0, minY = h, maxY = 0;
+    let found = false;
+
+    for (let y = 0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        const idx = (y * w + x) * 4;
+        const r = data[idx];
+        const g = data[idx + 1];
+        const b = data[idx + 2];
+        const a = data[idx + 3];
+
+        const isWhite = r > 240 && g > 240 && b > 240;
+        if (a > 0 && !isWhite) {
+          if (x < minX) minX = x;
+          if (x > maxX) maxX = x;
+          if (y < minY) minY = y;
+          if (y > maxY) maxY = y;
+          found = true;
+        }
+      }
+    }
+
+    if (!found) return canvas;
+
+    const padding = 12;
+    minX = Math.max(0, minX - padding);
+    minY = Math.max(0, minY - padding);
+    maxX = Math.min(w - 1, maxX + padding);
+    maxY = Math.min(h - 1, maxY + padding);
+
+    const cropWidth = maxX - minX + 1;
+    const cropHeight = maxY - minY + 1;
+
+    const cropCanvas = document.createElement("canvas");
+    cropCanvas.width = cropWidth;
+    cropCanvas.height = cropHeight;
+    const cropCtx = cropCanvas.getContext("2d");
+    if (!cropCtx) return canvas;
+
+    cropCtx.fillStyle = "#ffffff";
+    cropCtx.fillRect(0, 0, cropWidth, cropHeight);
+    cropCtx.drawImage(canvas, minX, minY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
+
+    return cropCanvas;
   };
 
   const dataURLtoFile = (dataUrl: string, filename: string) => {
@@ -124,7 +213,8 @@ export const QuoteSidebar = ({
       const canvas = canvasRef.current;
       if (!canvas) return;
       toast.info("Uploading signature...");
-      const dataUrl = canvas.toDataURL("image/png");
+      const croppedCanvas = cropSignatureCanvas(canvas);
+      const dataUrl = croppedCanvas.toDataURL("image/png");
       const file = dataURLtoFile(dataUrl, "admin-signature.png");
       const fd = new FormData();
       fd.append("files", file);
@@ -378,9 +468,6 @@ export const QuoteSidebar = ({
                   onMouseMove={draw}
                   onMouseUp={endDraw}
                   onMouseLeave={endDraw}
-                  onTouchStart={startDraw}
-                  onTouchMove={draw}
-                  onTouchEnd={endDraw}
                 />
                 {!hasSigned && (
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
