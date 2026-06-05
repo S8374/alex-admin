@@ -93,12 +93,18 @@ interface ToggleButtonProps {
   label: string;
   active: boolean;
   onToggle: () => void;
+  disabled?: boolean;
 }
 
-export function ToggleButton({ label, active, onToggle }: ToggleButtonProps) {
+export function ToggleButton({ label, active, onToggle, disabled }: ToggleButtonProps) {
   return (
-    <label className="flex items-center gap-3 cursor-pointer group" onClick={onToggle}>
-      <div className={`w-10 h-6 rounded-full transition-all flex items-center px-1 ${active ? 'bg-primary' : 'bg-gray-200'}`}>
+    <label 
+      className={`flex items-center gap-3 group ${disabled ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
+      onClick={() => {
+        if (!disabled) onToggle();
+      }}
+    >
+      <div className={`w-10 h-6 rounded-full transition-all flex items-center px-1 ${active ? 'bg-[#85A1D1]' : 'bg-gray-200'}`}>
         <div className={`w-4 h-4 bg-white rounded-full shadow-sm transition-all ${active ? 'translate-x-4' : 'translate-x-0'}`} />
       </div>
       <span className="text-xs font-bold text-gray-500">{label}</span>

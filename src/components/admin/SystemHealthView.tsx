@@ -567,7 +567,7 @@ export function SystemHealthView({
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-6 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-6 gap-4 sm:gap-6 mb-8">
         {stats.map((stat: any, idx: number) => (
           <motion.div
             key={stat.label}
@@ -587,60 +587,12 @@ export function SystemHealthView({
         ))}
       </div>
 
-      <div className="space-y-8">
-        <div className="w-full bg-primary rounded-3xl p-6 sm:p-8 text-white shadow-[0_20px_60px_rgba(133,161,209,0.28)] relative overflow-hidden flex flex-col">
-            <div className="absolute top-0 right-0 p-8 opacity-10">
-              <Server className="w-32 h-32 text-black" />
-            </div>
-            <div className="relative z-10 space-y-6 flex-1">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                <div>
-                  <h3 className="text-xl font-black">Deep Infrastructure</h3>
-                  <p className="text-xs text-white/70 font-bold uppercase tracking-widest mt-1">Real-time Runtime Audit</p>
-                </div>
-                <div className="flex items-center gap-2 px-3 py-1 bg-black/10 rounded-lg border border-black/10 self-start">
-                  <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
-                  <span className="text-[10px] font-black uppercase tracking-wider">Active Runtime</span>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8">
-                {sysInfo.map((info: any) => (
-                  <div key={info.label} className="space-y-1 min-w-0">
-                    <p className="text-[10px] font-black text-white/50 uppercase tracking-widest">{info.label}</p>
-                    <p className="text-sm font-bold font-mono wrap-break-word">{info.value || "---"}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-        </div>
         <div className="w-full bg-white rounded-3xl border border-gray-100 overflow-hidden flex flex-col shadow-[0_18px_50px_rgba(15,23,42,0.06)] min-w-0 min-h-135 lg:min-h-162.5">
             <div className="p-5 sm:p-6 border-b border-gray-50 bg-white/95 backdrop-blur sticky top-0 z-10 space-y-4">
               <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                 <div>
-                  <h3 className="font-black text-gray-900">Activity & Event Monitoring</h3>
-                  <p className="text-xs text-gray-600 font-bold">Real-time platform audit trail</p>
-                </div>
-                <div className="flex w-full sm:w-auto bg-gray-100 p-1 rounded-xl self-start sm:self-auto">
-                  <button
-                    onClick={() => setActiveTab("traffic")}
-                    className={`flex-1 sm:flex-none px-4 py-1.5 text-[11px] font-black rounded-lg transition-all ${activeTab === "traffic" ? "bg-white text-gray-900 shadow-sm" : "text-gray-600"}`}
-                  >
-                    LIVE TRAFFIC
-                  </button>
-                  <button
-                    onClick={() => setActiveTab("logs")}
-                    className={`flex-1 sm:flex-none px-4 py-1.5 text-[11px] font-black rounded-lg transition-all ${activeTab === "logs" ? "bg-white text-gray-900 shadow-sm" : "text-gray-600"}`}
-                  >
-                    SERVER LOGS
-                  </button>
-                  <button
-                    onClick={() => setActiveTab("alerts")}
-                    className={`hidden sm:inline-flex flex-1 sm:flex-none px-4 py-1.5 text-[11px] font-black rounded-lg transition-all ${activeTab === "alerts" ? "bg-white text-gray-900 shadow-sm" : "text-gray-600"}`}
-                  >
-                    ALERTS
-                  </button>
+                  <h3 className="font-black text-gray-900">Security Alerts</h3>
+                  <p className="text-xs text-gray-600 font-bold">Real-time system security notifications</p>
                 </div>
               </div>
 
@@ -648,47 +600,14 @@ export function SystemHealthView({
                 <label className="flex items-center gap-2 rounded-2xl border border-gray-200 bg-white px-3 py-2 shadow-sm">
                   <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Search</span>
                   <input
-                    value={activeTab === "traffic" ? trafficSearch : activeTab === "logs" ? logsSearch : alertsSearch}
+                    value={alertsSearch}
                     onChange={(event) => {
-                      const value = event.target.value;
-                      if (activeTab === "traffic") {
-                        setTrafficSearch(value);
-                        setTrafficPage(1);
-                      } else if (activeTab === "logs") {
-                        setLogsSearch(value);
-                        setLogsPage(1);
-                      } else {
-                        setAlertsSearch(value);
-                        setAlertsPage(1);
-                      }
+                      setAlertsSearch(event.target.value);
+                      setAlertsPage(1);
                     }}
-                    placeholder="Message, IP, request id"
+                    placeholder="Message"
                     className="min-w-0 flex-1 bg-transparent text-sm font-semibold text-gray-700 outline-none placeholder:text-gray-400"
                   />
-                </label>
-                <label className="flex items-center gap-2 rounded-2xl border border-gray-200 bg-white px-3 py-2 shadow-sm">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Level</span>
-                  <select
-                    value={activeTab === "traffic" ? trafficLevel : logsLevel}
-                    onChange={(event) => {
-                      const value = event.target.value;
-                      if (activeTab === "traffic") {
-                        setTrafficLevel(value);
-                        setTrafficPage(1);
-                      } else {
-                        setLogsLevel(value);
-                        setLogsPage(1);
-                      }
-                    }}
-                    className="min-w-0 flex-1 bg-transparent text-sm font-semibold text-gray-700 outline-none"
-                  >
-                    <option value="all">All levels</option>
-                    <option value="info">Info</option>
-                    <option value="warn">Warn</option>
-                    <option value="error">Error</option>
-                    <option value="debug">Debug</option>
-                    <option value="success">Success</option>
-                  </select>
                 </label>
                 <div className="flex items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white px-3 py-2 shadow-sm">
                   <div className="min-w-0">
@@ -698,11 +617,7 @@ export function SystemHealthView({
                   <div className="text-right min-w-0">
                     <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Showing</p>
                     <p className="text-sm font-bold text-gray-700">
-                      {activeTab === "traffic"
-                        ? `${Math.min((safeTrafficPage - 1) * pageSize + 1, activityLogs.length)}-${Math.min(safeTrafficPage * pageSize, activityLogs.length) || 0} of ${activityLogs.length}`
-                        : activeTab === "logs"
-                        ? `${Math.min((safeLogsPage - 1) * pageSize + 1, serverLogs.length)}-${Math.min(safeLogsPage * pageSize, serverLogs.length) || 0} of ${serverLogs.length}`
-                        : `${Math.min((safeAlertsPage - 1) * pageSize + 1, alertsList.length)}-${Math.min(safeAlertsPage * pageSize, alertsList.length) || 0} of ${alertsList.length}`}
+                      {`${Math.min((safeAlertsPage - 1) * pageSize + 1, alertsList.length)}-${Math.min(safeAlertsPage * pageSize, alertsList.length) || 0} of ${alertsList.length}`}
                     </p>
                   </div>
                 </div>
@@ -711,39 +626,6 @@ export function SystemHealthView({
 
             <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 space-y-4 custom-scrollbar bg-gray-50/50">
               <AnimatePresence mode="wait">
-                {activeTab === "traffic" ? (
-                  <motion.div
-                    key="traffic"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="space-y-4"
-                  >
-                    {renderLogTable(
-                      visibleActivityLogs,
-                      safeTrafficPage,
-                      activityTotalPages,
-                      setTrafficPage,
-                      "No activity logs match the current filters."
-                    )}
-                  </motion.div>
-                ) : activeTab === "logs" ? (
-                  <motion.div
-                    key="logs"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="space-y-4"
-                  >
-                    {renderLogTable(
-                      visibleServerLogs,
-                      safeLogsPage,
-                      serverTotalPages,
-                      setLogsPage,
-                      "No server logs match the current filters."
-                    )}
-                  </motion.div>
-                ) : (
                   <motion.div
                     key="alerts"
                     initial={{ opacity: 0, y: 10 }}
@@ -759,11 +641,9 @@ export function SystemHealthView({
                       "No security alerts found."
                     )}
                   </motion.div>
-                )}
               </AnimatePresence>
             </div>
         </div>
-      </div>
 
       <AnimatePresence>
         {selectedLog && (

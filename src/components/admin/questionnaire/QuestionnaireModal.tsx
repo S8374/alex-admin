@@ -65,14 +65,28 @@ export function QuestionnaireModal({
                 {isQuestion && (
                   <>
                     <TextAreaGroup label="Question Text" value={formData.questionText} onChange={(val: string) => setFormData({ ...formData, questionText: val })} placeholder="Enter question..." rows={3} />
-                    {type.includes("question") ? (
-                      <SelectGroup label="Category" value={formData.category} onChange={(val: string) => setFormData({ ...formData, category: val })} options={[{v:"HEALTH", l:"Health"}, {v:"CANCER", l:"Cancer"}, {v:"NORMAL", l:"Normal"}]} />
-                    ) : (
-                      <InputGroup label="Input Label Text" value={formData.inputLebleText} onChange={(val: string) => setFormData({ ...formData, inputLebleText: val })} placeholder="e.g. Diagnosis Details" />
+                    {type.includes("question") && (
+                      <SelectGroup 
+                        label="Category" 
+                        value={formData.category} 
+                        onChange={(val: string) => {
+                          const isRequired = val === "HEALTH" || val === "CANCER";
+                          setFormData({ 
+                            ...formData, 
+                            category: val, 
+                            isInputRequired: isRequired ? true : formData.isInputRequired 
+                          });
+                        }} 
+                        options={[{v:"HEALTH", l:"Health"}, {v:"CANCER", l:"Cancer"}, {v:"NORMAL", l:"Normal"}]} 
+                      />
                     )}
                     <div className="flex items-center gap-8 pt-2">
-                      <ToggleButton label="Input Required" active={formData.isInputRequired} onToggle={() => setFormData({ ...formData, isInputRequired: !formData.isInputRequired })} />
-                      <ToggleButton label="Document Required" active={formData.isDocumentNeeded} onToggle={() => setFormData({ ...formData, isDocumentNeeded: !formData.isDocumentNeeded })} />
+                      <ToggleButton 
+                        label="Input Required" 
+                        active={formData.isInputRequired} 
+                        onToggle={() => setFormData({ ...formData, isInputRequired: !formData.isInputRequired })} 
+                        disabled={formData.category === "HEALTH" || formData.category === "CANCER"}
+                      />
                     </div>
                   </>
                 )}

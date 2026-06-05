@@ -88,19 +88,20 @@ export function QuestionnaireManagementView() {
           toast.success("Questionnaire initialized");
         }
       } else if (modalType === "add-question" || modalType === "edit-question") {
+        const isRequired = formData.category === "HEALTH" || formData.category === "CANCER" ? true : formData.isInputRequired;
         if (modalType === "edit-question" && editId) {
-          await updateQuestion({ id: editId, questionText: formData.questionText, category: formData.category, isInputRequired: formData.isInputRequired, isDocumentNeeded: formData.isDocumentNeeded }).unwrap();
+          await updateQuestion({ id: editId, questionText: formData.questionText, category: formData.category, isInputRequired: isRequired, isDocumentNeeded: formData.isDocumentNeeded }).unwrap();
           toast.success("Question updated");
         } else {
-          await addQuestion({ questionnaireId: questionnaire.id, questionText: formData.questionText, category: formData.category, isInputRequired: formData.isInputRequired, isDocumentNeeded: formData.isDocumentNeeded }).unwrap();
+          await addQuestion({ questionnaireId: questionnaire.id, questionText: formData.questionText, category: formData.category, isInputRequired: isRequired, isDocumentNeeded: formData.isDocumentNeeded }).unwrap();
           toast.success("Question added");
         }
       } else if (modalType === "add-nested" || modalType === "edit-nested") {
         if (modalType === "edit-nested" && editId) {
-          await updateNestedQuestion({ id: editId, questionText: formData.questionText, inputLebleText: formData.inputLebleText, isInputRequired: formData.isInputRequired, isDocumentNeeded: formData.isDocumentNeeded }).unwrap();
+          await updateNestedQuestion({ id: editId, questionText: formData.questionText, inputLebleText: "", isInputRequired: formData.isInputRequired, isDocumentNeeded: formData.isDocumentNeeded }).unwrap();
           toast.success("Nested logic updated");
         } else {
-          await addNestedQuestion({ questionId: selectedParentId, questionText: formData.questionText, inputLebleText: formData.inputLebleText, isInputRequired: formData.isInputRequired, isDocumentNeeded: formData.isDocumentNeeded }).unwrap();
+          await addNestedQuestion({ questionId: selectedParentId, questionText: formData.questionText, inputLebleText: "", isInputRequired: formData.isInputRequired, isDocumentNeeded: formData.isDocumentNeeded }).unwrap();
           toast.success("Nested logic added");
         }
       }
@@ -117,7 +118,7 @@ export function QuestionnaireManagementView() {
   };
 
   const resetForm = () => {
-    setFormData({ topicTitle: "", description: "", disclaimerText: "", disclaimerLabel: "", questionText: "", category: "HEALTH", isInputRequired: false, isDocumentNeeded: false, inputLebleText: "" });
+    setFormData({ topicTitle: "", description: "", disclaimerText: "", disclaimerLabel: "", questionText: "", category: "HEALTH", isInputRequired: true, isDocumentNeeded: false, inputLebleText: "" });
     setEditId("");
     setSelectedParentId("");
   };
@@ -129,7 +130,8 @@ export function QuestionnaireManagementView() {
         setFormData((prev: FormData) => ({ ...prev, topicTitle: data.topicTitle || "", description: data.description || "", disclaimerText: data.disclaimerText || "", disclaimerLabel: data.disclaimerLabel || "" }));
       } else if (type === "edit-question") {
         setEditId(data.id);
-        setFormData((prev: FormData) => ({ ...prev, questionText: data.questionText, category: data.category, isInputRequired: data.isInputRequired, isDocumentNeeded: data.isDocumentNeeded }));
+        const isRequired = data.category === "HEALTH" || data.category === "CANCER" ? true : data.isInputRequired;
+        setFormData((prev: FormData) => ({ ...prev, questionText: data.questionText, category: data.category, isInputRequired: isRequired, isDocumentNeeded: data.isDocumentNeeded }));
       } else if (type === "edit-nested") {
         setEditId(data.id);
         setFormData((prev: FormData) => ({ ...prev, questionText: data.questionText, inputLebleText: data.inputLabelText, isInputRequired: data.isInputRequired, isDocumentNeeded: data.isDocumentNeeded }));

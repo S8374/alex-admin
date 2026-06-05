@@ -18,6 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { HealthAnalysis } from "./HealthAnalysis";
 import { PetDossier } from "./PetDossier";
 import { QuoteSidebar } from "./QuoteSidebar";
+import { AgreementTemplate } from "./AgreementTemplate";
 
 interface QuoteEditorProps {
   application: any;
@@ -32,7 +33,7 @@ export const QuoteEditor = ({
   onSendQuote, 
   isSending 
 }: QuoteEditorProps) => {
-  const [activeTab, setActiveTab] = useState<"overview" | "health" | "pets">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "health" | "pets" | "agreement">("overview");
   const [selectedPetIds, setSelectedPetIds] = useState<string[]>(
     application.pets
       ?.filter((p: any) => {
@@ -43,7 +44,12 @@ export const QuoteEditor = ({
   );
   const [quoteForm, setQuoteForm] = useState({
     setupFee: 10,
-    petCharges: {} as Record<string, number>
+    transportFee: 50,
+    spayNeuterFee: 150,
+    dueDay: 1,
+    lateFee: 25,
+    petCharges: {} as Record<string, number>,
+    representativeSignatureUrl: ""
   });
 
   const togglePetSelection = (petId: string) => {
@@ -84,6 +90,7 @@ export const QuoteEditor = ({
               { id: "overview", label: "Overview", icon: LayoutGrid },
               { id: "health", label: "Health", icon: HeartPulse },
               { id: "pets", label: "Pets", icon: Dog },
+              { id: "agreement", label: "Agreement", icon: ShieldCheck },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -99,8 +106,8 @@ export const QuoteEditor = ({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 py-10">
-        <div className="lg:col-span-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 py-6">
+        <div className={activeTab === "agreement" ? "lg:col-span-8 lg:max-h-[calc(100vh-250px)] lg:overflow-y-auto style-scrollbar lg:pr-2" : "lg:col-span-12"}>
           <AnimatePresence mode="wait">
             {activeTab === "overview" && (
               <motion.div key="overview" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -109,10 +116,10 @@ export const QuoteEditor = ({
                     <UserCheck className="w-5 h-5 text-primary" /> Applicant Data
                   </h3>
                   <div className="space-y-4">
-                    {application.user.personInfos?.[0] ? Object.entries(application.user.personInfos[0]).filter(([k]) => !['id', 'userId', 'createdAt', 'updatedAt'].includes(k)).map(([key, val]) => (
+                    {application.personInfo ? Object.entries(application.personInfo).filter(([k]) => !['id', 'userId', 'applicationId', 'createdAt', 'updatedAt'].includes(k)).map(([key, val]) => (
                       <div key={key} className="flex justify-between items-center border-b border-gray-50 pb-3">
                         <span className="text-xs font-semibold text-gray-400 capitalize">{key.replace(/([A-Z])/g, ' $1')}</span>
-                        <span className="text-sm font-bold text-gray-900">{val as string || "N/A"}</span>
+                        <span className="text-sm font-bold text-gray-900">{String(val) || "N/A"}</span>
                       </div>
                     )) : (
                       <div className="p-10 text-center bg-gray-50 rounded-xl border border-dashed border-gray-200">
@@ -144,23 +151,112 @@ export const QuoteEditor = ({
               <PetDossier 
                 pets={application.pets} 
                 selectedIds={selectedPetIds} 
-                onToggle={togglePetSelection} 
+                onToggle={togglePetSelection}
+                application={application}
               />
+            )}
+            {activeTab === "agreement" && (
+              <motion.div key="agreement" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                <AgreementTemplate
+                  clientName={application.user.fullName}
+                  clientAddress={
+                    application.personInfo
+                      ? `${application.personInfo.streetAddress || ""}, ${application.personInfo.city || ""}, ${application.personInfo.state || ""} ${application.personInfo.zipCode || ""}`
+                      : ""
+                  }
+                  clientPhone={
+                    application.personInfo?.cellPhone || 
+                    application.personInfo?.homePhone || 
+                    application.personInfo?.workPhone || 
+                    ""
+                  }
+                  clientEmail={application.user.email}
+                  representativeName={application.representative?.fullName || ""}
+                  representativeEmail={application.representative?.email || ""}
+                  representativePhone={application.representative?.phoneNumber || ""}
+                  
+                  clientFirstName={application.personInfo?.firstName || ""}
+                  clientLastName={application.personInfo?.lastName || ""}
+                  clientMiddleInitial={application.personInfo?.middleInitial || ""}
+                  clientSsnLast4={application.personInfo?.ssnLast4 || ""}
+                  clientHomePhone={application.personInfo?.homePhone || ""}
+                  clientWorkPhone={application.personInfo?.workPhone || ""}
+
+                  representativeFirstName={application.representative?.fullName?.split(" ")[0] || ""}
+                  representativeLastName={application.representative?.fullName?.split(" ").slice(1).join(" ") || ""}
+                  representativeMiddleInitial={application.representative?.middleInitial || ""}
+                  representativeAddress={application.representative?.streetAddress || ""}
+                  representativeCityStateZip={
+                    application.representative 
+                      ? `${application.representative.city || ""}${application.representative.state ? ", " + application.representative.state : ""}${application.representative.zipCode ? " " + application.representative.zipCode : ""}`
+                      : ""
+                  }
+                  representativeRelation={application.representative?.relationship || ""}
+                  representativeHomePhone={application.representative?.homePhone || ""}
+                  representativeWorkPhone={application.representative?.workPhone || ""}
+
+                  transportFeePerDog={quoteForm.transportFee}
+                  spayNeuterFeePerDog={quoteForm.spayNeuterFee}
+                  dueDay={quoteForm.dueDay}
+                  lateFee={quoteForm.lateFee}
+
+                  pets={application.pets
+                    ?.filter((p: any) => selectedPetIds.includes(p.id))
+                    ?.map((p: any) => ({
+                      name: p.name,
+                      species: p.species || "Dog",
+                      gender: p.gender || "MALE",
+                      spayedNeutered: p.isSpayedNeutered ? "Yes" : "No",
+                      primaryBreed: p.primaryBreed,
+                      additionalBreed: p.additionalBreed || "None",
+                      colorsAndCoat: p.colorsAndCoat || "N/A",
+                      birthday: p.birthday,
+                      isMicrochipped: p.isMicrochipped ? "Yes" : "No",
+                      microchipNumber: p.microchipNumber,
+                      petCharge: quoteForm.petCharges[p.id] || 0
+                    }))
+                  }
+                  setupFee={quoteForm.setupFee}
+                  totalMonthlyCharge={Object.values(quoteForm.petCharges).reduce((acc: number, curr: any) => acc + curr, 0)}
+                  isSigned={false}
+                  healthAnswers={application.healthAnswers}
+                  familyHealthHistories={application.familyHealthHistories}
+                  representativeSignatureUrl={quoteForm.representativeSignatureUrl}
+                />
+              </motion.div>
             )}
           </AnimatePresence>
         </div>
 
-        <div className="lg:col-span-4">
-          <QuoteSidebar 
-            pets={application.pets} 
-            selectedIds={selectedPetIds} 
-            form={quoteForm} 
-            onFormUpdate={setQuoteForm} 
-            onSend={() => onSendQuote({ ...quoteForm, selectedPetIds })} 
-            isSending={isSending} 
-          />
-        </div>
+        {activeTab === "agreement" && (
+          <div className="lg:col-span-4 pl-3 lg:sticky lg:top-[230px] self-start">
+            <QuoteSidebar 
+              pets={application.pets} 
+              selectedIds={selectedPetIds} 
+              form={quoteForm} 
+              onFormUpdate={setQuoteForm} 
+              onSend={() => onSendQuote({ ...quoteForm, selectedPetIds })} 
+              isSending={isSending} 
+            />
+          </div>
+        )}
       </div>
+
+      <style>{`
+        .style-scrollbar::-webkit-scrollbar {
+          width: 5px;
+        }
+        .style-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .style-scrollbar::-webkit-scrollbar-thumb {
+          background: #cbd5e1;
+          border-radius: 4px;
+        }
+        .style-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: #94a3b8;
+        }
+      `}</style>
     </div>
   );
 };
