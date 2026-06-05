@@ -26,7 +26,7 @@ export function Header({ refetch, isFetching, onMenuClick }: HeaderProps) {
           <input 
             type="text" 
             placeholder="Search across the system..." 
-            className="w-full h-11 bg-gray-50 border-none rounded-xl pl-12 pr-4 text-sm outline-none focus:ring-2 focus:ring-[#85A1D1]/10 transition-all text-gray-900"
+            className="w-full h-11 bg-gray-50 border-none rounded-xl pl-12 pr-4 text-sm outline-none focus:ring-2 focus:ring-primary/10 transition-all text-gray-900"
           />
         </div>
       </div>
@@ -34,20 +34,20 @@ export function Header({ refetch, isFetching, onMenuClick }: HeaderProps) {
       <div className="flex items-center gap-2 sm:gap-4 lg:gap-6 shrink-0">
         <button 
           onClick={() => refetch()}
-          className={`p-2 text-gray-400 hover:text-[#85A1D1] transition-all ${isFetching ? 'animate-spin' : ''}`}
+          className={`p-2 text-gray-400 hover:text-primary transition-all ${isFetching ? 'animate-spin' : ''}`}
         >
           <RefreshCcw className="w-5 h-5" />
         </button>
-        <button className="relative p-2 text-gray-400 hover:text-[#85A1D1] transition-colors">
+        <button className="relative p-2 text-gray-400 hover:text-primary transition-colors">
           <Bell className="w-6 h-6" />
           <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />
         </button>
         <div className="hidden sm:flex items-center gap-3 pl-4 lg:pl-6 border-l border-gray-100">
           <div className="text-right">
             <p className="text-sm font-bold text-gray-900">Alex Garrett</p>
-            <p className="text-[11px] font-bold text-[#85A1D1] uppercase tracking-wider">Super Admin</p>
+            <p className="text-[11px] font-bold text-primary uppercase tracking-wider">Super Admin</p>
           </div>
-          <div className="w-10 h-10 bg-[#85A1D1]/10 rounded-full flex items-center justify-center font-bold text-[#85A1D1] border-2 border-white shadow-sm">
+          <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center font-bold text-primary border-2 border-white shadow-sm">
             AG
           </div>
         </div>

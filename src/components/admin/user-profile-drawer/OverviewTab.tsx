@@ -19,7 +19,7 @@ export function OverviewTab({ user, isLoading = false }: OverviewTabProps) {
   const InfoCard = ({ title, icon: Icon, children }: { title: string, icon: any, children: React.ReactNode }) => (
     <div className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm">
       <div className="flex items-center gap-3 mb-6 border-b border-gray-50 pb-4">
-        <div className="w-8 h-8 rounded-lg bg-[#85A1D1]/10 flex items-center justify-center text-[#85A1D1]">
+        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
           <Icon className="w-4 h-4" />
         </div>
         <h3 className="text-xs font-bold text-gray-900 uppercase tracking-widest">{title}</h3>
@@ -73,7 +73,7 @@ export function OverviewTab({ user, isLoading = false }: OverviewTabProps) {
             <>
               <div className="flex items-start justify-between">
                 <DataField label="Full Name" value={representative.fullName} />
-                <Badge variant="outline" className="bg-[#85A1D1]/5 text-[#85A1D1] border-[#85A1D1]/10 text-[10px] font-bold uppercase">
+                <Badge variant="outline" className="bg-primary/5 text-primary border-primary/10 text-[10px] font-bold uppercase">
                   {representative.relationship}
                 </Badge>
               </div>
@@ -107,10 +107,10 @@ export function OverviewTab({ user, isLoading = false }: OverviewTabProps) {
       <div className="bg-gray-900 rounded-xl p-8 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-8">
         <div className="flex items-center gap-6">
           <div className="w-14 h-14 rounded-xl bg-white/10 flex items-center justify-center border border-white/10">
-            <Shield className="w-6 h-6 text-[#85A1D1]" />
+            <Shield className="w-6 h-6 text-primary" />
           </div>
           <div>
-            <p className="text-[10px] font-bold text-[#85A1D1] uppercase tracking-[0.2em] mb-1">Account Eligibility</p>
+            <p className="text-[10px] font-bold text-primary uppercase tracking-[0.2em] mb-1">Account Eligibility</p>
             <p className="text-xl font-bold">Verified Member Profile</p>
           </div>
         </div>

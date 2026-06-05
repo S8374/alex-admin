@@ -115,7 +115,7 @@ export function AdminLoginForm() {
           <label className="flex items-center gap-2 cursor-pointer group">
             <input 
               type="checkbox" 
-              className="w-4 h-4 rounded border-gray-300 text-[#85A1D1] focus:ring-[#85A1D1] cursor-pointer"
+              className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
             />
             <span className="text-xs font-semibold text-muted-foreground group-hover:text-foreground transition-colors">
               Stay signed in
@@ -133,7 +133,7 @@ export function AdminLoginForm() {
       {/* Support Section */}
       <div className="pt-6 border-t border-gray-100">
         <p className="text-center text-xs text-muted-foreground font-medium leading-relaxed">
-          Trouble logging in? Contact the <a href="#" className="text-[#85A1D1] font-bold hover:underline">Systems Administrator</a> for assistance or to recover your credentials.
+          Trouble logging in? Contact the <a href="#" className="text-primary font-bold hover:underline">Systems Administrator</a> for assistance or to recover your credentials.
         </p>
       </div>
     </div>

@@ -15,7 +15,7 @@ export function ManagementHeader({ hasQuestionnaire, onInit, onAdd }: any) {
       </div>
       <div className="flex items-stretch sm:items-center gap-3 w-full sm:w-auto">
         {!hasQuestionnaire ? (
-          <button onClick={onInit} className="h-10 w-full sm:w-auto px-4 bg-[#85A1D1] text-white rounded-lg font-bold text-xs hover:bg-[#7490c0] transition-all flex items-center justify-center gap-2 shadow-sm whitespace-nowrap">
+          <button onClick={onInit} className="h-10 w-full sm:w-auto px-4 bg-primary text-white rounded-lg font-bold text-xs hover:bg-[#7490c0] transition-all flex items-center justify-center gap-2 shadow-sm whitespace-nowrap">
             <Plus className="w-4 h-4" /> Initialize Framework
           </button>
         ) : (

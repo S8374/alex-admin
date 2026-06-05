@@ -67,13 +67,13 @@ export const QuoteSidebar = ({
   return (
     <div className="bg-white rounded border border-gray-100  p-8 flex flex-col h-fit sticky top-24">
       <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2 mb-6">
-        <Settings2 className="w-4 h-4 text-[#85A1D1]" /> Financials
+        <Settings2 className="w-4 h-4 text-primary" /> Financials
       </h3>
 
       <div className="space-y-6 flex-1">
         {/* Setup Fee */}
         <div className="p-6 bg-white rounded text-black ">
-          <p className="text-[10px] font-bold text-[#85A1D1] uppercase tracking-widest mb-2">Activation Fee</p>
+          <p className="text-[10px] font-bold text-primary uppercase tracking-widest mb-2">Activation Fee</p>
           <div className="flex items-center gap-2 border-b border-white/10 pb-4">
             <span className="text-xl font-bold text-white/40">$</span>
             <input 
@@ -91,7 +91,7 @@ export const QuoteSidebar = ({
             <div key={pet.id} className="p-4 bg-gray-50 rounded border border-gray-100 space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Dog className="w-4 h-4 text-[#85A1D1]" />
+                  <Dog className="w-4 h-4 text-primary" />
                   <span className="text-xs font-bold text-gray-900 uppercase tracking-tight">{pet.name}</span>
                 </div>
                 <Badge className="bg-emerald-50 text-emerald-600 border-none font-bold text-[10px] px-2 py-0.5">Selected</Badge>
@@ -107,7 +107,7 @@ export const QuoteSidebar = ({
                       ...form,
                       petCharges: { ...form.petCharges, [pet.id]: Number(e.target.value) }
                     })}
-                    className="w-full h-10 pl-8 pr-3 bg-white rounded text-base font-bold text-gray-900 outline-none border border-gray-200 focus:border-[#85A1D1] transition-all"
+                    className="w-full h-10 pl-8 pr-3 bg-white rounded text-base font-bold text-gray-900 outline-none border border-gray-200 focus:border-primary transition-all"
                   />
                 </div>
               </div>
@@ -122,7 +122,7 @@ export const QuoteSidebar = ({
 
         {/* Unified Agreement Document URL */}
         {selectedIds.length > 0 && (
-          <div className="p-4 bg-[#85A1D1]/10 rounded border border-[#85A1D1]/20 space-y-3">
+          <div className="p-4 bg-primary/10 rounded border border-primary/20 space-y-3">
             <p className="text-[10px] font-bold text-[#5675A5] uppercase tracking-widest">
               Agreement Document
             </p>
@@ -134,16 +134,16 @@ export const QuoteSidebar = ({
               onDrop={handleDrop}
               className={`p-3 rounded-lg border-2 border-dashed cursor-pointer transition-all ${
                 dragOver 
-                  ? "border-[#85A1D1] bg-[#85A1D1]/10" 
-                  : "border-gray-200 hover:border-[#85A1D1]/40 bg-white"
+                  ? "border-primary bg-primary/10" 
+                  : "border-gray-200 hover:border-primary/40 bg-white"
               }`}
               onClick={() => fileInputRef.current?.click()}
             >
               <div className="flex items-center justify-center gap-2 py-2">
                 {isUploading ? (
                   <>
-                    <Loader2 className="w-3.5 h-3.5 text-[#85A1D1] animate-spin" />
-                    <span className="text-[10px] font-bold text-[#85A1D1] uppercase tracking-tight">Uploading...</span>
+                    <Loader2 className="w-3.5 h-3.5 text-primary animate-spin" />
+                    <span className="text-[10px] font-bold text-primary uppercase tracking-tight">Uploading...</span>
                   </>
                 ) : (
                   <>
@@ -176,7 +176,7 @@ export const QuoteSidebar = ({
                     ...form,
                     sharedAgreementUrl: e.target.value
                   })}
-                  className="flex-1 h-9 px-3 bg-white rounded text-xs font-semibold text-gray-700 outline-none border border-gray-200 focus:border-[#85A1D1] transition-all"
+                  className="flex-1 h-9 px-3 bg-white rounded text-xs font-semibold text-gray-700 outline-none border border-gray-200 focus:border-primary transition-all"
                 />
                 {form.sharedAgreementUrl && (
                   <button
@@ -214,7 +214,7 @@ export const QuoteSidebar = ({
           </div>
           <div className="text-right">
             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Due Today</p>
-            <p className="text-lg font-bold text-[#85A1D1]">${dueNow.toFixed(2)}</p>
+            <p className="text-lg font-bold text-primary">${dueNow.toFixed(2)}</p>
           </div>
         </div>
 

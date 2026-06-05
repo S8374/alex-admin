@@ -55,7 +55,7 @@ function SidebarContent({ activeView, setActiveView, handleLogout, isLoggingOut,
         {onToggleCollapse && (
           <button 
             onClick={onToggleCollapse} 
-            className="p-2 bg-gray-50 text-gray-400 hover:text-[#85A1D1] rounded-xl transition-colors shrink-0"
+            className="p-2 bg-gray-50 text-gray-400 hover:text-primary rounded-xl transition-colors shrink-0"
             title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
           >
             {isCollapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}

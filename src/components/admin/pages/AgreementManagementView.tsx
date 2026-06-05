@@ -104,7 +104,7 @@ export function AgreementManagementView() {
   if (isLoading) {
     return (
       <div className="h-[60vh] flex flex-col items-center justify-center gap-4">
-        <div className="w-8 h-8 border-3 border-[#85A1D1] border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin" />
         <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest font-mono">Connecting...</span>
       </div>
     );
@@ -132,7 +132,7 @@ export function AgreementManagementView() {
                   setEditData({ id: "", agreementDocURL: "" });
                   setViewMode("edit");
                 }}
-                className="h-9 px-4 bg-[#85A1D1] hover:bg-[#7490c0] text-white rounded-lg font-bold text-xs transition-all flex items-center gap-2"
+                className="h-9 px-4 bg-primary hover:bg-[#7490c0] text-white rounded-lg font-bold text-xs transition-all flex items-center gap-2"
               >
                 <Plus className="w-4 h-4" /> Add Document Link
               </button>
@@ -157,7 +157,7 @@ export function AgreementManagementView() {
             <div className="lg:col-span-8 bg-white rounded-2xl border border-gray-100 shadow-sm p-8 space-y-8">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="space-y-4">
-                  <div className="w-12 h-12 bg-[#85A1D1]/10 rounded-xl flex items-center justify-center text-[#85A1D1]">
+                  <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
                     <FileUp className="w-6 h-6" />
                   </div>
                   <div>
@@ -171,7 +171,7 @@ export function AgreementManagementView() {
                   <button 
                     onClick={() => fileInputRef.current?.click()}
                     disabled={isUploading}
-                    className="h-11 px-6 bg-[#85A1D1]/10 text-[#85A1D1] rounded-xl font-bold text-xs hover:bg-[#85A1D1]/20 transition-all flex items-center gap-2 border border-[#85A1D1]/20"
+                    className="h-11 px-6 bg-primary/10 text-primary rounded-xl font-bold text-xs hover:bg-primary/20 transition-all flex items-center gap-2 border border-primary/20"
                   >
                     {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
                     {isUploading ? "Uploading..." : "Upload PDF/DOC"}
@@ -186,7 +186,7 @@ export function AgreementManagementView() {
                     <input 
                       value={editData.agreementDocURL}
                       onChange={(e) => setEditData({ ...editData, agreementDocURL: e.target.value })}
-                      className="w-full h-14 bg-gray-50 border-none rounded-xl px-5 pr-12 text-sm font-bold text-[#85A1D1] outline-none focus:ring-1 focus:ring-[#85A1D1]"
+                      className="w-full h-14 bg-gray-50 border-none rounded-xl px-5 pr-12 text-sm font-bold text-primary outline-none focus:ring-1 focus:ring-primary"
                       placeholder="Paste link here or upload above..."
                     />
                     <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-300">
@@ -209,7 +209,7 @@ export function AgreementManagementView() {
 
             <div className="lg:col-span-4 space-y-6">
               <div className="bg-gray-900 p-8 rounded-2xl text-white space-y-4 shadow-xl">
-                <ShieldCheck className="w-8 h-8 text-[#85A1D1]" />
+                <ShieldCheck className="w-8 h-8 text-primary" />
                 <h3 className="text-sm font-bold uppercase tracking-widest">Digital Integrity</h3>
                 <p className="text-xs text-white/60 leading-relaxed font-medium">
                   Uploading a document directly ensures the source is managed by our secure servers. External links depend on the provider's availability.
@@ -243,17 +243,17 @@ export function AgreementManagementView() {
                       </div>
                     </div>
 
-                    <div className="p-6 bg-[#85A1D1]/5 rounded-xl border border-[#85A1D1]/10 flex items-center justify-between group cursor-pointer" onClick={() => window.open(currentAgreement.agreementDocURL, '_blank')}>
+                    <div className="p-6 bg-primary/5 rounded-xl border border-primary/10 flex items-center justify-between group cursor-pointer" onClick={() => window.open(currentAgreement.agreementDocURL, '_blank')}>
                       <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-[#85A1D1] shadow-sm">
+                        <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-primary shadow-sm">
                           <FileText className="w-5 h-5" />
                         </div>
                         <div className="overflow-hidden max-w-[400px]">
                           <p className="text-xs font-bold text-gray-900 truncate">{currentAgreement.agreementDocURL}</p>
-                          <p className="text-[10px] text-[#85A1D1] font-bold uppercase tracking-tight">Tap to inspect document</p>
+                          <p className="text-[10px] text-primary font-bold uppercase tracking-tight">Tap to inspect document</p>
                         </div>
                       </div>
-                      <ExternalLink className="w-4 h-4 text-gray-300 group-hover:text-[#85A1D1] transition-colors" />
+                      <ExternalLink className="w-4 h-4 text-gray-300 group-hover:text-primary transition-colors" />
                     </div>
 
                     <div className="flex items-center justify-between pt-6 border-t border-gray-50">

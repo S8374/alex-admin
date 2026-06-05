@@ -12,14 +12,14 @@ interface AuthInputProps extends InputHTMLAttributes<HTMLInputElement> {
 export function AuthInput({ label, error, rightElement, ...props }: AuthInputProps) {
   return (
     <div className="space-y-1.5 group">
-      <label className="text-[13px] font-semibold text-muted-foreground ml-1 transition-colors group-focus-within:text-[#85A1D1]">
+      <label className="text-[13px] font-semibold text-muted-foreground ml-1 transition-colors group-focus-within:text-primary">
         {label}
       </label>
       <div className="relative">
         <input
           {...props}
           className={`w-full h-12 bg-gray-50 border ${
-            error ? "border-red-500 focus:ring-red-100" : "border-gray-200 focus:ring-[#85A1D1]/10 focus:border-[#85A1D1]"
+            error ? "border-red-500 focus:ring-red-100" : "border-gray-200 focus:ring-primary/10 focus:border-primary"
           } rounded-xl px-4 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-all focus:ring-4 focus:bg-white`}
         />
         {rightElement && (

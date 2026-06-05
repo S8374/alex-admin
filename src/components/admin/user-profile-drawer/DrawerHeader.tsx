@@ -9,7 +9,7 @@ export function DrawerHeader({ user }: DrawerHeaderProps) {
       <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8 text-center sm:text-left">
         <Avatar className="w-20 h-20 rounded-[2.5rem] border-4 border-white shadow-2xl ring-1 ring-gray-100">
           <AvatarImage src={user.avatarUrl} />
-          <AvatarFallback className="bg-[#85A1D1]/10 text-[#85A1D1] text-4xl sm:text-5xl font-black">
+          <AvatarFallback className="bg-primary/10 text-primary text-4xl sm:text-5xl font-black">
             {user.fullName.charAt(0)}
           </AvatarFallback>
         </Avatar>
@@ -18,11 +18,11 @@ export function DrawerHeader({ user }: DrawerHeaderProps) {
             <h2 className="text-3xl sm:text-xl font-black text-gray-900 tracking-tight mb-2 sm:mb-3">{user.fullName}</h2>
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 sm:gap-6">
               <div className="flex items-center gap-2 text-gray-600 font-bold text-xs sm:text-sm">
-                <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-[#85A1D1]" />
+                <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                 {user.email}
               </div>
               <div className="flex items-center gap-2 text-gray-600 font-bold text-xs sm:text-sm">
-                <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-[#85A1D1]" />
+                <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                 Joined {new Date(user.createdAt).toLocaleDateString()}
               </div>
             </div>

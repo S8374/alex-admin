@@ -25,7 +25,7 @@ export function UserProfileDrawer({ userId, isOpen, onClose }: UserProfileDrawer
       <SheetContent className="w-[95vw] sm:w-150 lg:w-212.5 max-w-none p-0 border-l border-gray-100 flex flex-col h-full gap-0 overflow-hidden shadow-2xl bg-white">
         {isLoading ? (
           <div className="flex-1 flex items-center justify-center bg-white">
-            <div className="w-12 h-12 border-4 border-[#85A1D1]/20 border-t-[#85A1D1] rounded-full animate-spin" />
+            <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
           </div>
         ) : user ? (
           <>
@@ -37,11 +37,11 @@ export function UserProfileDrawer({ userId, isOpen, onClose }: UserProfileDrawer
               <div className="border-b border-gray-100 shrink-0 sticky top-0 bg-white z-20">
                 <ScrollArea className="w-full">
                   <TabsList className="h-16 bg-transparent gap-0 px-6 sm:px-10 flex justify-start items-center border-none outline-none w-max">
-                    <TabsTrigger value="overview" className="h-full rounded-none border-b-3 border-transparent data-[state=active]:border-[#85A1D1] data-[state=active]:bg-[#85A1D1]/5 px-4 sm:px-6 font-black text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all shrink-0 hover:bg-gray-50 data-[state=active]:shadow-sm">Overview</TabsTrigger>
-                    <TabsTrigger value="applications" className="h-full rounded-none border-b-3 border-transparent data-[state=active]:border-[#85A1D1] data-[state=active]:bg-[#85A1D1]/5 px-4 sm:px-6 font-black text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all shrink-0 hover:bg-gray-50 data-[state=active]:shadow-sm">Applications ({user.applications?.length || 0})</TabsTrigger>
-                    <TabsTrigger value="pets" className="h-full rounded-none border-b-3 border-transparent data-[state=active]:border-[#85A1D1] data-[state=active]:bg-[#85A1D1]/5 px-4 sm:px-6 font-black text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all shrink-0 hover:bg-gray-50 data-[state=active]:shadow-sm">Pets ({user.pets?.length || 0})</TabsTrigger>
-                    <TabsTrigger value="financials" className="h-full rounded-none border-b-3 border-transparent data-[state=active]:border-[#85A1D1] data-[state=active]:bg-[#85A1D1]/5 px-4 sm:px-6 font-black text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all shrink-0 hover:bg-gray-50 data-[state=active]:shadow-sm">Financials</TabsTrigger>
-                    <TabsTrigger value="health" className="h-full rounded-none border-b-3 border-transparent data-[state=active]:border-[#85A1D1] data-[state=active]:bg-[#85A1D1]/5 px-4 sm:px-6 font-black text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all shrink-0 hover:bg-gray-50 data-[state=active]:shadow-sm">Health</TabsTrigger>
+                    <TabsTrigger value="overview" className="h-full rounded-none border-b-3 border-transparent data-[state=active]:border-primary data-[state=active]:bg-primary/5 px-4 sm:px-6 font-black text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all shrink-0 hover:bg-gray-50 data-[state=active]:shadow-sm">Overview</TabsTrigger>
+                    <TabsTrigger value="applications" className="h-full rounded-none border-b-3 border-transparent data-[state=active]:border-primary data-[state=active]:bg-primary/5 px-4 sm:px-6 font-black text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all shrink-0 hover:bg-gray-50 data-[state=active]:shadow-sm">Applications ({user.applications?.length || 0})</TabsTrigger>
+                    <TabsTrigger value="pets" className="h-full rounded-none border-b-3 border-transparent data-[state=active]:border-primary data-[state=active]:bg-primary/5 px-4 sm:px-6 font-black text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all shrink-0 hover:bg-gray-50 data-[state=active]:shadow-sm">Pets ({user.pets?.length || 0})</TabsTrigger>
+                    <TabsTrigger value="financials" className="h-full rounded-none border-b-3 border-transparent data-[state=active]:border-primary data-[state=active]:bg-primary/5 px-4 sm:px-6 font-black text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all shrink-0 hover:bg-gray-50 data-[state=active]:shadow-sm">Financials</TabsTrigger>
+                    <TabsTrigger value="health" className="h-full rounded-none border-b-3 border-transparent data-[state=active]:border-primary data-[state=active]:bg-primary/5 px-4 sm:px-6 font-black text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all shrink-0 hover:bg-gray-50 data-[state=active]:shadow-sm">Health</TabsTrigger>
                   </TabsList>
                   <ScrollBar orientation="horizontal" />
                 </ScrollArea>

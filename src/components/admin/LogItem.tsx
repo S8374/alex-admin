@@ -75,7 +75,7 @@ export function LogItem({ log, onDelete, icon: Icon, colorClass }: LogItemProps)
                           {shouldTruncate && (
                             <button 
                               onClick={() => setShowModal(true)}
-                              className="text-[9px] font-black text-[#85A1D1] hover:underline uppercase"
+                              className="text-[9px] font-black text-primary hover:underline uppercase"
                             >
                               Show Full Response
                             </button>
@@ -135,7 +135,7 @@ export function LogItem({ log, onDelete, icon: Icon, colorClass }: LogItemProps)
                    return (
                      <div key={key} className="space-y-4">
                        <div className="flex items-center gap-2">
-                         <div className="h-4 w-1 bg-[#85A1D1] rounded-full" />
+                         <div className="h-4 w-1 bg-primary rounded-full" />
                          <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{key}</span>
                        </div>
                        <pre className="text-xs font-bold text-gray-700 bg-white p-4 sm:p-6 rounded-2xl border border-gray-100 font-mono overflow-x-auto shadow-sm">

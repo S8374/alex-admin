@@ -26,7 +26,7 @@ export const PetDossier = ({
         <h3 className="text-sm font-bold text-gray-900 uppercase tracking-widest">Pet Dossier</h3>
         <p className="text-xs text-gray-400 mt-1">Select pets for this coverage plan</p>
       </div>
-      <Badge className="bg-[#85A1D1] text-white border-none font-bold text-xs px-3">
+      <Badge className="bg-primary text-white border-none font-bold text-xs px-3">
         {selectedIds.length} / {pets.length} Selected
       </Badge>
     </div>
@@ -48,7 +48,7 @@ export const PetDossier = ({
             className={`p-6 rounded-xl border transition-all relative group ${isDisabled
                 ? 'bg-gray-100/50 border-gray-200 opacity-60 cursor-not-allowed'
                 : isSelected
-                  ? 'bg-white border-[#85A1D1] shadow-md ring-1 ring-[#85A1D1]/5 cursor-pointer'
+                  ? 'bg-white border-primary shadow-md ring-1 ring-primary/5 cursor-pointer'
                   : 'bg-gray-50/50 border-gray-100 opacity-70 grayscale hover:opacity-100 hover:grayscale-0 cursor-pointer'
               }`}
           >
@@ -62,7 +62,7 @@ export const PetDossier = ({
             </div>
 
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 rounded-xl bg-[#85A1D1]/10 flex items-center justify-center text-[#85A1D1]">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
                 <Dog className="w-6 h-6" />
               </div>
               <div>
@@ -104,7 +104,7 @@ export const PetDossier = ({
                 { icon: Stethoscope, label: "History", val: "Clean" }
               ].map((stat, i) => (
                 <div key={i} className="p-2.5 bg-gray-50 rounded-lg flex items-center gap-2">
-                  <stat.icon className="w-3.5 h-3.5 text-[#85A1D1]" />
+                  <stat.icon className="w-3.5 h-3.5 text-primary" />
                   <div>
                     <p className="text-[10px] font-bold text-gray-400 uppercase leading-none mb-1">{stat.label}</p>
                     <p className="text-xs font-bold text-gray-900">{stat.val}</p>

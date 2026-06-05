@@ -41,7 +41,7 @@ function MobileApplicationCard({ app, getStatusBadge, onApprove, onReject, onOpe
         <div className="flex items-center gap-3 min-w-0">
           <Avatar className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg border border-white shadow-sm shrink-0">
             <AvatarImage src={app.user?.avatarUrl} />
-            <AvatarFallback className="bg-[#85A1D1]/10 text-[#85A1D1] font-bold text-xs">{app.user?.fullName?.charAt(0) || "U"}</AvatarFallback>
+            <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs">{app.user?.fullName?.charAt(0) || "U"}</AvatarFallback>
           </Avatar>
           <div className="min-w-0">
             <p className="text-sm font-bold text-gray-900 truncate">{app.user?.fullName}</p>
@@ -142,7 +142,7 @@ export const ApplicationList = ({
         </div>
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto">
           {/* Status Filter */}
-          <select value={statusFilter} onChange={(e) => onStatusFilterChange(e.target.value)} className="h-10 px-4 w-full sm:w-48 bg-white border border-gray-200 rounded-lg text-sm font-bold text-gray-700 outline-none focus:ring-2 focus:ring-[#85A1D1]/10 transition-all shadow-sm">
+          <select value={statusFilter} onChange={(e) => onStatusFilterChange(e.target.value)} className="h-10 px-4 w-full sm:w-48 bg-white border border-gray-200 rounded-lg text-sm font-bold text-gray-700 outline-none focus:ring-2 focus:ring-primary/10 transition-all shadow-sm">
             <option value="ALL">All Statuses</option>
             <option value="DRAFT">Draft</option>
             <option value="SUBMITTED">Submitted</option>
@@ -155,7 +155,7 @@ export const ApplicationList = ({
           {/* Search */}
           <div className="relative w-full sm:w-80">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input type="text" placeholder="Search by name or email..." value={search} onChange={(e) => onSearchChange(e.target.value)} className="h-10 w-full bg-white border border-gray-200 rounded-lg pl-10 pr-4 text-sm font-medium outline-none focus:ring-2 focus:ring-[#85A1D1]/10 transition-all text-gray-900 shadow-sm" />
+            <input type="text" placeholder="Search by name or email..." value={search} onChange={(e) => onSearchChange(e.target.value)} className="h-10 w-full bg-white border border-gray-200 rounded-lg pl-10 pr-4 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/10 transition-all text-gray-900 shadow-sm" />
           </div>
         </div>
       </div>
@@ -213,7 +213,7 @@ export const ApplicationList = ({
                           <div className="flex items-center gap-3">
                             <Avatar className="w-9 h-9 rounded-lg border border-white shadow-sm">
                               <AvatarImage src={app.user?.avatarUrl} />
-                              <AvatarFallback className="bg-[#85A1D1]/10 text-[#85A1D1] font-bold text-xs">{app.user?.fullName?.charAt(0) || "U"}</AvatarFallback>
+                              <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs">{app.user?.fullName?.charAt(0) || "U"}</AvatarFallback>
                             </Avatar>
                             <div>
                               <p className="text-sm font-bold text-gray-900 leading-none mb-1">{app.user?.fullName}</p>

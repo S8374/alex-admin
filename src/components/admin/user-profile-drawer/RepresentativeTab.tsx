@@ -24,9 +24,9 @@ export function RepresentativeTab({ user, isLoading = false }: TabProps) {
             <CardHeader className="bg-gray-50/40 border-b border-gray-50 py-6 px-10">
               <CardTitle className="text-[11px] font-black uppercase tracking-widest text-gray-500 flex items-center justify-between w-full">
                 <div className="flex items-center gap-3">
-                  <User className="w-4 h-4 text-[#85A1D1]" /> Representative Information
+                  <User className="w-4 h-4 text-primary" /> Representative Information
                 </div>
-                <span className="text-[9px] bg-[#85A1D1]/10 text-[#85A1D1] px-3 py-1 rounded-full">
+                <span className="text-[9px] bg-primary/10 text-primary px-3 py-1 rounded-full">
                   App #{rep.applicationId.slice(0, 8)}
                 </span>
               </CardTitle>
@@ -35,13 +35,13 @@ export function RepresentativeTab({ user, isLoading = false }: TabProps) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                 <div className="space-y-8">
                   <div className="flex items-center gap-6">
-                    <div className="w-16 h-16 bg-[#85A1D1]/5 rounded-3xl flex items-center justify-center shrink-0 border border-[#85A1D1]/10 shadow-sm">
-                      <User className="w-7 h-7 text-[#85A1D1]" />
+                    <div className="w-16 h-16 bg-primary/5 rounded-3xl flex items-center justify-center shrink-0 border border-primary/10 shadow-sm">
+                      <User className="w-7 h-7 text-primary" />
                     </div>
                     <div className="space-y-1">
                       <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Full Name</p>
                       <h3 className="text-xl font-black text-gray-900 leading-none">{rep.fullName}</h3>
-                      <p className="text-[11px] font-bold text-[#85A1D1] uppercase tracking-tighter">{rep.relationship}</p>
+                      <p className="text-[11px] font-bold text-primary uppercase tracking-tighter">{rep.relationship}</p>
                     </div>
                   </div>
 
@@ -97,12 +97,12 @@ export function RepresentativeTab({ user, isLoading = false }: TabProps) {
 
                   <Separator className="bg-gray-50" />
 
-                  <div className="p-6 bg-[#85A1D1]/5 rounded-3xl border border-[#85A1D1]/10 flex items-center gap-4">
+                  <div className="p-6 bg-primary/5 rounded-3xl border border-primary/10 flex items-center gap-4">
                     <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm">
-                      <Briefcase className="w-6 h-6 text-[#85A1D1]" />
+                      <Briefcase className="w-6 h-6 text-primary" />
                     </div>
                     <div>
-                      <p className="text-[10px] font-black text-[#85A1D1] uppercase tracking-widest mb-0.5">Role Type</p>
+                      <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-0.5">Role Type</p>
                       <p className="text-sm font-black text-gray-900">Designated Representative</p>
                     </div>
                   </div>

@@ -64,7 +64,7 @@ export const ApplicationList = ({
             placeholder="Search applications..." 
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="h-10 w-full bg-white border border-gray-200 rounded-lg pl-10 pr-4 text-sm font-medium outline-none focus:ring-2 focus:ring-[#85A1D1]/10 transition-all text-gray-900 shadow-sm"
+            className="h-10 w-full bg-white border border-gray-200 rounded-lg pl-10 pr-4 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/10 transition-all text-gray-900 shadow-sm"
           />
         </div>
       </div>
@@ -74,7 +74,7 @@ export const ApplicationList = ({
         <div className="block lg:hidden p-4 flex-1">
           {loading ? (
             <div className="h-full flex items-center justify-center">
-              <div className="w-12 h-12 border-4 border-[#85A1D1] border-t-transparent rounded-full animate-spin" />
+              <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
             </div>
           ) : paginated.length ? (
             <div className="space-y-3">
@@ -106,7 +106,7 @@ export const ApplicationList = ({
                 <TableRow>
                   <TableCell colSpan={5} className="px-6 py-0">
                     <div className="min-h-[40vh] flex items-center justify-center">
-                      <div className="w-12 h-12 border-4 border-[#85A1D1] border-t-transparent rounded-full animate-spin" />
+                      <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
                     </div>
                   </TableCell>
                 </TableRow>
@@ -117,7 +117,7 @@ export const ApplicationList = ({
                       <div className="flex items-center gap-3">
                         <Avatar className="w-9 h-9 rounded-lg border border-white shadow-sm">
                           <AvatarImage src={app.user.avatarUrl} />
-                          <AvatarFallback className="bg-[#85A1D1]/10 text-[#85A1D1] font-bold text-xs">
+                          <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs">
                             {app.user.fullName.charAt(0)}
                           </AvatarFallback>
                         </Avatar>
@@ -208,7 +208,7 @@ export const ApplicationList = ({
           <div className="flex items-center gap-3 min-w-0">
             <Avatar className="w-9 h-9 rounded-lg border border-white shadow-sm shrink-0">
               <AvatarImage src={app.user?.avatarUrl} />
-              <AvatarFallback className="bg-[#85A1D1]/10 text-[#85A1D1] font-bold text-xs">{app.user?.fullName?.charAt(0) || "U"}</AvatarFallback>
+              <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs">{app.user?.fullName?.charAt(0) || "U"}</AvatarFallback>
             </Avatar>
             <div className="min-w-0">
               <p className="text-sm font-bold text-gray-900 truncate">{app.user?.fullName}</p>

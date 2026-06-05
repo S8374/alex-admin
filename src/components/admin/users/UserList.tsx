@@ -104,13 +104,13 @@ export const UserList = ({
               placeholder="Search users..."
               value={params.search}
               onChange={(e) => setParams({ ...params, search: e.target.value, page: 1 })}
-              className="h-10 w-full bg-white border border-gray-200 rounded-lg pl-10 pr-4 text-sm font-medium outline-none focus:ring-2 focus:ring-[#85A1D1]/10 transition-all text-gray-900 shadow-sm"
+              className="h-10 w-full bg-white border border-gray-200 rounded-lg pl-10 pr-4 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/10 transition-all text-gray-900 shadow-sm"
             />
           </div>
           <select
             value={params.role}
             onChange={(e) => setParams({ ...params, role: e.target.value, page: 1 })}
-            className="h-10 px-4 bg-white border border-gray-200 rounded-lg text-sm font-bold text-gray-700 outline-none focus:ring-2 focus:ring-[#85A1D1]/10 transition-all"
+            className="h-10 px-4 bg-white border border-gray-200 rounded-lg text-sm font-bold text-gray-700 outline-none focus:ring-2 focus:ring-primary/10 transition-all"
           >
             <option value="">All Roles</option>
             <option value="USER">User</option>
@@ -131,7 +131,7 @@ export const UserList = ({
                       <div className="flex items-center gap-3 min-w-0">
                         <Avatar className="w-11 h-11 rounded-xl border border-white shadow-sm shrink-0">
                           <AvatarImage src={user.avatarUrl} />
-                          <AvatarFallback className="bg-[#85A1D1]/10 text-[#85A1D1] font-bold text-xs">
+                          <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs">
                             {user.fullName.charAt(0)}
                           </AvatarFallback>
                         </Avatar>
@@ -171,7 +171,7 @@ export const UserList = ({
                           <DropdownMenuLabel className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-3 py-2">Management</DropdownMenuLabel>
                           <DropdownMenuItem
                             onClick={() => onStatusToggle(user.id, user.status)}
-                            className="rounded-lg cursor-pointer font-bold text-xs gap-3 focus:bg-[#85A1D1]/5 focus:text-[#85A1D1]"
+                            className="rounded-lg cursor-pointer font-bold text-xs gap-3 focus:bg-primary/5 focus:text-primary"
                           >
                             {user.status === "ACTIVE" ? <UserMinus className="w-4 h-4" /> : <UserCheck className="w-4 h-4" />}
                             {user.status === "ACTIVE" ? "Suspend Account" : "Activate Account"}
@@ -215,7 +215,7 @@ export const UserList = ({
                           <div className="flex items-center gap-3">
                             <Avatar className="w-10 h-10 rounded-lg border border-white shadow-sm">
                               <AvatarImage src={user.avatarUrl} />
-                              <AvatarFallback className="bg-[#85A1D1]/10 text-[#85A1D1] font-bold text-xs">
+                              <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs">
                                 {user.fullName.charAt(0)}
                               </AvatarFallback>
                             </Avatar>
@@ -259,7 +259,7 @@ export const UserList = ({
                               <DropdownMenuLabel className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-3 py-2">Management</DropdownMenuLabel>
                               <DropdownMenuItem
                                 onClick={() => onStatusToggle(user.id, user.status)}
-                                className="rounded-lg cursor-pointer font-bold text-xs gap-3 focus:bg-[#85A1D1]/5 focus:text-[#85A1D1]"
+                                className="rounded-lg cursor-pointer font-bold text-xs gap-3 focus:bg-primary/5 focus:text-primary"
                               >
                                 {user.status === "ACTIVE" ? <UserMinus className="w-4 h-4" /> : <UserCheck className="w-4 h-4" />}
                                 {user.status === "ACTIVE" ? "Suspend Account" : "Activate Account"}

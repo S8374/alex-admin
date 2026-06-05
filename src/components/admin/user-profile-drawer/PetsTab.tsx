@@ -21,10 +21,10 @@ export function PetsTab({ user, isLoading = false }: PetsTabProps) {
     <div className="space-y-8">
       <div className="flex items-center justify-between border-b border-gray-100 pb-4">
         <div className="flex items-center gap-2">
-          <Dog className="w-5 h-5 text-[#85A1D1]" />
+          <Dog className="w-5 h-5 text-primary" />
           <h3 className="text-sm font-bold text-gray-900 uppercase tracking-widest">Registered Pets</h3>
         </div>
-        <Badge variant="outline" className="bg-[#85A1D1]/5 text-[#85A1D1] border-[#85A1D1]/20 font-bold text-xs px-3">
+        <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 font-bold text-xs px-3">
           {pets.length} Active
         </Badge>
       </div>
@@ -37,7 +37,7 @@ export function PetsTab({ user, isLoading = false }: PetsTabProps) {
                 <div className="flex items-center gap-4">
                   <Avatar className="w-12 h-12 rounded-lg border-2 border-white shadow-sm ring-1 ring-gray-200">
                     <AvatarImage src={pet.avatarUrl || pet.imageUrl} className="object-cover" />
-                    <AvatarFallback className="bg-[#85A1D1]/10 text-[#85A1D1] font-bold text-xs">
+                    <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs">
                       {pet.name.charAt(0)}
                     </AvatarFallback>
                   </Avatar>

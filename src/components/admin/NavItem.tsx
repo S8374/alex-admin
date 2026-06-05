@@ -17,7 +17,7 @@ export function NavItem({ icon: Icon, label, active = false, onClick, isCollapse
         isCollapsed ? "justify-center p-3" : "gap-3 px-4 py-3"
       } rounded-xl ${
         active 
-          ? "bg-[#85A1D1] text-white shadow-lg shadow-[#85A1D1]/20" 
+          ? "bg-primary text-white shadow-lg shadow-primary/20" 
           : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
       }`}
     >

@@ -82,7 +82,7 @@ export function QuotesManagementView() {
       <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="min-h-screen bg-gray-50/50 -m-10 pt-0 px-10 pb-10">
         {isDetailLoading ? (
           <div className="h-[80vh] flex flex-col items-center justify-center gap-6 animate-pulse">
-            <div className="w-16 h-16 border-4 border-[#85A1D1] border-t-transparent rounded-full animate-spin" />
+            <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin" />
             <p className="text-xs font-black text-gray-400 uppercase tracking-widest">Constructing Laboratory...</p>
           </div>
         ) : detailData?.data && (

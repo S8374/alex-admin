@@ -20,10 +20,10 @@ export function ApplicationsTab({ user, isLoading = false }: ApplicationsTabProp
     <div className="space-y-8">
       <div className="flex items-center justify-between border-b border-gray-100 pb-4">
         <div className="flex items-center gap-2">
-          <ClipboardList className="w-5 h-5 text-[#85A1D1]" />
+          <ClipboardList className="w-5 h-5 text-primary" />
           <h3 className="text-sm font-bold text-gray-900 uppercase tracking-widest">Enrollment History</h3>
         </div>
-        <Badge variant="outline" className="bg-[#85A1D1]/5 text-[#85A1D1] border-[#85A1D1]/20 font-bold text-xs px-3">
+        <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 font-bold text-xs px-3">
           {applications.length} Records
         </Badge>
       </div>
@@ -35,7 +35,7 @@ export function ApplicationsTab({ user, isLoading = false }: ApplicationsTabProp
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="flex-1 space-y-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-[#85A1D1]">
+                    <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-primary">
                       <FileCheck className="w-4 h-4" />
                     </div>
                     <div>
@@ -44,7 +44,7 @@ export function ApplicationsTab({ user, isLoading = false }: ApplicationsTabProp
                         <Badge className={`rounded-md font-bold text-[9px] uppercase px-2 py-0.5 ${
                           app.status === 'APPROVED' ? 'bg-emerald-50 text-emerald-600' :
                           app.status === 'DECLINED' ? 'bg-red-50 text-red-600' : 
-                          'bg-[#85A1D1]/10 text-[#85A1D1]'
+                          'bg-primary/10 text-primary'
                         }`}>
                           {app.status}
                         </Badge>
@@ -83,7 +83,7 @@ export function ApplicationsTab({ user, isLoading = false }: ApplicationsTabProp
                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Last Update</p>
                      <p className="text-xs font-bold text-gray-900">{new Date(app.updatedAt || app.createdAt).toLocaleDateString()}</p>
                    </div>
-                   <button className="flex items-center gap-2 text-[10px] font-bold text-[#85A1D1] uppercase tracking-[0.2em] hover:text-gray-900 transition-all group/btn">
+                   <button className="flex items-center gap-2 text-[10px] font-bold text-primary uppercase tracking-[0.2em] hover:text-gray-900 transition-all group/btn">
                      Audit Log <ArrowRight className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform" />
                    </button>
                 </div>

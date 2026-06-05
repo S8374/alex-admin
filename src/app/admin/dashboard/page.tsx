@@ -165,7 +165,7 @@ export default function AdminDashboard() {
     if (message.includes("SECURITY") || level === "ERROR") return "text-red-600 bg-red-50 border-red-100";
     if (message.includes("Database")) return "text-purple-600 bg-purple-50 border-purple-100";
     if (message.includes("Auth")) return "text-amber-600 bg-amber-50 border-amber-100";
-    return "text-[#85A1D1] bg-[#85A1D1]/5 border-[#85A1D1]/10";
+    return "text-primary bg-primary/5 border-primary/10";
   };
 
   return (

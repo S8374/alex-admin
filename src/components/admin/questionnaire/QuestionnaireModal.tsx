@@ -34,7 +34,7 @@ export function QuestionnaireModal({
             <div className="p-8 space-y-8">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-[#85A1D1]/10 rounded-2xl flex items-center justify-center text-[#85A1D1]">
+                  <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
                     {type.includes("question") ? <HelpCircle className="w-6 h-6" /> : type.includes("nested") ? <GitBranch className="w-6 h-6" /> : <Settings className="w-6 h-6" />}
                   </div>
                   <div>

@@ -9,9 +9,9 @@ export function LogicStats({ questions }: { questions: any[] }) {
       <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Logic Statistics</h3>
       <div className="space-y-4">
         <StatItem icon={HelpCircle} label="Root Questions" value={questions.length} color="text-gray-400" />
-        <StatItem icon={GitBranch} label="Logic Branches" value={branchCount} color="text-[#85A1D1]" />
+        <StatItem icon={GitBranch} label="Logic Branches" value={branchCount} color="text-primary" />
       </div>
-      <div className="bg-[#85A1D1] p-6 rounded-2xl text-white space-y-4">
+      <div className="bg-primary p-6 rounded-2xl text-white space-y-4">
         <ShieldCheck className="w-6 h-6 text-white/50" />
         <h3 className="text-[10px] font-bold uppercase tracking-widest">Assessment Policy</h3>
         <p className="text-[10px] text-white/70 leading-relaxed font-medium">All edits are live. Use logic branching to capture deep medical history for accurate quotes.</p>

@@ -42,7 +42,7 @@ export const ApplicationDetail = ({
   if (isLoading) {
     return (
       <div className="h-[80vh] flex flex-col items-center justify-center gap-6">
-        <div className="w-12 h-12 border-4 border-[#85A1D1] border-t-transparent rounded-full animate-spin" />
+        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
         <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">Loading Application Details...</p>
       </div>
     );
@@ -81,7 +81,7 @@ export const ApplicationDetail = ({
             <div className="flex items-center gap-4">
               <Avatar className="w-16 h-16 rounded-2xl border-2 border-white shadow-sm">
                 <AvatarImage src={user?.avatarUrl} />
-                <AvatarFallback className="bg-[#85A1D1]/10 text-[#85A1D1] font-bold text-xl">
+                <AvatarFallback className="bg-primary/10 text-primary font-bold text-xl">
                   {user?.fullName?.charAt(0) || "U"}
                 </AvatarFallback>
               </Avatar>
@@ -135,16 +135,16 @@ export const ApplicationDetail = ({
         <Tabs defaultValue="applicant" className="space-y-8">
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
             <TabsList className="h-14 bg-transparent gap-8 px-6 md:px-10 flex justify-start border-none">
-              <TabsTrigger value="applicant" className="h-full rounded-none border-b-2 border-transparent data-[state=active]:border-[#85A1D1] data-[state=active]:bg-transparent px-0 font-bold text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all">
+              <TabsTrigger value="applicant" className="h-full rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 font-bold text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all">
                 <User className="w-4 h-4 mr-2" /> Applicant
               </TabsTrigger>
-              <TabsTrigger value="pets" className="h-full rounded-none border-b-2 border-transparent data-[state=active]:border-[#85A1D1] data-[state=active]:bg-transparent px-0 font-bold text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all">
+              <TabsTrigger value="pets" className="h-full rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 font-bold text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all">
                 <Dog className="w-4 h-4 mr-2" /> Pets ({pets?.length || 0})
               </TabsTrigger>
-              <TabsTrigger value="health" className="h-full rounded-none border-b-2 border-transparent data-[state=active]:border-[#85A1D1] data-[state=active]:bg-transparent px-0 font-bold text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all">
+              <TabsTrigger value="health" className="h-full rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 font-bold text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all">
                 <HeartPulse className="w-4 h-4 mr-2" /> Health
               </TabsTrigger>
-              <TabsTrigger value="representative" className="h-full rounded-none border-b-2 border-transparent data-[state=active]:border-[#85A1D1] data-[state=active]:bg-transparent px-0 font-bold text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all">
+              <TabsTrigger value="representative" className="h-full rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 font-bold text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all">
                 <Users className="w-4 h-4 mr-2" /> Representative
               </TabsTrigger>
             </TabsList>
@@ -155,7 +155,7 @@ export const ApplicationDetail = ({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm space-y-6">
                   <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                    <User className="w-4 h-4 text-[#85A1D1]" /> Basic Information
+                    <User className="w-4 h-4 text-primary" /> Basic Information
                   </h3>
                   <div className="space-y-4">
                     <InfoRow label="Full Name" value={user?.fullName} />
@@ -166,7 +166,7 @@ export const ApplicationDetail = ({
                 </div>
                 <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm space-y-6">
                   <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-[#85A1D1]" /> Address Information
+                    <MapPin className="w-4 h-4 text-primary" /> Address Information
                   </h3>
                   <div className="space-y-4">
                     <InfoRow label="Street" value={personInfo?.streetAddress || "N/A"} />
@@ -184,7 +184,7 @@ export const ApplicationDetail = ({
                   <div key={pet.id} className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex gap-6">
                     <Avatar className="w-20 h-20 rounded-xl border-2 border-white shadow-sm">
                       <AvatarImage src={pet.photoUrl} />
-                      <AvatarFallback className="bg-[#85A1D1]/10 text-[#85A1D1]">
+                      <AvatarFallback className="bg-primary/10 text-primary">
                         <Dog className="w-8 h-8" />
                       </AvatarFallback>
                     </Avatar>

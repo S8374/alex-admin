@@ -131,7 +131,7 @@ export function PaymentManagementView() {
   if (loading) {
     return (
       <div className="h-[60vh] flex flex-col items-center justify-center gap-4">
-        <div className="w-8 h-8 border-3 border-[#85A1D1] border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin" />
         <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Loading Financial Data...</span>
       </div>
     );
@@ -150,7 +150,7 @@ export function PaymentManagementView() {
       label: "Total Transactions",
       value: paymentStats.totalTransactions.toLocaleString(),
       subtitle: "All payment records",
-      color: "bg-[#85A1D1]",
+      color: "bg-primary",
     },
     {
       icon: CheckCircle2,
@@ -202,7 +202,7 @@ export function PaymentManagementView() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search by transaction ID, customer or email..."
-                className="w-full h-11 bg-gray-50 border-none rounded-xl pl-11 pr-4 text-sm font-medium text-gray-900 outline-none focus:ring-1 focus:ring-[#85A1D1] transition-all"
+                className="w-full h-11 bg-gray-50 border-none rounded-xl pl-11 pr-4 text-sm font-medium text-gray-900 outline-none focus:ring-1 focus:ring-primary transition-all"
               />
             </div>
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
@@ -271,7 +271,7 @@ export function PaymentManagementView() {
                         className={`hover:bg-gray-50/50 transition-colors group cursor-pointer ${expandedRows.includes(payment.id) ? "bg-gray-50/80" : ""}`}
                       >
                         <td className="px-6 py-5">
-                          {expandedRows.includes(payment.id) ? <ChevronUp className="w-4 h-4 text-[#85A1D1]" /> : <ChevronDown className="w-4 h-4 text-gray-300" />}
+                          {expandedRows.includes(payment.id) ? <ChevronUp className="w-4 h-4 text-primary" /> : <ChevronDown className="w-4 h-4 text-gray-300" />}
                         </td>
                         <td className="px-6 py-5">
                           <div className="flex flex-col">
@@ -296,7 +296,7 @@ export function PaymentManagementView() {
                           <div className="flex flex-wrap gap-1 max-w-55">
                             {payment.coveredPets?.length > 0 ? (
                               payment.coveredPets.map((pet: any) => (
-                                <Badge key={pet.id} className="bg-[#85A1D1]/10 text-[#85A1D1] border-none text-[9px] font-black uppercase py-0.5">
+                                <Badge key={pet.id} className="bg-primary/10 text-primary border-none text-[9px] font-black uppercase py-0.5">
                                   {pet.name} (${pet.petCharge || "0"})
                                 </Badge>
                               ))
@@ -322,7 +322,7 @@ export function PaymentManagementView() {
                         </td>
                         <td className="px-6 py-5 text-right">
                           <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                            <button onClick={(e) => { e.stopPropagation(); toast.info(`Viewing details for ${payment.transactionId || payment.id}`); }} className="p-2 text-gray-400 hover:text-[#85A1D1] transition-colors"><ExternalLink className="w-4 h-4" /></button>
+                            <button onClick={(e) => { e.stopPropagation(); toast.info(`Viewing details for ${payment.transactionId || payment.id}`); }} className="p-2 text-gray-400 hover:text-primary transition-colors"><ExternalLink className="w-4 h-4" /></button>
                             <button onClick={(e) => { e.stopPropagation(); toast.info("Opening actions for transaction"); }} className="p-2 text-gray-400 hover:text-gray-900 transition-colors"><MoreHorizontal className="w-4 h-4" /></button>
                           </div>
                         </td>
@@ -338,7 +338,7 @@ export function PaymentManagementView() {
                                 exit={{ height: 0, opacity: 0 }}
                                 className="overflow-hidden bg-gray-50/30 "
                               >
-                                <div className=" border-l-4 border-[#85A1D1] ml-6 mb-6 mt-2 space-y-6">
+                                <div className=" border-l-4 border-primary ml-6 mb-6 mt-2 space-y-6">
                                   <PetCoverageTable pets={payment.coveredPets || []} totalMonthlyFee={Number(payment.monthlyPremium || 0)} />
                                 </div>
                               </motion.div>
@@ -394,7 +394,7 @@ export function PaymentManagementView() {
               <div className="space-y-5">
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Payment Status</label>
-                  <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="w-full h-12 bg-gray-50 border-none rounded-xl px-4 text-sm font-bold text-gray-900 outline-none focus:ring-1 focus:ring-[#85A1D1]">
+                  <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="w-full h-12 bg-gray-50 border-none rounded-xl px-4 text-sm font-bold text-gray-900 outline-none focus:ring-1 focus:ring-primary">
                     <option value={ALL_STATUS}>All Statuses</option>
                     <option value="SUCCESS">Success</option>
                     <option value="PENDING">Pending</option>
@@ -403,7 +403,7 @@ export function PaymentManagementView() {
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Payment Type</label>
-                  <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} className="w-full h-12 bg-gray-50 border-none rounded-xl px-4 text-sm font-bold text-gray-900 outline-none focus:ring-1 focus:ring-[#85A1D1]">
+                  <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} className="w-full h-12 bg-gray-50 border-none rounded-xl px-4 text-sm font-bold text-gray-900 outline-none focus:ring-1 focus:ring-primary">
                     <option value={ALL_STATUS}>All Types</option>
                     <option value="SETUP_FEE">Setup Fee</option>
                     <option value="MONTHLY_PREMIUM">Monthly Premium</option>
@@ -496,7 +496,7 @@ function MobilePaymentCard({ payment, expanded, onToggle, onView }: any) {
             <div className="p-4 space-y-4 bg-gray-50/60">
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2 min-w-0">
-                  <Dog className="w-4 h-4 text-[#85A1D1] shrink-0" />
+                  <Dog className="w-4 h-4 text-primary shrink-0" />
                   <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 truncate">Pet Coverage</p>
                 </div>
                 <button onClick={onView} className="h-8 px-3 rounded-lg bg-white border border-gray-100 text-[10px] font-bold text-gray-700">
@@ -564,7 +564,7 @@ function PetCoverageTable({ pets, totalMonthlyFee, compact = false }: { pets: an
                   <tr key={pet.id} className="hover:bg-gray-50/40 transition-colors">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center text-[#85A1D1] shrink-0">
+                        <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center text-primary shrink-0">
                           <Dog className="w-4 h-4" />
                         </div>
                         <div className="min-w-0">
@@ -598,7 +598,7 @@ function PetCoverageTable({ pets, totalMonthlyFee, compact = false }: { pets: an
                             value={editCharge}
                             onChange={(e) => setEditCharge(e.target.value)}
                             placeholder="Add $/mo"
-                            className="w-20 px-2 py-1 text-xs border rounded outline-none focus:border-[#85A1D1]"
+                            className="w-20 px-2 py-1 text-xs border rounded outline-none focus:border-primary"
                             disabled={isUpdating}
                           />
                           <div className="flex gap-1">
@@ -644,7 +644,7 @@ function PetCoverageTable({ pets, totalMonthlyFee, compact = false }: { pets: an
                                   : Number(pet.petCharge || 0)
                               );
                             }}
-                            className="p-1 text-gray-400 transition-colors hover:text-[#85A1D1]"
+                            className="p-1 text-gray-400 transition-colors hover:text-primary"
                             title="Edit Monthly Charge"
                           >
                             <Pencil className="w-3 h-3" />
@@ -688,7 +688,7 @@ function calculatePaymentStats(payments: any[]) {
 
 function StatCard({ icon: Icon, label, value, subtitle, color }: any) {
   return (
-    <div className="bg-white p-5 sm:p-6 rounded-2xl border border-gray-100 shadow-sm relative overflow-hidden group hover:border-[#85A1D1]/30 transition-all cursor-default">
+    <div className="bg-white p-5 sm:p-6 rounded-2xl border border-gray-100 shadow-sm relative overflow-hidden group hover:border-primary/30 transition-all cursor-default">
       <div className="relative z-10 flex flex-col gap-4">
         <div className="flex items-center justify-between gap-3">
           <div className={`w-10 h-10 ${color} rounded-xl flex items-center justify-center text-white shadow-lg shrink-0`}>

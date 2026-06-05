@@ -64,16 +64,16 @@ export const QuoteEditor = ({
             <div className="flex items-center gap-4">
               <Avatar className="w-16 h-16 md:w-20 md:h-20 rounded-2xl border-2 border-white ">
                 <AvatarImage src={application.user.avatarUrl} />
-                <AvatarFallback className="bg-[#85A1D1]/10 text-[#85A1D1] font-bold text-xl">
+                <AvatarFallback className="bg-primary/10 text-primary font-bold text-xl">
                   {application.user.fullName.charAt(0)}
                 </AvatarFallback>
               </Avatar>
               <div>
                 <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight mb-1">{application.user.fullName}</h1>
                 <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500">
-                  <div className="flex items-center gap-1.5"><Mail className="w-4 h-4 text-[#85A1D1]" /> {application.user.email}</div>
+                  <div className="flex items-center gap-1.5"><Mail className="w-4 h-4 text-primary" /> {application.user.email}</div>
                   <div className="hidden md:block w-1 h-1 rounded-full bg-gray-300" />
-                  <div className="flex items-center gap-1.5 font-mono uppercase"><Hash className="w-3.5 h-3.5 text-[#85A1D1]" /> {application.id.split("-")[0].toUpperCase()}</div>
+                  <div className="flex items-center gap-1.5 font-mono uppercase"><Hash className="w-3.5 h-3.5 text-primary" /> {application.id.split("-")[0].toUpperCase()}</div>
                 </div>
               </div>
             </div>
@@ -106,7 +106,7 @@ export const QuoteEditor = ({
               <motion.div key="overview" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="p-8 bg-white rounded-2xl border border-gray-100 shadow-sm space-y-6">
                   <h3 className="text-sm font-bold text-gray-900 uppercase tracking-widest flex items-center gap-2">
-                    <UserCheck className="w-5 h-5 text-[#85A1D1]" /> Applicant Data
+                    <UserCheck className="w-5 h-5 text-primary" /> Applicant Data
                   </h3>
                   <div className="space-y-4">
                     {application.user.personInfos?.[0] ? Object.entries(application.user.personInfos[0]).filter(([k]) => !['id', 'userId', 'createdAt', 'updatedAt'].includes(k)).map(([key, val]) => (
@@ -123,7 +123,7 @@ export const QuoteEditor = ({
                 </div>
                 <div className="p-8 bg-gray-900 rounded-2xl text-white space-y-6 shadow-xl relative overflow-hidden">
                   <div className="absolute top-0 right-0 p-10 opacity-10 pointer-events-none"><ShieldCheck className="w-32 h-32" /></div>
-                  <h3 className="text-sm font-bold text-[#85A1D1] uppercase tracking-widest flex items-center gap-2">
+                  <h3 className="text-sm font-bold text-primary uppercase tracking-widest flex items-center gap-2">
                     <Activity className="w-5 h-5" /> Summary
                   </h3>
                   <div className="grid grid-cols-1 gap-4 relative z-10">

@@ -13,7 +13,7 @@ interface AuthShellProps {
 
 export function AuthShell({ slide, children }: AuthShellProps) {
   return (
-    <div className={`min-h-screen w-full bg-[#fafafa] flex items-center justify-center p-4 md:p-8 ${inter.className}`}>
+    <div className={`min-h-screen w-full bg-background bg-[image:var(--app-gradient)] flex items-center justify-center p-4 md:p-8 ${inter.className}`}>
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -29,7 +29,7 @@ export function AuthShell({ slide, children }: AuthShellProps) {
             className="object-cover transition-transform duration-1000 group-hover:scale-105"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-[#85A1D1]/90 via-[#85A1D1]/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-primary/40 to-transparent" />
           
           <div className="absolute top-10 left-10 z-10">
             <Link href="/admin/dashboard" className="flex items-center gap-2 group/logo">

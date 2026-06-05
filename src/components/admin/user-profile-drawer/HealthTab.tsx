@@ -28,11 +28,11 @@ export function HealthTab({ user }: HealthTabProps) {
       {/* Header */}
       <div className="flex items-center justify-between border-b border-gray-100 pb-4">
         <div className="flex items-center gap-2">
-          <HeartPulse className="w-5 h-5 text-[#85A1D1]" />
+          <HeartPulse className="w-5 h-5 text-primary" />
           <h3 className="text-sm font-bold text-gray-900 uppercase tracking-widest">Health Responses</h3>
         </div>
         <div className="flex items-center gap-2 flex-wrap justify-end">
-          <Badge variant="outline" className="bg-[#85A1D1]/5 text-[#85A1D1] border-[#85A1D1]/20 font-bold text-xs px-3">
+          <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 font-bold text-xs px-3">
             {healthAnswers.length} Total
           </Badge>
           {answersWithFamily.length > 0 && (
@@ -92,7 +92,7 @@ export function HealthTab({ user }: HealthTabProps) {
                     {/* Input Value if exists */}
                     {answer.inputValue && (
                       <div className="p-3 bg-white rounded-lg border border-amber-100 flex gap-2">
-                        <Info className="w-4 h-4 text-[#85A1D1] mt-0.5 shrink-0" />
+                        <Info className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                         <p className="text-xs text-gray-600"><span className="font-semibold">Details:</span> {answer.inputValue}</p>
                       </div>
                     )}
@@ -131,8 +131,8 @@ export function HealthTab({ user }: HealthTabProps) {
 
                     {/* Questionnaire Info */}
                     <div className="flex items-center gap-3 p-3 bg-white rounded-lg border border-gray-100">
-                      <div className="w-8 h-8 bg-[#85A1D1]/10 rounded-lg flex items-center justify-center">
-                        <FileText className="w-4 h-4 text-[#85A1D1]" />
+                      <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
+                        <FileText className="w-4 h-4 text-primary" />
                       </div>
                       <div className="text-xs">
                         <p className="font-semibold text-gray-900">{answer.questionnaire?.topicTitle || 'General Health'}</p>
@@ -150,7 +150,7 @@ export function HealthTab({ user }: HealthTabProps) {
         {answersWithoutFamily.length > 0 && (
           <div className="space-y-4">
             <div className="flex items-center gap-2 pb-3 border-b-2 border-gray-200">
-              <CheckCircle2 className="w-4 h-4 text-[#85A1D1]" />
+              <CheckCircle2 className="w-4 h-4 text-primary" />
               <h4 className="text-xs font-bold text-gray-700 uppercase tracking-widest">
                 Other Responses
               </h4>

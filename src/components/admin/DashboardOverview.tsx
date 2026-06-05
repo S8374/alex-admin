@@ -98,10 +98,10 @@ export function DashboardOverview({ setActiveView, summary }: DashboardOverviewP
             key={idx}
             type="button"
             onClick={stat.onClick}
-            className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm space-y-4 hover:border-[#85A1D1]/20 transition-colors group text-left disabled:cursor-default"
+            className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm space-y-4 hover:border-primary/20 transition-colors group text-left disabled:cursor-default"
           >
             <p className="text-[11px] font-black text-gray-500 uppercase tracking-widest">{stat.label}</p>
-            <p className="text-xl font-black text-gray-900 group-hover:text-[#85A1D1] transition-colors">{stat.value}</p>
+            <p className="text-xl font-black text-gray-900 group-hover:text-primary transition-colors">{stat.value}</p>
           </button>
         ))}
       </div>
@@ -112,25 +112,25 @@ export function DashboardOverview({ setActiveView, summary }: DashboardOverviewP
             key={idx} 
             type="button"
             onClick={() => mod.action?.()}
-            className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm space-y-5 hover:border-[#85A1D1]/20 transition-all cursor-pointer group text-left"
+            className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm space-y-5 hover:border-primary/20 transition-all cursor-pointer group text-left"
           >
             <div className="flex items-start justify-between gap-4">
-              <div className="w-8 h-8 bg-[#85A1D1]/10 rounded-lg flex items-center justify-center text-[#85A1D1]">
+              <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
                 <mod.icon className="w-4 h-4" />
               </div>
               {mod.metric && (
-                <span className="text-[10px] font-black uppercase tracking-widest text-[#85A1D1] bg-[#85A1D1]/5 px-2 py-1 rounded-md">
+                <span className="text-[10px] font-black uppercase tracking-widest text-primary bg-primary/5 px-2 py-1 rounded-md">
                   {mod.metric}
                 </span>
               )}
             </div>
             <div className="space-y-3">
-              <h3 className="text-sm font-black text-gray-900 group-hover:text-[#85A1D1] transition-colors">{mod.title}</h3>
+              <h3 className="text-sm font-black text-gray-900 group-hover:text-primary transition-colors">{mod.title}</h3>
               <p className="text-[11px] text-gray-600 leading-relaxed font-semibold">
                 {mod.desc}
               </p>
             </div>
-            <div className="flex items-center gap-2 text-[#85A1D1] text-[10px] font-bold">
+            <div className="flex items-center gap-2 text-primary text-[10px] font-bold">
               Open module <ArrowRight className="w-3 h-3" />
             </div>
           </button>

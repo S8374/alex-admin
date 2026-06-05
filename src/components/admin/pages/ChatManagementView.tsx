@@ -264,7 +264,7 @@ export function ChatManagementView() {
               placeholder="Search conversations..." 
               value={conversationSearchQuery}
               onChange={(e) => setConversationSearchQuery(e.target.value)}
-              className="w-full h-11 bg-gray-50 border-none rounded-xl pl-11 pr-4 text-sm font-medium outline-none focus:ring-1 focus:ring-[#85A1D1] transition-all"
+              className="w-full h-11 bg-gray-50 border-none rounded-xl pl-11 pr-4 text-sm font-medium outline-none focus:ring-1 focus:ring-primary transition-all"
             />
           </div>
         </div>
@@ -288,7 +288,7 @@ export function ChatManagementView() {
               <div 
                 key={conv.id}
                 onClick={() => setActiveChat(conv.id)}
-                className={`p-4 mx-2 my-1 rounded-2xl cursor-pointer transition-all flex items-center gap-4 group ${activeChat === conv.id ? 'bg-[#85A1D1]/10' : 'hover:bg-gray-50'}`}
+                className={`p-4 mx-2 my-1 rounded-2xl cursor-pointer transition-all flex items-center gap-4 group ${activeChat === conv.id ? 'bg-primary/10' : 'hover:bg-gray-50'}`}
               >
                 <div className="relative">
                   <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 overflow-hidden">
@@ -314,7 +314,7 @@ export function ChatManagementView() {
                       {conv.lastMessage?.content || "Start a conversation"}
                     </p>
                     {conv.unreadCount > 0 && (
-                      <div className="w-5 h-5 bg-[#85A1D1] rounded-full flex items-center justify-center text-[10px] font-bold text-white shrink-0">
+                      <div className="w-5 h-5 bg-primary rounded-full flex items-center justify-center text-[10px] font-bold text-white shrink-0">
                         {conv.unreadCount}
                       </div>
                     )}
@@ -367,7 +367,7 @@ export function ChatManagementView() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <button className="p-2.5 text-gray-400 hover:text-[#85A1D1] hover:bg-[#85A1D1]/5 rounded-xl transition-all"><Info className="w-5 h-5" /></button>
+                <button className="p-2.5 text-gray-400 hover:text-primary hover:bg-primary/5 rounded-xl transition-all"><Info className="w-5 h-5" /></button>
               </div>
             </div>
 
@@ -377,7 +377,7 @@ export function ChatManagementView() {
                 <div className="space-y-4 animate-pulse">
                   {[...Array(6)].map((_, idx) => (
                     <div key={idx} className={`flex ${idx % 2 === 0 ? 'justify-start' : 'justify-end'}`}>
-                      <div className={`max-w-[78%] rounded-2xl px-4 py-3 ${idx % 2 === 0 ? 'bg-white' : 'bg-[#85A1D1]/10'}`}>
+                      <div className={`max-w-[78%] rounded-2xl px-4 py-3 ${idx % 2 === 0 ? 'bg-white' : 'bg-primary/10'}`}>
                         <div className="h-3.5 w-48 rounded-full bg-gray-100 mb-2" />
                         <div className="h-3 w-24 rounded-full bg-gray-100" />
                       </div>
@@ -464,7 +464,7 @@ export function ChatManagementView() {
                         ) : (
                           <div className={`p-4 rounded-2xl text-sm leading-relaxed shadow-sm ${
                             isMine 
-                              ? 'bg-[#85A1D1] text-white rounded-br-none' 
+                              ? 'bg-primary text-white rounded-br-none' 
                               : 'bg-white text-gray-700 rounded-bl-none border border-gray-50'
                           }`}>
                             {msg.content !== " " && msg.content}
@@ -529,9 +529,9 @@ export function ChatManagementView() {
                   </div>
                   <div className="bg-white px-4 py-2 rounded-2xl border border-gray-50 flex items-center gap-2">
                     <div className="flex gap-1">
-                      <motion.div animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 1.5, repeat: Infinity, delay: 0 }} className="w-1.5 h-1.5 bg-[#85A1D1] rounded-full" />
-                      <motion.div animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 1.5, repeat: Infinity, delay: 0.2 }} className="w-1.5 h-1.5 bg-[#85A1D1] rounded-full" />
-                      <motion.div animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 1.5, repeat: Infinity, delay: 0.4 }} className="w-1.5 h-1.5 bg-[#85A1D1] rounded-full" />
+                      <motion.div animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 1.5, repeat: Infinity, delay: 0 }} className="w-1.5 h-1.5 bg-primary rounded-full" />
+                      <motion.div animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 1.5, repeat: Infinity, delay: 0.2 }} className="w-1.5 h-1.5 bg-primary rounded-full" />
+                      <motion.div animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 1.5, repeat: Infinity, delay: 0.4 }} className="w-1.5 h-1.5 bg-primary rounded-full" />
                     </div>
                     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Typing...</span>
                   </div>
@@ -561,7 +561,7 @@ export function ChatManagementView() {
                 </div>
               )}
               <form onSubmit={handleSend} className="p-4 sm:p-6 flex items-end gap-3 bg-white">
-                <div className="flex items-center bg-gray-50 p-2 rounded-2xl border border-gray-100 flex-1 focus-within:border-[#85A1D1]/30 transition-all">
+                <div className="flex items-center bg-gray-50 p-2 rounded-2xl border border-gray-100 flex-1 focus-within:border-primary/30 transition-all">
                   <input 
                     type="file" 
                     multiple 
@@ -598,7 +598,7 @@ export function ChatManagementView() {
                 <button 
                   type="submit"
                   disabled={(!messageText.trim() && selectedFiles.length === 0) || isSending || isUploading}
-                  className="p-3 bg-[#85A1D1] text-white rounded-2xl hover:bg-black transition-all shadow-lg shadow-[#85A1D1]/20 disabled:opacity-50 h-12 w-12 flex items-center justify-center shrink-0"
+                  className="p-3 bg-primary text-white rounded-2xl hover:bg-black transition-all shadow-lg shadow-primary/20 disabled:opacity-50 h-12 w-12 flex items-center justify-center shrink-0"
                 >
                   {isSending || isUploading ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
@@ -644,7 +644,7 @@ export function ChatManagementView() {
                     value={userSearchQuery}
                     onChange={(e) => setUserSearchQuery(e.target.value)}
                     placeholder="Search users by name or email..." 
-                    className="w-full h-12 bg-gray-50 border-none rounded-xl pl-11 pr-4 text-sm font-medium outline-none focus:ring-1 focus:ring-[#85A1D1] transition-all"
+                    className="w-full h-12 bg-gray-50 border-none rounded-xl pl-11 pr-4 text-sm font-medium outline-none focus:ring-1 focus:ring-primary transition-all"
                   />
                 </div>
 
@@ -671,7 +671,7 @@ export function ChatManagementView() {
                           {user.avatarUrl ? <img src={user.avatarUrl} className="w-full h-full object-cover" alt="" /> : <User className="w-5 h-5" />}
                         </div>
                         <div className="flex-1">
-                          <h4 className="text-sm font-bold text-gray-900 group-hover:text-[#85A1D1] transition-colors">{user.fullName}</h4>
+                          <h4 className="text-sm font-bold text-gray-900 group-hover:text-primary transition-colors">{user.fullName}</h4>
                           <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{user.email}</p>
                         </div>
                         <Badge className="bg-gray-100 text-gray-500 border-none text-[8px] font-black uppercase py-0.5">{user.role}</Badge>

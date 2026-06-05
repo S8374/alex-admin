@@ -83,7 +83,7 @@ export const UserDetail = ({ user, onBack, isLoading }: UserDetailProps) => {
             <div className="flex flex-col sm:flex-row sm:items-center gap-4">
               <Avatar className="w-16 h-16 md:w-20 md:h-20 rounded-2xl border-2 border-white shrink-0">
                 <AvatarImage src={user.avatarUrl} />
-                <AvatarFallback className="bg-[#85A1D1]/10 text-[#85A1D1] font-bold text-xl">
+                <AvatarFallback className="bg-primary/10 text-primary font-bold text-xl">
                   {user.fullName.charAt(0)}
                 </AvatarFallback>
               </Avatar>
@@ -95,9 +95,9 @@ export const UserDetail = ({ user, onBack, isLoading }: UserDetailProps) => {
                   </Badge>
                 </div>
                 <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500">
-                  <div className="flex items-center gap-1.5 min-w-0 wrap-break-word"><Mail className="w-4 h-4 text-[#85A1D1] shrink-0" /> <span className="wrap-break-word">{user.email}</span></div>
+                  <div className="flex items-center gap-1.5 min-w-0 wrap-break-word"><Mail className="w-4 h-4 text-primary shrink-0" /> <span className="wrap-break-word">{user.email}</span></div>
                   <div className="hidden md:block w-1 h-1 rounded-full bg-gray-300" />
-                  <div className="flex items-center gap-1.5 font-mono uppercase"><Hash className="w-3.5 h-3.5 text-[#85A1D1]" /> {user.id.split("-")[0].toUpperCase()}</div>
+                  <div className="flex items-center gap-1.5 font-mono uppercase"><Hash className="w-3.5 h-3.5 text-primary" /> {user.id.split("-")[0].toUpperCase()}</div>
                 </div>
               </div>
             </div>
@@ -120,7 +120,7 @@ export const UserDetail = ({ user, onBack, isLoading }: UserDetailProps) => {
                   <TabsTrigger
                     key={tab.id}
                     value={tab.id}
-                    className="h-10 sm:h-full px-3 sm:px-4 md:px-6 rounded-xl sm:rounded-none border-b-3 sm:border-b-3 border-transparent data-[state=active]:border-[#85A1D1] data-[state=active]:bg-[#85A1D1]/5 sm:data-[state=active]:bg-[#85A1D1]/5 font-bold text-[10px] sm:text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all shrink-0 hover:bg-gray-50 sm:hover:bg-gray-50 data-[state=active]:shadow-sm"
+                    className="h-10 sm:h-full px-3 sm:px-4 md:px-6 rounded-xl sm:rounded-none border-b-3 sm:border-b-3 border-transparent data-[state=active]:border-primary data-[state=active]:bg-primary/5 sm:data-[state=active]:bg-primary/5 font-bold text-[10px] sm:text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all shrink-0 hover:bg-gray-50 sm:hover:bg-gray-50 data-[state=active]:shadow-sm"
                   >
                     <tab.icon className="w-4 h-4 mr-2 hidden sm:inline-flex" /> {tab.label}
                   </TabsTrigger>

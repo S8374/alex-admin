@@ -32,7 +32,7 @@ export const HealthAnalysis = ({ answers }: HealthAnalysisProps) => (
         }`}>
           <div className="flex items-start justify-between gap-6">
             <div className="space-y-2">
-              <span className="text-[10px] font-bold text-[#85A1D1] uppercase tracking-widest">{ans.question?.category || "General"}</span>
+              <span className="text-[10px] font-bold text-primary uppercase tracking-widest">{ans.question?.category || "General"}</span>
               <p className="text-base font-bold text-gray-900 leading-snug">
                 {ans.question?.questionText || ans.nestedQuestion?.questionText}
               </p>
@@ -45,7 +45,7 @@ export const HealthAnalysis = ({ answers }: HealthAnalysisProps) => (
           </div>
           {ans.inputValue && (
             <div className="mt-4 p-4 bg-gray-50 rounded-lg flex gap-3 items-start border border-gray-100">
-              <Info className="w-4 h-4 text-[#85A1D1] mt-0.5" />
+              <Info className="w-4 h-4 text-primary mt-0.5" />
               <p className="text-sm text-gray-600 italic">"{ans.inputValue}"</p>
             </div>
           )}

@@ -21,10 +21,10 @@ export function FinancialsTab({ user, isLoading = false }: FinancialsTabProps) {
     <div className="space-y-8">
       <div className="flex items-center justify-between border-b border-gray-100 pb-4">
         <div className="flex items-center gap-2">
-          <Wallet className="w-5 h-5 text-[#85A1D1]" />
+          <Wallet className="w-5 h-5 text-primary" />
           <h3 className="text-sm font-bold text-gray-900 uppercase tracking-widest">Financial Records</h3>
         </div>
-        <Badge variant="outline" className="bg-[#85A1D1]/5 text-[#85A1D1] border-[#85A1D1]/20 font-bold text-xs px-3">
+        <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 font-bold text-xs px-3">
           {payments.length} Transactions
         </Badge>
       </div>
@@ -46,7 +46,7 @@ export function FinancialsTab({ user, isLoading = false }: FinancialsTabProps) {
                 <div className="relative z-10 flex flex-col h-full justify-between gap-10">
                   <div className="flex justify-between items-start">
                     <div className="space-y-1">
-                      <p className="text-[10px] font-bold text-[#85A1D1] uppercase tracking-[0.2em]">{method.provider || "Premium"} Member</p>
+                      <p className="text-[10px] font-bold text-primary uppercase tracking-[0.2em]">{method.provider || "Premium"} Member</p>
                       <Badge className="bg-white/10 text-white border-none text-[8px] h-4 font-black tracking-widest">
                         {method.isDefault ? "PRIMARY" : "SECONDARY"}
                       </Badge>
@@ -60,7 +60,7 @@ export function FinancialsTab({ user, isLoading = false }: FinancialsTabProps) {
                     <div className="space-y-3">
                       <div className="space-y-1">
                         <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest">Card Reference</p>
-                        <p className="text-2xl font-mono font-bold text-[#85A1D1] tracking-wider">
+                        <p className="text-2xl font-mono font-bold text-primary tracking-wider">
                           **** {method.last4}
                         </p>
                       </div>
@@ -90,9 +90,9 @@ export function FinancialsTab({ user, isLoading = false }: FinancialsTabProps) {
             </div>
           )}
           
-          <div className="p-4 bg-[#85A1D1]/5 rounded-xl border border-[#85A1D1]/10">
+          <div className="p-4 bg-primary/5 rounded-xl border border-primary/10">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-[#85A1D1] shadow-sm">
+              <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-primary shadow-sm">
                 <ShieldCheck className="w-4 h-4" />
               </div>
               <div>
@@ -114,12 +114,12 @@ export function FinancialsTab({ user, isLoading = false }: FinancialsTabProps) {
                 <div key={payment.id} className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-all">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-6 pb-6 border-b border-gray-50">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-gray-50 flex items-center justify-center text-[#85A1D1]">
+                      <div className="w-12 h-12 rounded-xl bg-gray-50 flex items-center justify-center text-primary">
                         <TrendingUp className="w-6 h-6" />
                       </div>
                       <div>
                         <p className="text-lg font-bold text-gray-900">${Number(payment.amount || 0).toFixed(2)}</p>
-                        <p className="text-[10px] font-bold text-[#85A1D1] uppercase tracking-[0.2em]">{payment.type.replace('_', ' ')}</p>
+                        <p className="text-[10px] font-bold text-primary uppercase tracking-[0.2em]">{payment.type.replace('_', ' ')}</p>
                       </div>
                     </div>
                     <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-2">
