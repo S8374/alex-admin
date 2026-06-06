@@ -11,7 +11,8 @@ import {
   Dog, 
   UserCheck, 
   Activity, 
-  ShieldCheck 
+  ShieldCheck, 
+  FileSpreadsheet
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -19,21 +20,26 @@ import { HealthAnalysis } from "./HealthAnalysis";
 import { PetDossier } from "./PetDossier";
 import { QuoteSidebar } from "./QuoteSidebar";
 import { AgreementTemplate } from "./AgreementTemplate";
+import { SentQuotesView } from "../pages/SentQuotesView";
 
 interface QuoteEditorProps {
   application: any;
   onBack: () => void;
   onSendQuote: (form: any) => void;
   isSending: boolean;
+  onApproveApplication?: () => void;
+  isApprovingApplication?: boolean;
 }
 
 export const QuoteEditor = ({ 
   application, 
   onBack, 
   onSendQuote, 
-  isSending 
+  isSending,
+  onApproveApplication,
+  isApprovingApplication
 }: QuoteEditorProps) => {
-  const [activeTab, setActiveTab] = useState<"overview" | "health" | "pets" | "agreement">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "health" | "pets" | "agreement" | "sent_quotes">("overview");
   const [selectedPetIds, setSelectedPetIds] = useState<string[]>(
     application.pets
       ?.filter((p: any) => {
@@ -44,7 +50,7 @@ export const QuoteEditor = ({
   );
   const [quoteForm, setQuoteForm] = useState({
     setupFee: 10,
-    transportFee: 50,
+    transportFee: 500,
     spayNeuterFee: 150,
     dueDay: 1,
     lateFee: 25,
@@ -91,6 +97,7 @@ export const QuoteEditor = ({
               { id: "health", label: "Health", icon: HeartPulse },
               { id: "pets", label: "Pets", icon: Dog },
               { id: "agreement", label: "Agreement", icon: ShieldCheck },
+              { id: "sent_quotes", label: "Sent Quotes", icon: FileSpreadsheet },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -154,6 +161,11 @@ export const QuoteEditor = ({
                 onToggle={togglePetSelection}
                 application={application}
               />
+            )}
+            {activeTab === "sent_quotes" && (
+              <motion.div key="sent_quotes" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                <SentQuotesView userId={application.user.id} />
+              </motion.div>
             )}
             {activeTab === "agreement" && (
               <motion.div key="agreement" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
@@ -237,6 +249,9 @@ export const QuoteEditor = ({
               onFormUpdate={setQuoteForm} 
               onSend={() => onSendQuote({ ...quoteForm, selectedPetIds })} 
               isSending={isSending} 
+              applicationStatus={application.status}
+              onApprove={onApproveApplication}
+              isApproving={isApprovingApplication}
             />
           </div>
         )}

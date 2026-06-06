@@ -4,6 +4,10 @@ import React from "react";
 import { Dog, Calendar, ShieldCheck, Heart, Weight, Dna } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useDeletePetMutation } from "@/redux/api/quoteApi";
+import { toast } from "sonner";
+import { Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface PetsTabProps {
   user: any;
@@ -16,6 +20,18 @@ export function PetsTab({ user, isLoading = false }: PetsTabProps) {
   }
 
   const pets = user.pets || [];
+  const [deletePet, { isLoading: isDeleting }] = useDeletePetMutation();
+
+  const handleDeletePet = async (id: string) => {
+    if (window.confirm("Are you sure you want to delete this dog?")) {
+      try {
+        await deletePet(id).unwrap();
+        toast.success("Dog deleted successfully");
+      } catch (error) {
+        toast.error("Failed to delete dog");
+      }
+    }
+  };
 
   return (
     <div className="space-y-8">
@@ -36,7 +52,7 @@ export function PetsTab({ user, isLoading = false }: PetsTabProps) {
               <div className="bg-gray-50/50 border-b border-gray-50 px-8 py-5 flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <Avatar className="w-12 h-12 rounded-lg border-2 border-white shadow-sm ring-1 ring-gray-200">
-                    <AvatarImage src={pet.avatarUrl || pet.imageUrl} className="object-cover" />
+                    <AvatarImage src={pet.photoUrl || pet.avatarUrl || pet.imageUrl} className="object-cover" />
                     <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs">
                       {pet.name.charAt(0)}
                     </AvatarFallback>
@@ -46,11 +62,35 @@ export function PetsTab({ user, isLoading = false }: PetsTabProps) {
                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Dossier #{index + 1}</p>
                   </div>
                 </div>
-                <Badge className={`rounded-lg font-bold text-[10px] uppercase px-3 py-1 ${
-                  pet.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-600' : 'bg-gray-100 text-gray-400'
-                }`}>
-                  {pet.status}
-                </Badge>
+                <div className="flex items-center gap-2">
+                  <Badge className={`rounded-lg font-bold text-[10px] uppercase px-3 py-1 ${
+                    pet.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-600' : 'bg-gray-100 text-gray-400'
+                  }`}>
+                    {pet.status}
+                  </Badge>
+                  {(() => {
+                    const hasPaidQuote = pet.sendQuotes?.some((q: any) => q.payments && q.payments.length > 0);
+                    
+                    if (hasPaidQuote) {
+                      return (
+                        <div className="flex items-center gap-1.5 text-[10px] text-blue-600 bg-blue-50 border border-blue-100 px-2 py-1 rounded-md font-bold">
+                          💳 Payment made
+                        </div>
+                      );
+                    }
+                    return (
+                      <Button
+                        onClick={() => handleDeletePet(pet.id)}
+                        variant="ghost"
+                        size="sm"
+                        disabled={isDeleting}
+                        className="text-red-500 hover:text-red-600 hover:bg-red-50 h-8 text-xs px-2"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    );
+                  })()}
+                </div>
               </div>
 
               <div className="p-8">
@@ -68,6 +108,10 @@ export function PetsTab({ user, isLoading = false }: PetsTabProps) {
                       <div className="flex justify-between items-center py-2 border-b border-gray-50">
                         <span className="text-xs text-gray-500">Species</span>
                         <span className="text-xs font-bold text-gray-900">{pet.species}</span>
+                      </div>
+                      <div className="flex justify-between items-center py-2 border-b border-gray-50">
+                        <span className="text-xs text-gray-500">Weight</span>
+                        <span className="text-xs font-bold text-gray-900">{pet.weight ? `${pet.weight} lbs` : "N/A"}</span>
                       </div>
                       <div className="flex justify-between items-center py-2 border-b border-gray-50">
                         <span className="text-xs text-gray-500">Fixed</span>

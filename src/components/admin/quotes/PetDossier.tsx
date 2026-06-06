@@ -87,10 +87,12 @@ export const PetDossier = ({
           {pets.map((pet: any) => {
             const isSelected = selectedIds.includes(pet.id);
             const statusUpper = pet.status?.toUpperCase() || "";
-            const isDisabled = statusUpper === "QUOTE_ACCEPTED" || statusUpper === "ACTIVE" || statusUpper === "QUOTE_READY";
+            const activeQuotes = (pet.sendQuotes || []).filter((q: any) => !q.isRejected);
+            const hasActiveQuotes = activeQuotes.length > 0;
+            const isDisabled = hasActiveQuotes && (statusUpper === "QUOTE_ACCEPTED" || statusUpper === "ACTIVE" || statusUpper === "QUOTE_READY");
             const rejectedQuote = (pet.sendQuotes || []).find((quote: any) => quote.isRejected) || (pet.sendQuotes || [])[0];
             const rejectionReason = rejectedQuote?.rejectionReason || pet.rejectionReason || pet.quoteRejectionReason;
-            const hasAgreement = statusUpper === "QUOTE_ACCEPTED" || statusUpper === "ACTIVE" || statusUpper === "QUOTE_READY";
+            const hasAgreement = hasActiveQuotes && activeQuotes.some((q: any) => q.agreements && q.agreements.length > 0);
 
             return (
               <div
@@ -116,18 +118,22 @@ export const PetDossier = ({
                 </div>
 
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-                    <Dog className="w-6 h-6" />
-                  </div>
+                  {pet.photoUrl ? (
+                    <img src={pet.photoUrl} alt={pet.name} className="w-12 h-12 rounded-xl object-cover border border-gray-200" />
+                  ) : (
+                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                      <Dog className="w-6 h-6" />
+                    </div>
+                  )}
                   <div>
                     <div className="flex items-center gap-2 flex-wrap">
                       <h4 className="text-base font-bold text-gray-900">{pet.name}</h4>
-                      {(statusUpper === "QUOTE_ACCEPTED" || statusUpper === "ACTIVE") && (
+                      {hasActiveQuotes && (statusUpper === "QUOTE_ACCEPTED" || statusUpper === "ACTIVE") && (
                         <Badge className="bg-emerald-50 text-emerald-700 border-none font-bold text-[9px] px-1.5 py-0.5">
                           Active Coverage
                         </Badge>
                       )}
-                      {statusUpper === "QUOTE_READY" && (
+                      {hasActiveQuotes && statusUpper === "QUOTE_READY" && (
                         <Badge className="bg-amber-50 text-amber-700 border-none font-bold text-[9px] px-1.5 py-0.5">
                           Quote Sent
                         </Badge>
@@ -153,6 +159,7 @@ export const PetDossier = ({
                   {[
                     { icon: Dog, label: "Gender", val: pet.gender === "FEMALE" ? "Female" : "Male" },
                     { icon: Cake, label: "Age", val: calculateAge(pet.birthday) },
+                    { icon: Weight, label: "Weight", val: pet.weight ? `${pet.weight} lbs` : "N/A" },
                     { icon: Syringe, label: "Spayed/Neutered", val: pet.isSpayedNeutered ? "Yes" : "No" },
                     { icon: Stethoscope, label: "Microchipped", val: pet.isMicrochipped ? (pet.microchipId || pet.microchipNumber || "Yes") : "No" }
                   ].map((stat, i) => (

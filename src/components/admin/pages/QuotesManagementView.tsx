@@ -4,7 +4,7 @@ import React, { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { useSelector } from "react-redux";
 import { useGetAllUsersQuery } from "@/redux/api/userApi";
-import { useSendQuoteMutation, useGetApplicationByIdQuery } from "@/redux/api/quoteApi";
+import { useSendQuoteMutation, useGetApplicationByIdQuery, useUpdateApplicationStatusMutation } from "@/redux/api/quoteApi";
 import { toast } from "sonner";
 import { ApplicationList } from "../quotes/ApplicationList";
 import { QuoteEditor } from "../quotes/QuoteEditor";
@@ -20,7 +20,18 @@ export function QuotesManagementView() {
   const { data: userData, isLoading, isFetching } = useGetAllUsersQuery({ search, limit: 99999 });
   const { data: detailData, isLoading: isDetailLoading } = useGetApplicationByIdQuery(selectedAppId!, { skip: !selectedAppId });
   const [sendQuote, { isLoading: isSending }] = useSendQuoteMutation();
- console.log("Users data:", userData);
+  const [updateApplicationStatus, { isLoading: isApproving }] = useUpdateApplicationStatusMutation();
+
+  const handleApproveApplication = async () => {
+    if (!selectedAppId) return;
+    try {
+      await updateApplicationStatus({ id: selectedAppId, status: "APPROVED" }).unwrap();
+      toast.success("Application approved successfully!");
+    } catch (err: any) {
+      toast.error(err?.data?.message || "Failed to approve application");
+    }
+  };
+
   const allApps = useMemo(() => {
     return userData?.data?.flatMap((user: any) => 
       (user.applications || []).map((app: any) => ({
@@ -116,6 +127,8 @@ export function QuotesManagementView() {
             onBack={handleBack} 
             onSendQuote={handleSendQuote} 
             isSending={isSending} 
+            onApproveApplication={handleApproveApplication}
+            isApprovingApplication={isApproving}
           />
         )}
       </motion.div>

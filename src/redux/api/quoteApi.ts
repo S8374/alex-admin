@@ -27,6 +27,24 @@ export const quoteApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["applications"],
     }),
+    getSentQuotes: builder.query({
+      query: () => "/admin/quote-management/quotes",
+      providesTags: ["quotes"],
+    }),
+    deleteQuote: builder.mutation({
+      query: (id) => ({
+        url: `/admin/quote-management/quotes/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["quotes", "applications"],
+    }),
+    deletePet: builder.mutation({
+      query: (id) => ({
+        url: `/admin/quote-management/pets/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["applications"],
+    }),
   }),
 });
 
@@ -35,4 +53,7 @@ export const {
   useGetApplicationByIdQuery,
   useSendQuoteMutation,
   useUpdateApplicationStatusMutation,
+  useGetSentQuotesQuery,
+  useDeleteQuoteMutation,
+  useDeletePetMutation,
 } = quoteApi;

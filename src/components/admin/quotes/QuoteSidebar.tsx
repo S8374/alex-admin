@@ -14,6 +14,9 @@ interface QuoteSidebarProps {
   onFormUpdate: (f: any) => void;
   onSend: () => void;
   isSending: boolean;
+  applicationStatus?: string;
+  onApprove?: () => void;
+  isApproving?: boolean;
 }
 
 type SigMode = "draw" | "type" | "upload";
@@ -24,7 +27,10 @@ export const QuoteSidebar = ({
   form, 
   onFormUpdate, 
   onSend, 
-  isSending 
+  isSending,
+  applicationStatus,
+  onApprove,
+  isApproving 
 }: QuoteSidebarProps) => {
   const [uploadDocuments, { isLoading: isUploading }] = useUploadDocumentsMutation();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -542,18 +548,34 @@ export const QuoteSidebar = ({
           </div>
         </div>
 
-        <Button 
-          disabled={
-            isSending || 
-            selectedIds.length === 0 || 
-            Object.values(form.petCharges).length === 0
-          }
-          onClick={onSend}
-          className="w-full h-12 rounded bg-gray-900 text-white font-bold text-sm uppercase tracking-widest hover:bg-gray-800 transition-all  disabled:opacity-50"
-        >
-          {isSending ? "Processing..." : " Send"}
-          <ArrowRight className="w-4 h-4 ml-2" />
-        </Button>
+        {applicationStatus === "UNDER_REVIEW" ? (
+          <div className="space-y-3">
+            <div className="p-3 bg-amber-50 border border-amber-100 rounded text-amber-700 text-xs font-medium">
+              This application is currently Under Review. You must approve it before sending quotes.
+            </div>
+            <Button 
+              disabled={isApproving}
+              onClick={onApprove}
+              className="w-full h-12 rounded bg-emerald-600 text-white font-bold text-sm uppercase tracking-widest hover:bg-emerald-500 transition-all disabled:opacity-50"
+            >
+              {isApproving ? "Approving..." : "Approve Application"}
+              <Check className="w-4 h-4 ml-2" />
+            </Button>
+          </div>
+        ) : (
+          <Button 
+            disabled={
+              isSending || 
+              selectedIds.length === 0 || 
+              Object.values(form.petCharges).length === 0
+            }
+            onClick={onSend}
+            className="w-full h-12 rounded bg-gray-900 text-white font-bold text-sm uppercase tracking-widest hover:bg-gray-800 transition-all disabled:opacity-50"
+          >
+            {isSending ? "Processing..." : " Send Quote"}
+            <ArrowRight className="w-4 h-4 ml-2" />
+          </Button>
+        )}
       </div>
 
       <style>{`
