@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Search, Shield, UserCheck, UserMinus, Trash2, MoreVertical, Users, ArrowRight } from "lucide-react";
+import { Search, Shield, UserCheck, UserMinus, UserX, Clock, Trash2, MoreVertical, Users, ArrowRight } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/button";
 
 interface UserListProps {
   users: any[];
+  stats?: any;
   isLoading: boolean;
   isFetching?: boolean;
   params: any;
@@ -35,6 +36,7 @@ interface UserListProps {
 
 export const UserList = ({
   users,
+  stats,
   isLoading,
   isFetching,
   params,
@@ -91,6 +93,37 @@ export const UserList = ({
 
   return (
     <div className="min-h-screen flex flex-col space-y-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 flex flex-col justify-center relative overflow-hidden">
+          <div className="flex justify-between items-center mb-1">
+            <p className="text-sm font-medium text-gray-500">Total Users</p>
+            <div className="p-1.5 bg-gray-50 rounded-lg"><Users className="w-4 h-4 text-gray-600" /></div>
+          </div>
+          <p className="text-2xl font-bold text-gray-900">{stats?.totalUsers ?? users.length}</p>
+        </div>
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 flex flex-col justify-center relative overflow-hidden">
+          <div className="flex justify-between items-center mb-1">
+            <p className="text-sm font-medium text-gray-500">Active Users</p>
+            <div className="p-1.5 bg-emerald-50 rounded-lg"><UserCheck className="w-4 h-4 text-emerald-600" /></div>
+          </div>
+          <p className="text-2xl font-bold text-emerald-600">{stats?.activeUsers ?? users.filter((u: any) => u.status === 'ACTIVE').length}</p>
+        </div>
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 flex flex-col justify-center relative overflow-hidden">
+          <div className="flex justify-between items-center mb-1">
+            <p className="text-sm font-medium text-gray-500">Pending</p>
+            <div className="p-1.5 bg-amber-50 rounded-lg"><Clock className="w-4 h-4 text-amber-500" /></div>
+          </div>
+          <p className="text-2xl font-bold text-amber-500">{stats?.pendingUsers ?? users.filter((u: any) => u.status === 'PENDING_VERIFICATION').length}</p>
+        </div>
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 flex flex-col justify-center relative overflow-hidden">
+          <div className="flex justify-between items-center mb-1">
+            <p className="text-sm font-medium text-gray-500">Suspended</p>
+            <div className="p-1.5 bg-red-50 rounded-lg"><UserX className="w-4 h-4 text-red-600" /></div>
+          </div>
+          <p className="text-2xl font-bold text-red-600">{stats?.suspendedUsers ?? users.filter((u: any) => u.status === 'SUSPENDED').length}</p>
+        </div>
+      </div>
+
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-1">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">User Management</h1>
@@ -108,7 +141,17 @@ export const UserList = ({
             />
           </div>
           <select
-            value={params.role}
+            value={params.status || ""}
+            onChange={(e) => setParams({ ...params, status: e.target.value, page: 1 })}
+            className="h-10 px-4 bg-white border border-gray-200 rounded-lg text-sm font-bold text-gray-700 outline-none focus:ring-2 focus:ring-primary/10 transition-all"
+          >
+            <option value="">All Statuses</option>
+            <option value="ACTIVE">Active</option>
+            <option value="PENDING_VERIFICATION">Pending Verification</option>
+            <option value="SUSPENDED">Suspended</option>
+          </select>
+          <select
+            value={params.role || ""}
             onChange={(e) => setParams({ ...params, role: e.target.value, page: 1 })}
             className="h-10 px-4 bg-white border border-gray-200 rounded-lg text-sm font-bold text-gray-700 outline-none focus:ring-2 focus:ring-primary/10 transition-all"
           >

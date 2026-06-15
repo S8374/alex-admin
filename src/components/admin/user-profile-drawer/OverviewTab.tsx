@@ -104,24 +104,24 @@ export function OverviewTab({ user, isLoading = false }: OverviewTabProps) {
       </div>
 
       {/* System Status / Quick Info */}
-      <div className="bg-gray-900 rounded-xl p-8 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-8">
-        <div className="flex items-center gap-6">
-          <div className="w-14 h-14 rounded-xl bg-white/10 flex items-center justify-center border border-white/10">
-            <Shield className="w-6 h-6 text-primary" />
+      <div className="bg-gray-900 rounded-xl p-6 md:p-8 text-white shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6 md:gap-8 overflow-hidden w-full">
+        <div className="flex items-center gap-4 md:gap-6 w-full md:w-auto">
+          <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-white/10 flex items-center justify-center border border-white/10 shrink-0">
+            <Shield className="w-5 h-5 md:w-6 md:h-6 text-primary" />
           </div>
-          <div>
-            <p className="text-[10px] font-bold text-primary uppercase tracking-[0.2em] mb-1">Account Eligibility</p>
-            <p className="text-xl font-bold">Verified Member Profile</p>
+          <div className="flex-1 min-w-0">
+            <p className="text-[9px] md:text-[10px] font-bold text-primary uppercase tracking-[0.2em] mb-0.5 md:mb-1 truncate">Account Eligibility</p>
+            <p className="text-lg md:text-xl font-bold truncate">Verified Member</p>
           </div>
         </div>
-        <div className="flex gap-10">
-          <div className="text-center">
+        <div className="grid grid-cols-2 gap-4 sm:gap-10 w-full md:w-auto pt-4 md:pt-0 border-t border-white/10 md:border-0">
+          <div className="text-left md:text-center">
             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Status</p>
-            <p className="text-lg font-bold">{user.status || 'ACTIVE'}</p>
+            <p className="text-sm sm:text-lg font-bold break-words">{user.status ? user.status.replace(/_/g, ' ') : 'ACTIVE'}</p>
           </div>
-          <div className="text-center">
+          <div className="text-left md:text-center">
             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Joined</p>
-            <p className="text-lg font-bold">{new Date(user.createdAt).toLocaleDateString([], { month: 'short', year: 'numeric' })}</p>
+            <p className="text-sm sm:text-lg font-bold">{new Date(user.createdAt).toLocaleDateString([], { month: 'short', year: 'numeric' })}</p>
           </div>
         </div>
       </div>

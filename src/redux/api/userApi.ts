@@ -2,6 +2,10 @@ import { baseApi } from "./baseApi";
 
 export const userApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+    getUserStats: builder.query({
+      query: () => "/admin/user-management/stats",
+      providesTags: ["users"],
+    }),
     getAllUsers: builder.query({
       query: (params) => ({
         url: "/admin/user-management",
@@ -40,6 +44,7 @@ export const userApi = baseApi.injectEndpoints({
 });
 
 export const {
+  useGetUserStatsQuery,
   useGetAllUsersQuery,
   useGetUserByIdQuery,
   useUpdateUserMutation,

@@ -14,6 +14,7 @@ type ViewMode = "list" | "editor";
 export function QuotesManagementView() {
   const [mode, setMode] = useState<ViewMode>("list");
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("ALL");
   const [selectedAppId, setSelectedAppId] = useState<string | null>(null);
 
   const authUser = useSelector((state: any) => state.auth.user);
@@ -141,7 +142,9 @@ export function QuotesManagementView() {
       isLoading={isLoading} 
       isFetching={isFetching}
       search={search} 
-      onSearchChange={setSearch} 
+      onSearchChange={setSearch}
+      statusFilter={statusFilter}
+      onStatusFilterChange={setStatusFilter}
       onOpenEditor={handleOpenEditor} 
     />
   );

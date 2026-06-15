@@ -8,9 +8,9 @@ import {
   Activity, 
   Users, 
   Dog, 
-  ClipboardList, 
-  FileSpreadsheet, 
-  FileText, 
+  Inbox, 
+  Calculator, 
+  ListChecks, 
   ShieldCheck, 
   Settings, 
   LogOut,
@@ -107,21 +107,21 @@ function SidebarContent({ activeView, setActiveView, handleLogout, isLoggingOut,
             isCollapsed={isCollapsed}
           />
           <NavItem 
-            icon={ClipboardList} 
+            icon={Inbox} 
             label="Application Management" 
             active={activeView === "applications"}
             onClick={() => setActiveView("applications")}
             isCollapsed={isCollapsed}
           />
           <NavItem 
-            icon={FileSpreadsheet} 
+            icon={Calculator} 
             label="Quotes Management" 
             active={activeView === "quotes"}
             onClick={() => setActiveView("quotes")}
             isCollapsed={isCollapsed}
           />
           <NavItem 
-            icon={FileText} 
+            icon={ListChecks} 
             label="Questionnaires" 
             active={activeView === "questionnaires"}
             onClick={() => setActiveView("questionnaires")}

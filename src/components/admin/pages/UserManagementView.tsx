@@ -6,7 +6,8 @@ import {
   useGetAllUsersQuery,
   useToggleUserStatusMutation,
   useDeleteUserMutation,
-  useGetUserByIdQuery
+  useGetUserByIdQuery,
+  useGetUserStatsQuery
 } from "@/redux/api/userApi";
 import { toast } from "sonner";
 import { UserList } from "../users/UserList";
@@ -21,6 +22,7 @@ export function UserManagementView() {
 
   const { data: userData, isLoading, isFetching } = useGetAllUsersQuery(params);
   const { data: detailResponse, isLoading: isDetailLoading } = useGetUserByIdQuery(selectedUserId!, { skip: !selectedUserId });
+  const { data: statsResponse } = useGetUserStatsQuery(undefined);
 
   const [toggleStatus] = useToggleUserStatusMutation();
   const [deleteUser] = useDeleteUserMutation();
@@ -76,6 +78,7 @@ export function UserManagementView() {
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
       <UserList
         users={users}
+        stats={statsResponse?.data}
         isLoading={isLoading}
         isFetching={isFetching}
         params={params}

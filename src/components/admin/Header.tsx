@@ -1,6 +1,6 @@
 "use client";
 
-import { Menu, Search, RefreshCcw, Bell } from "lucide-react";
+import { Menu, Search, RefreshCcw } from "lucide-react";
 
 interface HeaderProps {
   refetch: () => void;
@@ -38,10 +38,7 @@ export function Header({ refetch, isFetching, onMenuClick }: HeaderProps) {
         >
           <RefreshCcw className="w-5 h-5" />
         </button>
-        <button className="relative p-2 text-gray-400 hover:text-primary transition-colors">
-          <Bell className="w-6 h-6" />
-          <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />
-        </button>
+
         <div className="hidden sm:flex items-center gap-3 pl-4 lg:pl-6 border-l border-gray-100">
           <div className="text-right">
             <p className="text-sm font-bold text-gray-900">Alex Garrett</p>

@@ -18,10 +18,10 @@ export function AuthShell({ slide, children }: AuthShellProps) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="w-full max-w-6xl bg-white rounded-[32px] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] flex flex-col md:flex-row overflow-hidden border border-gray-100"
+        className="w-full max-w-6xl bg-white rounded-lg flex flex-col md:flex-row overflow-hidden border border-gray-100"
       >
         {/* Left: Branding & Visuals */}
-        <div className="relative md:w-[48%] min-h-[300px] md:min-h-[700px] overflow-hidden group">
+        <div className="relative md:w-[48%] min-h-[350px] md:min-h-[700px] overflow-hidden group">
           <Image
             src={slide.image}
             alt={slide.alt}
@@ -31,7 +31,7 @@ export function AuthShell({ slide, children }: AuthShellProps) {
           />
           <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-primary/40 to-transparent" />
           
-          <div className="absolute top-10 left-10 z-10">
+          <div className="absolute top-6 left-6 md:top-10 md:left-10 z-10">
             <Link href="/admin/dashboard" className="flex items-center gap-2 group/logo">
               <Image
                 src="/logo/encore.png"
@@ -43,7 +43,7 @@ export function AuthShell({ slide, children }: AuthShellProps) {
             </Link>
           </div>
 
-          <div className="absolute bottom-12 left-10 right-10 z-10">
+          <div className="absolute bottom-6 left-6 right-6 md:bottom-12 md:left-10 md:right-10 z-10">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -52,7 +52,7 @@ export function AuthShell({ slide, children }: AuthShellProps) {
               <span className="inline-block px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-white text-[10px] font-bold uppercase tracking-widest mb-4 border border-white/30">
                 Premium Dashboard
               </span>
-              <h2 className="text-white font-bold text-3xl lg:text-4xl leading-tight drop-shadow-xl">
+              <h2 className="text-white font-bold text-2xl md:text-3xl lg:text-4xl leading-tight drop-shadow-xl">
                 {slide.quote}
               </h2>
             </motion.div>
@@ -60,14 +60,14 @@ export function AuthShell({ slide, children }: AuthShellProps) {
         </div>
 
         {/* Right: Interaction Panel */}
-        <div className="flex-1 flex flex-col items-center justify-center px-6 py-12 md:px-16 lg:px-20 relative bg-white">
-          <div className="w-full max-w-[420px]">
+        <div className="flex-1 flex flex-col items-center justify-center px-6 py-10 md:py-12 md:px-16 lg:px-20 relative bg-white">
+          <div className="w-full max-w-[420px] flex-grow flex flex-col justify-center">
             {children}
           </div>
           
           {/* Subtle footer in form panel */}
-          <div className="absolute bottom-8 text-center">
-            <p className="text-muted-foreground text-[11px] font-medium tracking-wide">
+          <div className="mt-8 md:mt-0 md:absolute md:bottom-8 text-center w-full">
+            <p className="text-muted-foreground text-[10px] md:text-[11px] font-medium tracking-wide">
               &copy; 2026 ALEX GARRETT ENTERPRISES. ALL RIGHTS RESERVED.
             </p>
           </div>

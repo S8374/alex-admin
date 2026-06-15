@@ -15,10 +15,13 @@ interface DashboardOverviewProps {
   setActiveView: (view: any) => void;
   summary: {
     totalUsers: number;
+    activeUsers: number;
+    pendingUsers: number;
     activePolicies: number;
     pendingQuotes: number;
     questionnaireQuestions: number;
     paymentTransactions: number;
+    totalRevenue: number;
     alerts: number;
     systemHealth: string;
     platform: string;
@@ -35,10 +38,13 @@ type StatCard = {
 export function DashboardOverview({ setActiveView, summary }: DashboardOverviewProps) {
   const overviewStats: StatCard[] = [
     { label: "Total Users", value: summary.totalUsers.toLocaleString(), onClick: () => setActiveView("users") },
+    { label: "Active Users", value: summary.activeUsers.toLocaleString(), onClick: () => setActiveView("users") },
+    { label: "Pending Users", value: summary.pendingUsers.toLocaleString(), onClick: () => setActiveView("users") },
     { label: "Active Policies", value: summary.activePolicies.toLocaleString(), onClick: () => setActiveView("applications") },
     { label: "Pending Quotes", value: summary.pendingQuotes.toLocaleString(), onClick: () => setActiveView("quotes") },
-    { label: "Questionnaire Questions", value: summary.questionnaireQuestions.toLocaleString(), onClick: () => setActiveView("questionnaires") },
+    { label: "Total Revenue", value: "$" + summary.totalRevenue.toLocaleString(undefined, {minimumFractionDigits: 2}), onClick: () => setActiveView("payments") },
     { label: "Payment Transactions", value: summary.paymentTransactions.toLocaleString(), onClick: () => setActiveView("payments") },
+    { label: "Questionnaire Questions", value: summary.questionnaireQuestions.toLocaleString(), onClick: () => setActiveView("questionnaires") },
   ];
 
   const overviewModules = [

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -10,8 +10,9 @@ import { AuthButton } from "./shared/AuthButton";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { useLoginMutation } from "@/redux/api/authApi";
+import { useAdminLoginMutation } from "@/redux/api/authApi";
 import { useDispatch } from "react-redux";
+import { useAppSelector } from "@/redux/hooks";
 import { setUser } from "@/redux/features/authSlice";
 
 // ─── Schema ───────────────────────────────────────────────────────────────────
@@ -26,7 +27,14 @@ export function AdminLoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const dispatch = useDispatch();
-  const [login, { isLoading }] = useLoginMutation();
+  const [adminLogin, { isLoading }] = useAdminLoginMutation();
+  const { token } = useAppSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (token) {
+      window.location.replace("/admin/dashboard");
+    }
+  }, [token]);
 
   const {
     register,
@@ -39,7 +47,7 @@ export function AdminLoginForm() {
 
   const onSubmit = async (values: LoginValues) => {
     try {
-      const response = await login(values).unwrap();
+      const response = await adminLogin(values).unwrap();
       
       if (response.success) {
         dispatch(setUser({ 
@@ -51,7 +59,7 @@ export function AdminLoginForm() {
         router.push("/admin/dashboard");
       }
     } catch (error: any) {
-      const errorMessage = error?.data?.message || "Invalid credentials. Please try again.";
+      const errorMessage = error?.data?.error?.message || error?.data?.message || "Invalid credentials. Please try again.";
       toast.error(errorMessage);
     }
   };
@@ -81,7 +89,7 @@ export function AdminLoginForm() {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <AuthInput
           label="Administrator Email"
-          placeholder="admin@alexgarrett.com"
+          placeholder="Enter Your Admin Email Address"
           type="email"
           {...register("email")}
           error={errors.email?.message}
@@ -110,18 +118,6 @@ export function AdminLoginForm() {
             </button>
           }
         />
-
-        <div className="flex items-center justify-between px-1">
-          <label className="flex items-center gap-2 cursor-pointer group">
-            <input 
-              type="checkbox" 
-              className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
-            />
-            <span className="text-xs font-semibold text-muted-foreground group-hover:text-foreground transition-colors">
-              Stay signed in
-            </span>
-          </label>
-        </div>
 
         <div className="pt-2">
           <AuthButton isLoading={isLoading} type="submit">

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Search, Eye, CheckCircle2, XCircle, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, Eye, CheckCircle2, XCircle, ChevronDown, ChevronLeft, ChevronRight, Inbox, Send, Clock, CheckCircle } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -123,8 +123,6 @@ export const ApplicationList = ({
         return <Badge className="bg-blue-50 text-blue-600 border border-blue-100 font-bold text-[10px] uppercase">Submitted</Badge>;
       case "UNDER_REVIEW":
         return <Badge className="bg-amber-50 text-amber-600 border border-amber-100 font-bold text-[10px] uppercase">Under Review</Badge>;
-      case "QUOTE_READY":
-        return <Badge className="bg-purple-50 text-purple-600 border border-purple-100 font-bold text-[10px] uppercase">Quote Ready</Badge>;
       case "DRAFT":
       case "IN_PROGRESS":
         return <Badge className="bg-gray-50 text-gray-500 border border-gray-200 font-bold text-[10px] uppercase">Draft</Badge>;
@@ -135,6 +133,37 @@ export const ApplicationList = ({
 
   return (
     <div className="min-h-screen flex flex-col space-y-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 flex flex-col justify-center relative overflow-hidden">
+          <div className="flex justify-between items-center mb-1">
+            <p className="text-sm font-medium text-gray-500">Total Apps</p>
+            <div className="p-1.5 bg-gray-50 rounded-lg"><Inbox className="w-4 h-4 text-gray-600" /></div>
+          </div>
+          <p className="text-2xl font-bold text-gray-900">{apps.length}</p>
+        </div>
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 flex flex-col justify-center relative overflow-hidden">
+          <div className="flex justify-between items-center mb-1">
+            <p className="text-sm font-medium text-gray-500">Submitted</p>
+            <div className="p-1.5 bg-blue-50 rounded-lg"><Send className="w-4 h-4 text-blue-600" /></div>
+          </div>
+          <p className="text-2xl font-bold text-blue-600">{apps.filter((a: any) => a.status === 'SUBMITTED').length}</p>
+        </div>
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 flex flex-col justify-center relative overflow-hidden">
+          <div className="flex justify-between items-center mb-1">
+            <p className="text-sm font-medium text-gray-500">Under Review</p>
+            <div className="p-1.5 bg-amber-50 rounded-lg"><Clock className="w-4 h-4 text-amber-500" /></div>
+          </div>
+          <p className="text-2xl font-bold text-amber-500">{apps.filter((a: any) => a.status === 'UNDER_REVIEW').length}</p>
+        </div>
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 flex flex-col justify-center relative overflow-hidden">
+          <div className="flex justify-between items-center mb-1">
+            <p className="text-sm font-medium text-gray-500">Approved</p>
+            <div className="p-1.5 bg-emerald-50 rounded-lg"><CheckCircle className="w-4 h-4 text-emerald-600" /></div>
+          </div>
+          <p className="text-2xl font-bold text-emerald-600">{apps.filter((a: any) => a.status === 'APPROVED').length}</p>
+        </div>
+      </div>
+
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div className="space-y-1">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">Application Management</h1>
@@ -147,7 +176,6 @@ export const ApplicationList = ({
             <option value="DRAFT">Draft</option>
             <option value="SUBMITTED">Submitted</option>
             <option value="UNDER_REVIEW">Under Review</option>
-            <option value="QUOTE_READY">Quote Ready</option>
             <option value="APPROVED">Approved</option>
             <option value="REJECTED">Rejected</option>
           </select>

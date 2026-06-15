@@ -67,31 +67,31 @@ export const QuoteEditor = ({
   return (
     <div className="w-full">
       {/* Sticky Editor Header */}
-      <div className="sticky top-20 z-30 bg-white/95 backdrop-blur-md border-b border-gray-100 py-6 px-4 md:px-10 -mx-4 md:-mx-10 shadow-sm">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-          <div className="flex flex-col gap-4">
-            <button onClick={onBack} className="flex items-center gap-2 text-xs font-bold text-gray-400 hover:text-gray-900 uppercase tracking-widest group transition-all">
-              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Back to queue
+      <div className="sticky top-16 md:top-20 z-30 bg-white/95 backdrop-blur-md border-b border-gray-100 py-4 md:py-6 px-4 md:px-10 -mx-4 md:-mx-10 shadow-sm">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 md:gap-6">
+          <div className="flex flex-col gap-3 md:gap-4">
+            <button onClick={onBack} className="flex items-center gap-2 text-[10px] md:text-xs font-bold text-gray-400 hover:text-gray-900 uppercase tracking-widest group transition-all">
+              <ArrowLeft className="w-3 h-3 md:w-4 md:h-4 group-hover:-translate-x-1 transition-transform" /> Back to queue
             </button>
-            <div className="flex items-center gap-4">
-              <Avatar className="w-16 h-16 md:w-20 md:h-20 rounded-2xl border-2 border-white ">
+            <div className="flex items-center gap-3 md:gap-4">
+              <Avatar className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-xl md:rounded-2xl border-2 border-white ">
                 <AvatarImage src={application.user.avatarUrl} />
-                <AvatarFallback className="bg-primary/10 text-primary font-bold text-xl">
+                <AvatarFallback className="bg-primary/10 text-primary font-bold text-lg md:text-xl">
                   {application.user.fullName.charAt(0)}
                 </AvatarFallback>
               </Avatar>
               <div>
-                <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight mb-1">{application.user.fullName}</h1>
-                <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500">
-                  <div className="flex items-center gap-1.5"><Mail className="w-4 h-4 text-primary" /> {application.user.email}</div>
-                  <div className="hidden md:block w-1 h-1 rounded-full bg-gray-300" />
-                  <div className="flex items-center gap-1.5 font-mono uppercase"><Hash className="w-3.5 h-3.5 text-primary" /> {application.id.split("-")[0].toUpperCase()}</div>
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 tracking-tight mb-0.5 md:mb-1 truncate max-w-[200px] sm:max-w-[300px] md:max-w-none">{application.user.fullName}</h1>
+                <div className="flex flex-wrap items-center gap-2 md:gap-3 text-xs md:text-sm text-gray-500">
+                  <div className="flex items-center gap-1 md:gap-1.5"><Mail className="w-3 h-3 md:w-4 md:h-4 text-primary" /> <span className="truncate max-w-[150px] sm:max-w-none">{application.user.email}</span></div>
+                  <div className="hidden sm:block w-1 h-1 rounded-full bg-gray-300" />
+                  <div className="flex items-center gap-1 md:gap-1.5 font-mono uppercase"><Hash className="w-3 h-3 md:w-3.5 md:h-3.5 text-primary" /> {application.id.split("-")[0].toUpperCase()}</div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="flex bg-gray-100/50 p-1 rounded-xl border border-gray-100 self-start md:self-center">
+          <div className="flex bg-gray-100/50 p-1 rounded-xl border border-gray-100 overflow-x-auto whitespace-nowrap hide-scrollbar w-full max-w-full lg:max-w-max">
             {[
               { id: "overview", label: "Overview", icon: LayoutGrid },
               { id: "health", label: "Health", icon: HeartPulse },
@@ -102,11 +102,11 @@ export const QuoteEditor = ({
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center gap-2 px-4 md:px-6 py-2.5 rounded-lg text-xs md:text-sm font-bold transition-all ${
+                className={`flex items-center gap-1.5 md:gap-2 px-3 md:px-6 py-2 md:py-2.5 rounded-lg text-[11px] md:text-sm font-bold transition-all ${
                   activeTab === tab.id ? "bg-white text-gray-900 shadow-sm border border-gray-200" : "text-gray-500 hover:text-gray-900"
                 }`}
               >
-                <tab.icon className="w-4 h-4" /> {tab.label}
+                <tab.icon className="w-3.5 h-3.5 md:w-4 md:h-4" /> {tab.label}
               </button>
             ))}
           </div>
@@ -124,9 +124,9 @@ export const QuoteEditor = ({
                   </h3>
                   <div className="space-y-4">
                     {application.personInfo ? Object.entries(application.personInfo).filter(([k]) => !['id', 'userId', 'applicationId', 'createdAt', 'updatedAt'].includes(k)).map(([key, val]) => (
-                      <div key={key} className="flex justify-between items-center border-b border-gray-50 pb-3">
-                        <span className="text-xs font-semibold text-gray-400 capitalize">{key.replace(/([A-Z])/g, ' $1')}</span>
-                        <span className="text-sm font-bold text-gray-900">{String(val) || "N/A"}</span>
+                      <div key={key} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-1 sm:gap-4 border-b border-gray-50 pb-3">
+                        <span className="text-xs font-semibold text-gray-400 capitalize whitespace-nowrap">{key.replace(/([A-Z])/g, ' $1')}</span>
+                        <span className="text-sm font-bold text-gray-900 break-words w-full sm:w-auto sm:text-right">{String(val) || "N/A"}</span>
                       </div>
                     )) : (
                       <div className="p-10 text-center bg-gray-50 rounded-xl border border-dashed border-gray-200">
@@ -270,6 +270,13 @@ export const QuoteEditor = ({
         }
         .style-scrollbar::-webkit-scrollbar-thumb:hover {
           background: #94a3b8;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .hide-scrollbar {
+          -ms-overflow-style: none;  /* IE and Edge */
+          scrollbar-width: none;  /* Firefox */
         }
       `}</style>
     </div>

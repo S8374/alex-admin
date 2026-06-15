@@ -462,7 +462,7 @@ export function ChatManagementView() {
                             </div>
                           </div>
                         ) : (
-                          <div className={`p-4 rounded-2xl text-sm leading-relaxed shadow-sm ${
+                          <div className={`p-4 rounded-2xl text-sm leading-relaxed shadow-sm break-words overflow-hidden ${
                             isMine 
                               ? 'bg-primary text-white rounded-br-none' 
                               : 'bg-white text-gray-700 rounded-bl-none border border-gray-50'
@@ -561,7 +561,7 @@ export function ChatManagementView() {
                 </div>
               )}
               <form onSubmit={handleSend} className="p-4 sm:p-6 flex items-end gap-3 bg-white">
-                <div className="flex items-center bg-gray-50 p-2 rounded-2xl border border-gray-100 flex-1 focus-within:border-primary/30 transition-all">
+                <div className="flex items-center bg-gray-50 p-2 rounded-2xl border border-gray-100 flex-1 min-w-0 focus-within:border-primary/30 transition-all">
                   <input 
                     type="file" 
                     multiple 
@@ -661,18 +661,18 @@ export function ChatManagementView() {
                       </div>
                     ))
                   ) : users.length > 0 ? (
-                    users.map((user: any) => (
+                    users.filter((user: any) => user.role !== "ADMIN" && user.id !== adminUser?.id).map((user: any) => (
                       <div 
                         key={user.id}
                         onClick={() => handleStartConversation(user.id)}
                         className="p-4 rounded-2xl hover:bg-gray-50 cursor-pointer transition-all flex items-center gap-4 group"
                       >
-                        <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 overflow-hidden">
+                        <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 overflow-hidden shrink-0">
                           {user.avatarUrl ? <img src={user.avatarUrl} className="w-full h-full object-cover" alt="" /> : <User className="w-5 h-5" />}
                         </div>
-                        <div className="flex-1">
-                          <h4 className="text-sm font-bold text-gray-900 group-hover:text-primary transition-colors">{user.fullName}</h4>
-                          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{user.email}</p>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-sm font-bold text-gray-900 group-hover:text-primary transition-colors truncate">{user.fullName}</h4>
+                          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider truncate">{user.email}</p>
                         </div>
                         <Badge className="bg-gray-100 text-gray-500 border-none text-[8px] font-black uppercase py-0.5">{user.role}</Badge>
                       </div>

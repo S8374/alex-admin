@@ -6,7 +6,7 @@ export interface AuthSlide {
 
 export const AUTH_SLIDES = {
   login: {
-    image: "https://images.unsplash.com/photo-1551434678-e076c223a692?q=80&w=2070&auto=format&fit=crop",
+    image: "/admin-login-office.png",
     alt: "Admin Dashboard",
     quote: "Management is the efficiency in climbing the ladder of success.",
   },

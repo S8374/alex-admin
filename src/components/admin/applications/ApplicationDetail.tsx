@@ -72,49 +72,49 @@ export const ApplicationDetail = ({
   return (
     <div className="w-full">
       {/* Header */}
-      <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-gray-100 py-6 px-4 md:px-10 -mx-4 md:-mx-10 shadow-sm">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-          <div className="flex flex-col gap-4">
-            <button onClick={onBack} className="flex items-center gap-2 text-xs font-bold text-gray-400 hover:text-gray-900 uppercase tracking-widest group transition-all">
-              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Back to applications
+      <div className="sticky top-[72px] lg:top-20 z-30 bg-white/95 backdrop-blur-md border-b border-gray-100 py-4 md:py-6 px-4 md:px-10 -mx-4 md:-mx-10 -mt-4 sm:-mt-6 lg:-mt-10 shadow-sm">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 md:gap-6">
+          <div className="flex flex-col gap-3 md:gap-4">
+            <button onClick={onBack} className="flex items-center gap-2 text-[10px] md:text-xs font-bold text-gray-400 hover:text-gray-900 uppercase tracking-widest group transition-all">
+              <ArrowLeft className="w-3 h-3 md:w-4 md:h-4 group-hover:-translate-x-1 transition-transform" /> Back to applications
             </button>
-            <div className="flex items-center gap-4">
-              <Avatar className="w-16 h-16 rounded-2xl border-2 border-white shadow-sm">
+            <div className="flex items-center gap-3 md:gap-4">
+              <Avatar className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl md:rounded-2xl border-2 border-white shadow-sm">
                 <AvatarImage src={user?.avatarUrl} />
-                <AvatarFallback className="bg-primary/10 text-primary font-bold text-xl">
+                <AvatarFallback className="bg-primary/10 text-primary font-bold text-lg md:text-xl">
                   {user?.fullName?.charAt(0) || "U"}
                 </AvatarFallback>
               </Avatar>
-              <div>
-                <div className="flex items-center gap-3 mb-1">
-                  <h1 className="text-2xl font-bold text-gray-900 tracking-tight">{user?.fullName || "Applicant"}</h1>
+              <div className="flex-1 min-w-0">
+                <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-0.5 md:mb-1">
+                  <h1 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight truncate max-w-[150px] sm:max-w-[300px] md:max-w-none">{user?.fullName || "Applicant"}</h1>
                   {getStatusBadge(status)}
                 </div>
-                <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500">
-                  <div className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> Submitted: {new Date(createdAt).toLocaleDateString()}</div>
-                  <div className="flex items-center gap-1.5"><Mail className="w-3.5 h-3.5" /> {user?.email}</div>
+                <div className="flex flex-wrap items-center gap-2 md:gap-4 text-[10px] md:text-xs text-gray-500">
+                  <div className="flex items-center gap-1 md:gap-1.5"><Calendar className="w-3 h-3 md:w-3.5 md:h-3.5" /> <span className="whitespace-nowrap">Submitted: {new Date(createdAt).toLocaleDateString()}</span></div>
+                  <div className="flex items-center gap-1 md:gap-1.5"><Mail className="w-3 h-3 md:w-3.5 md:h-3.5" /> <span className="truncate max-w-[150px] sm:max-w-none">{user?.email}</span></div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-row items-center gap-2 sm:gap-3 w-full lg:w-auto mt-4 lg:mt-0">
             {status !== "APPROVED" && status !== "REJECTED" && (
               <>
                 <Button 
                   onClick={() => onStatusUpdate("REJECTED")} 
                   disabled={isUpdating}
                   variant="outline"
-                  className="border-rose-200 text-rose-600 hover:bg-rose-50 font-bold text-xs uppercase tracking-widest px-6 h-10 transition-all"
+                  className="border-rose-200 text-rose-600 hover:bg-rose-50 font-bold text-[11px] sm:text-xs uppercase tracking-widest px-2 sm:px-6 h-11 sm:h-10 transition-all flex-1"
                 >
-                  <XCircle className="w-4 h-4 mr-2" /> Reject
+                  <XCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" /> Reject
                 </Button>
                 <Button 
                   onClick={() => onStatusUpdate("APPROVED")} 
                   disabled={isUpdating}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs uppercase tracking-widest px-6 h-10 shadow-lg shadow-emerald-600/20 transition-all"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] sm:text-xs uppercase tracking-widest px-2 sm:px-6 h-11 sm:h-10 shadow-lg shadow-emerald-600/20 transition-all flex-1"
                 >
-                  <CheckCircle2 className="w-4 h-4 mr-2" /> Approve
+                  <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" /> Approve
                 </Button>
               </>
             )}
@@ -122,7 +122,7 @@ export const ApplicationDetail = ({
                <Button
                onClick={onPrepareQuote}
                variant="outline"
-               className="border-blue-200 text-blue-600 hover:bg-blue-50 font-bold text-xs uppercase tracking-widest px-6 h-10 transition-all"
+               className="border-blue-200 text-blue-600 hover:bg-blue-50 font-bold text-[11px] sm:text-xs uppercase tracking-widest px-4 sm:px-6 h-11 sm:h-10 transition-all flex-1"
              >
                 Prepare Quote
              </Button>
@@ -133,21 +133,23 @@ export const ApplicationDetail = ({
 
       <div className="py-8">
         <Tabs defaultValue="applicant" className="space-y-8">
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-            <TabsList className="h-14 bg-transparent gap-8 px-6 md:px-10 flex justify-start border-none">
-              <TabsTrigger value="applicant" className="h-full rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 font-bold text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all">
-                <User className="w-4 h-4 mr-2" /> Applicant
+          <div className="w-full overflow-x-auto hide-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
+            <div className="bg-white rounded-xl border border-gray-100 shadow-sm w-max min-w-full">
+              <TabsList className="h-12 md:h-14 bg-transparent gap-4 md:gap-8 px-4 md:px-10 flex justify-start border-none w-full">
+              <TabsTrigger value="applicant" className="h-full rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 font-bold text-[10px] md:text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all">
+                <User className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" /> Applicant
               </TabsTrigger>
-              <TabsTrigger value="pets" className="h-full rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 font-bold text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all">
-                <Dog className="w-4 h-4 mr-2" /> Pets ({pets?.length || 0})
+              <TabsTrigger value="pets" className="h-full rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 font-bold text-[10px] md:text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all">
+                <Dog className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" /> Pets ({pets?.length || 0})
               </TabsTrigger>
-              <TabsTrigger value="health" className="h-full rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 font-bold text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all">
-                <HeartPulse className="w-4 h-4 mr-2" /> Health
+              <TabsTrigger value="health" className="h-full rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 font-bold text-[10px] md:text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all">
+                <HeartPulse className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" /> Health
               </TabsTrigger>
-              <TabsTrigger value="representative" className="h-full rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 font-bold text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all">
-                <Users className="w-4 h-4 mr-2" /> Representative
+              <TabsTrigger value="representative" className="h-full rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 font-bold text-[10px] md:text-xs uppercase tracking-widest text-gray-400 data-[state=active]:text-gray-900 transition-all">
+                <Users className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" /> Representative
               </TabsTrigger>
             </TabsList>
+          </div>
           </div>
 
           <ScrollArea className="h-[calc(100vh-280px)]">
@@ -179,21 +181,21 @@ export const ApplicationDetail = ({
             </TabsContent>
 
             <TabsContent value="pets" className="mt-0 outline-none">
-              <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6">
                 {pets?.map((pet: any) => (
-                  <div key={pet.id} className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex gap-6">
-                    <Avatar className="w-20 h-20 rounded-xl border-2 border-white shadow-sm">
+                  <div key={pet.id} className="bg-white p-4 sm:p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col sm:flex-row gap-4 sm:gap-6">
+                    <Avatar className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl border-2 border-white shadow-sm shrink-0">
                       <AvatarImage src={pet.photoUrl} />
                       <AvatarFallback className="bg-primary/10 text-primary">
-                        <Dog className="w-8 h-8" />
+                        <Dog className="w-6 h-6 sm:w-8 sm:h-8" />
                       </AvatarFallback>
                     </Avatar>
-                    <div className="flex-1 space-y-4">
+                    <div className="flex-1 space-y-3 sm:space-y-4">
                       <div className="flex items-center justify-between">
-                        <h4 className="text-lg font-bold text-gray-900">{pet.name}</h4>
-                        <Badge variant="secondary" className="text-[10px] uppercase font-bold">{pet.gender}</Badge>
+                        <h4 className="text-base sm:text-lg font-bold text-gray-900 truncate max-w-[200px]">{pet.name}</h4>
+                        <Badge variant="secondary" className="text-[9px] sm:text-[10px] uppercase font-bold shrink-0">{pet.gender}</Badge>
                       </div>
-                      <div className="grid grid-cols-2 gap-y-3 gap-x-6">
+                      <div className="grid grid-cols-2 gap-y-2 sm:gap-y-3 gap-x-2 sm:gap-x-6">
                         <PetInfo label="Breed" value={pet.primaryBreed} />
                         <PetInfo label="Age" value={pet.birthday ? `${new Date().getFullYear() - new Date(pet.birthday).getFullYear()} Years` : "N/A"} />
                         <PetInfo label="Microchipped" value={pet.isMicrochipped ? "Yes" : "No"} />
@@ -245,7 +247,7 @@ export const ApplicationDetail = ({
                     <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">{representative?.relationship || "Representative"}</p>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
                   <InfoRow label="Email" value={representative?.email || "N/A"} />
                   <InfoRow label="Phone" value={representative?.phoneNumber || "N/A"} />
                   <InfoRow label="City" value={representative?.city || "N/A"} />
@@ -256,14 +258,23 @@ export const ApplicationDetail = ({
           </ScrollArea>
         </Tabs>
       </div>
+      <style>{`
+        .hide-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .hide-scrollbar {
+          -ms-overflow-style: none;  /* IE and Edge */
+          scrollbar-width: none;  /* Firefox */
+        }
+      `}</style>
     </div>
   );
 };
 
 const InfoRow = ({ label, value }: { label: string; value: any }) => (
-  <div className="space-y-1">
+  <div className="space-y-1 min-w-0">
     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{label}</p>
-    <p className="text-sm font-bold text-gray-900">{value}</p>
+    <p className="text-sm font-bold text-gray-900 break-words">{value}</p>
   </div>
 );
 

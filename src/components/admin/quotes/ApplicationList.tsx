@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Search, FileSpreadsheet, Dog, ArrowRight, ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
+import { Search, FileSpreadsheet, Dog, ArrowRight, ChevronLeft, ChevronRight, ChevronDown, Calculator, Send, Clock, FileEdit } from "lucide-react";
 import { 
   Table, 
   TableBody, 
@@ -20,6 +20,8 @@ interface ApplicationListProps {
   isFetching?: boolean;
   search: string;
   onSearchChange: (val: string) => void;
+  statusFilter: string;
+  onStatusFilterChange: (val: string) => void;
   onOpenEditor: (app: any) => void;
 }
 
@@ -29,6 +31,8 @@ export const ApplicationList = ({
   isFetching = false,
   search, 
   onSearchChange, 
+  statusFilter,
+  onStatusFilterChange,
   onOpenEditor 
 }: ApplicationListProps) => {
   const loading = isLoading || isFetching;
@@ -40,6 +44,7 @@ export const ApplicationList = ({
   }, [search, apps]);
 
   const filtered = apps.filter((app: any) => {
+    if (statusFilter !== "ALL" && app.status !== statusFilter) return false;
     if (!search) return true;
     const q = search.toLowerCase();
     return (app.user?.fullName || "").toLowerCase().includes(q) || (app.user?.email || "").toLowerCase().includes(q);
@@ -52,20 +57,62 @@ export const ApplicationList = ({
   const paginated = filtered.slice(startIndex, endIndex);
   return (
     <div className="min-h-screen flex flex-col space-y-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 flex flex-col justify-center relative overflow-hidden">
+          <div className="flex justify-between items-center mb-1">
+            <p className="text-sm font-medium text-gray-500">Total Quotes</p>
+            <div className="p-1.5 bg-gray-50 rounded-lg"><Calculator className="w-4 h-4 text-gray-600" /></div>
+          </div>
+          <p className="text-2xl font-bold text-gray-900">{apps.length}</p>
+        </div>
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 flex flex-col justify-center relative overflow-hidden">
+          <div className="flex justify-between items-center mb-1">
+            <p className="text-sm font-medium text-gray-500">Quote Ready</p>
+            <div className="p-1.5 bg-emerald-50 rounded-lg"><Send className="w-4 h-4 text-emerald-600" /></div>
+          </div>
+          <p className="text-2xl font-bold text-emerald-600">{apps.filter((a: any) => a.status === 'QUOTE_READY').length}</p>
+        </div>
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 flex flex-col justify-center relative overflow-hidden">
+          <div className="flex justify-between items-center mb-1">
+            <p className="text-sm font-medium text-gray-500">Under Review</p>
+            <div className="p-1.5 bg-amber-50 rounded-lg"><Clock className="w-4 h-4 text-amber-500" /></div>
+          </div>
+          <p className="text-2xl font-bold text-amber-500">{apps.filter((a: any) => a.status === 'UNDER_REVIEW').length}</p>
+        </div>
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 flex flex-col justify-center relative overflow-hidden">
+          <div className="flex justify-between items-center mb-1">
+            <p className="text-sm font-medium text-gray-500">Drafts</p>
+            <div className="p-1.5 bg-gray-50 rounded-lg"><FileEdit className="w-4 h-4 text-gray-600" /></div>
+          </div>
+          <p className="text-2xl font-bold text-gray-600">{apps.filter((a: any) => ['DRAFT', 'IN_PROGRESS'].includes(a.status)).length}</p>
+        </div>
+      </div>
+
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-1">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">Quotes Management</h1>
           <p className="text-gray-500 text-sm font-medium">Manage and process user applications</p>
         </div>
-        <div className="relative w-full md:w-80">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <input 
-            type="text" 
-            placeholder="Search applications..." 
-            value={search}
-            onChange={(e) => onSearchChange(e.target.value)}
-            className="h-10 w-full bg-white border border-gray-200 rounded-lg pl-10 pr-4 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/10 transition-all text-gray-900 shadow-sm"
-          />
+        <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
+          {/* Status Filter */}
+          <select value={statusFilter} onChange={(e) => onStatusFilterChange(e.target.value)} className="h-10 px-4 w-full sm:w-48 bg-white border border-gray-200 rounded-lg text-sm font-bold text-gray-700 outline-none focus:ring-2 focus:ring-primary/10 transition-all shadow-sm">
+            <option value="ALL">All Statuses</option>
+            <option value="SUBMITTED">Submitted</option>
+            <option value="UNDER_REVIEW">Under Review</option>
+            <option value="APPROVED">Approved</option>
+            <option value="REJECTED">Rejected</option>
+          </select>
+
+          <div className="relative w-full sm:w-80">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input 
+              type="text" 
+              placeholder="Search applications..." 
+              value={search}
+              onChange={(e) => onSearchChange(e.target.value)}
+              className="h-10 w-full bg-white border border-gray-200 rounded-lg pl-10 pr-4 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/10 transition-all text-gray-900 shadow-sm"
+            />
+          </div>
         </div>
       </div>
 

@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { inter } from "@/app/fonts";
 import { useGetServerMonitoringQuery, useDeleteServerHistoryMutation, useDeleteSpasicHistoryMutation } from "@/redux/api/monitoringApi";
-import { useGetAllUsersQuery } from "@/redux/api/userApi";
+import { useGetAllUsersQuery, useGetUserStatsQuery } from "@/redux/api/userApi";
 import { useGetAllApplicationsQuery } from "@/redux/api/quoteApi";
 import { useGetActiveQuestionnaireQuery } from "@/redux/api/QuestionnaireApi";
 import { useGetPaymentStatsQuery } from "@/redux/api/PaymentApi";
@@ -76,6 +76,7 @@ export default function AdminDashboard() {
     pollingInterval: 30000,
   });
   const { data: usersResponse } = useGetAllUsersQuery({ page: 1, limit: 1, search: "", role: "", status: "" });
+  const { data: userStatsResponse } = useGetUserStatsQuery(undefined);
   const { data: applicationsResponse } = useGetAllApplicationsQuery(undefined);
   const { data: questionnaireResponse } = useGetActiveQuestionnaireQuery(undefined);
   const { data: paymentStatsResponse } = useGetPaymentStatsQuery(undefined);
@@ -95,10 +96,13 @@ export default function AdminDashboard() {
   const alerts = health?.security?.alerts?.length || 0;
   const summary = {
     totalUsers,
+    activeUsers: userStatsResponse?.data?.activeUsers || 0,
+    pendingUsers: userStatsResponse?.data?.pendingUsers || 0,
     activePolicies,
     pendingQuotes,
     questionnaireQuestions,
     paymentTransactions,
+    totalRevenue: paymentStatsResponse?.data?.totalRevenue || 0,
     alerts,
     systemHealth: health?.status === "UP" ? "Healthy" : (health?.status || "Loading"),
     platform: health?.environment?.toUpperCase() || "LIVE",

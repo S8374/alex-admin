@@ -10,6 +10,14 @@ const authApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["users"]
     }),
+    adminLogin: builder.mutation({
+      query: (userInfo: Record<string, any>) => ({
+        url: "/auth/admin-login",
+        method: "POST",
+        body: userInfo,
+      }),
+      invalidatesTags: ["users"]
+    }),
     register: builder.mutation({
       query: (payload: Record<string, any>) => ({
         url: "/auth/register",
@@ -80,6 +88,7 @@ const authApi = baseApi.injectEndpoints({
 
 export const {
   useLoginMutation,
+  useAdminLoginMutation,
   useRegisterMutation,
   useVerifyOtpMutation,
   useVerifyResetOtpMutation,
