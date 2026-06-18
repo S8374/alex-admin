@@ -60,6 +60,7 @@ export function OverviewTab({ user, isLoading = false }: OverviewTabProps) {
               <div className="grid grid-cols-2 gap-4">
                 <DataField label="Contact Number" value={personInfos.cellPhone || "N/A"} />
                 <DataField label="SSN (Last 4)" value={personInfos.ssnLast4 || "N/A"} />
+                <DataField label="Date of Birth" value={personInfos.birthday ? new Date(personInfos.birthday).toLocaleDateString() : "N/A"} />
               </div>
             </>
           ) : (

@@ -6,16 +6,25 @@ import { FileText, HeartPulse, Activity, CheckCircle2, Info, AlertCircle, Users 
 
 interface HealthTabProps {
   user: any;
+  isLoading?: boolean;
 }
 
-export function HealthTab({ user }: HealthTabProps) {
+export function HealthTab({ user, isLoading = false }: HealthTabProps) {
+  if (isLoading) {
+    return <HealthSkeleton />;
+  }
+
   const applications = user.applications || [];
   const healthAnswers = applications.flatMap((application: any) =>
     (application.healthAnswers || []).map((answer: any) => ({
       ...answer,
       application,
       familyHistories: (application.familyHealthHistories || []).filter(
-        (fh: any) => fh.questionId === answer.questionId
+        (fh: any) => {
+          if (answer.questionId && fh.questionId === answer.questionId) return true;
+          if (answer.nestedQuestionId && fh.nestedQuestionId === answer.nestedQuestionId) return true;
+          return false;
+        }
       ),
     }))
   );
@@ -196,6 +205,25 @@ export function HealthTab({ user }: HealthTabProps) {
             </div>
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+function HealthSkeleton() {
+  return (
+    <div className="space-y-6 animate-pulse">
+      <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+        <div className="h-5 w-40 rounded-full bg-gray-200" />
+        <div className="flex gap-2">
+          <div className="h-6 w-16 rounded-full bg-gray-200" />
+          <div className="h-6 w-24 rounded-full bg-gray-200" />
+        </div>
+      </div>
+      <div className="space-y-4">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="h-24 rounded-xl bg-gray-100" />
+        ))}
       </div>
     </div>
   );

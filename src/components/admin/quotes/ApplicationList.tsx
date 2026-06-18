@@ -97,7 +97,6 @@ export const ApplicationList = ({
           {/* Status Filter */}
           <select value={statusFilter} onChange={(e) => onStatusFilterChange(e.target.value)} className="h-10 px-4 w-full sm:w-48 bg-white border border-gray-200 rounded-lg text-sm font-bold text-gray-700 outline-none focus:ring-2 focus:ring-primary/10 transition-all shadow-sm">
             <option value="ALL">All Statuses</option>
-            <option value="SUBMITTED">Submitted</option>
             <option value="UNDER_REVIEW">Under Review</option>
             <option value="APPROVED">Approved</option>
             <option value="REJECTED">Rejected</option>

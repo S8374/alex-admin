@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Search, Shield, UserCheck, UserMinus, UserX, Clock, Trash2, MoreVertical, Users, ArrowRight } from "lucide-react";
+import { Search, Shield, UserCheck, UserMinus, UserX, Clock, Trash2, MoreVertical, Users, ArrowRight, CreditCard } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -122,6 +122,13 @@ export const UserList = ({
           </div>
           <p className="text-2xl font-bold text-red-600">{stats?.suspendedUsers ?? users.filter((u: any) => u.status === 'SUSPENDED').length}</p>
         </div>
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 flex flex-col justify-center relative overflow-hidden">
+          <div className="flex justify-between items-center mb-1">
+            <p className="text-sm font-medium text-gray-500">Paid Users</p>
+            <div className="p-1.5 bg-blue-50 rounded-lg"><CreditCard className="w-4 h-4 text-blue-600" /></div>
+          </div>
+          <p className="text-2xl font-bold text-blue-600">{stats?.paidUsers ?? 0}</p>
+        </div>
       </div>
 
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -149,15 +156,17 @@ export const UserList = ({
             <option value="ACTIVE">Active</option>
             <option value="PENDING_VERIFICATION">Pending Verification</option>
             <option value="SUSPENDED">Suspended</option>
+            <option value="INACTIVE">Inactive</option>
           </select>
           <select
-            value={params.role || ""}
-            onChange={(e) => setParams({ ...params, role: e.target.value, page: 1 })}
+            value={params.paidOnly || ""}
+            onChange={(e) => setParams({ ...params, paidOnly: e.target.value, page: 1 })}
             className="h-10 px-4 bg-white border border-gray-200 rounded-lg text-sm font-bold text-gray-700 outline-none focus:ring-2 focus:ring-primary/10 transition-all"
           >
-            <option value="">All Roles</option>
-            <option value="USER">User</option>
+            <option value="">All Users</option>
+            <option value="true">Paid Users Only</option>
           </select>
+
         </div>
       </div>
 
@@ -308,12 +317,22 @@ export const UserList = ({
                                 {user.status === "ACTIVE" ? "Suspend Account" : "Activate Account"}
                               </DropdownMenuItem>
                               <DropdownMenuSeparator className="my-1 bg-gray-50" />
-                              <DropdownMenuItem
-                                onClick={() => onDelete(user.id)}
-                                className="rounded-lg cursor-pointer font-bold text-xs gap-3 text-red-500 focus:bg-red-50 focus:text-red-600"
-                              >
-                                <Trash2 className="w-4 h-4" /> Delete User
-                              </DropdownMenuItem>
+                              {user.payments?.length > 0 ? (
+                                <DropdownMenuItem
+                                  disabled
+                                  className="rounded-lg font-bold text-xs gap-3 text-gray-400 cursor-not-allowed"
+                                  title="Cannot delete users with completed payments"
+                                >
+                                  <Trash2 className="w-4 h-4" /> Delete User (Paid)
+                                </DropdownMenuItem>
+                              ) : (
+                                <DropdownMenuItem
+                                  onClick={() => onDelete(user.id)}
+                                  className="rounded-lg cursor-pointer font-bold text-xs gap-3 text-red-500 focus:bg-red-50 focus:text-red-600"
+                                >
+                                  <Trash2 className="w-4 h-4" /> Delete User
+                                </DropdownMenuItem>
+                              )}
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </TableCell>

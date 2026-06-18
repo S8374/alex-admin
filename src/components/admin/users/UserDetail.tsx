@@ -144,7 +144,7 @@ export const UserDetail = ({ user, onBack, isLoading }: UserDetailProps) => {
               <FinancialsTab user={user} isLoading={isLoading} />
             </TabsContent>
             <TabsContent value="health" className="mt-0 outline-none">
-              <HealthTab user={user} />
+              <HealthTab user={user} isLoading={isLoading} />
             </TabsContent>
           </div>
         </Tabs>

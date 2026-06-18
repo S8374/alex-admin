@@ -80,14 +80,16 @@ export function QuestionnaireModal({
                         options={[{v:"HEALTH", l:"Health"}, {v:"CANCER", l:"Cancer"}, {v:"NORMAL", l:"Normal"}]} 
                       />
                     )}
-                    <div className="flex items-center gap-8 pt-2">
-                      <ToggleButton 
-                        label="Input Required" 
-                        active={formData.isInputRequired} 
-                        onToggle={() => setFormData({ ...formData, isInputRequired: !formData.isInputRequired })} 
-                        disabled={formData.category === "HEALTH" || formData.category === "CANCER"}
-                      />
-                    </div>
+                    {type.includes("question") && (
+                      <div className="flex items-center gap-8 pt-2">
+                        <ToggleButton 
+                          label="Input Required" 
+                          active={formData.isInputRequired} 
+                          onToggle={() => setFormData({ ...formData, isInputRequired: !formData.isInputRequired })} 
+                          disabled={formData.category === "HEALTH" || formData.category === "CANCER"}
+                        />
+                      </div>
+                    )}
                   </>
                 )}
               </div>

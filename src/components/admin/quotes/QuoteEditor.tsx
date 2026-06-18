@@ -153,7 +153,7 @@ export const QuoteEditor = ({
                 </div>
               </motion.div>
             )}
-            {activeTab === "health" && <HealthAnalysis answers={application.healthAnswers} />}
+            {activeTab === "health" && <HealthAnalysis application={application} />}
             {activeTab === "pets" && (
               <PetDossier 
                 pets={application.pets} 
