@@ -17,7 +17,6 @@ import { RepresentativeTab } from "./user-profile-drawer/RepresentativeTab";
 export function UserProfileDrawer({ userId, isOpen, onClose }: UserProfileDrawerProps) {
   const { data: userResponse, isLoading } = useGetUserByIdQuery(userId, { skip: !userId });
   const user = userResponse?.data;
-  console.log("user", user);
   if (!userId) return null;
 
   return (

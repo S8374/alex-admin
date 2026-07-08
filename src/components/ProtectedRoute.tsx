@@ -16,6 +16,7 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (mounted && !authUser) {
+      document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       router.replace("/");
     }
   }, [authUser, router, mounted]);

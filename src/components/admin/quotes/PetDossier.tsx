@@ -33,10 +33,6 @@ export const PetDossier = ({
   application
 }: PetDossierProps) => {
   const [agreementPet, setAgreementPet] = useState<any | null>(null);
-
-  console.log("PETDOSSIER API URL:", process.env.NEXT_PUBLIC_BASE_API_URL);
-  console.log("PETDOSSIER PETS DATA:", pets);
-
   useEffect(() => {
     if (agreementPet) {
       document.body.style.overflow = "hidden";

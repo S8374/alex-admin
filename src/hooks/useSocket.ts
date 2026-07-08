@@ -22,7 +22,6 @@ export const useSocket = () => {
     setSocket(socketInstance);
 
     socketInstance.on('connect', () => {
-      console.log('Admin connected to socket server');
     });
 
     socketInstance.on('connect_error', (err) => {
